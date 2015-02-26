@@ -25,7 +25,7 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version='0.1.0',
+    version='0.1.1',
     description="Borrow cookies from your browser's authenticated session for use in Python scripts.",
     long_description=readme + '\n\n' + history,
     author='Nathan Henrie',
