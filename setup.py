@@ -11,7 +11,7 @@ try:
     readme = pypandoc.convert('README.md', 'rst')
     history = pypandoc.convert('HISTORY.md', 'rst')
 except ImportError:
-    with open('README.md') as readme_file, open('HISTORY.md') as history_file,
+    with open('README.md') as readme_file, open('HISTORY.md') as history_file:
         readme = readme_file.read()
         history = history_file.read()
 
@@ -25,7 +25,7 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version='0.1.2',
+    version='0.1.3',
     description="Borrow cookies from your browser's authenticated session for use in Python scripts.",
     long_description=readme + '\n\n' + history,
     author='Nathan Henrie',
