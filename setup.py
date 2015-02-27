@@ -15,9 +15,8 @@ except ImportError:
         readme = readme_file.read()
         history = history_file.read()
 
-requirements = [
-        # TODO: Add any additional requirements for all templates
-]
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read().splitlines()
 
 test_requirements = [
     'pytest>=2.6.4'
@@ -25,7 +24,7 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version='0.1.3',
+    version='0.1.4',
     description="Borrow cookies from your browser's authenticated session for use in Python scripts.",
     long_description=readme + '\n\n' + history,
     author='Nathan Henrie',
