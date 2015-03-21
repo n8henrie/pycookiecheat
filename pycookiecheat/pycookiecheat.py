@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 '''pyCookieCheat.py
-20150221 v2.0.1: Now should find cookies for base domain and all subs.
-20140518 v2.0: Now works with Chrome's new encrypted cookies.
-
 See relevant post at http://n8h.me/HufI1w
 
 Use your browser's cookies to make grabbing data from login-protected sites easier.
@@ -10,16 +7,6 @@ Intended for use with Python Requests http://python-requests.org
 
 Accepts a URL from which it tries to extract a domain. If you want to force the domain,
 just send it the domain you'd like to use instead.
-
-Intended use with requests:
-    import requests
-    import pyCookieCheat
-
-    url = 'http://www.example.com'
-
-    s = requests.Session()
-    cookies = pyCookieCheat.chrome_cookies(url)
-    s.get(url, cookies = cookies)
 
 Adapted from my code at http://n8h.me/HufI1w
 
@@ -77,7 +64,7 @@ def chrome_cookies(url):
             '~/.config/chromium/Default/Cookies'
         )
     else:
-        raise Exception("This script only works on OSX or Linux.")
+        raise OSError("This script only works on OSX or Linux.")
 
     # Generate key from values above
     key = PBKDF2(my_pass, salt, length, iterations)
@@ -86,7 +73,12 @@ def chrome_cookies(url):
     domain = urllib.parse.urlparse(url).netloc
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
-    conn = sqlite3.connect(cookie_file)
+    try:
+        conn = sqlite3.connect(cookie_file)
+    except sqlite3.OperationalError as e:
+        print("Unable to connect to cookie file, please make sure it exists: {}".format(cookie_file))
+        sys.exit(0)
+
     sql = 'select name, value, encrypted_value from cookies '\
             'where host_key like "%{}%"'.format(domain_no_sub)
 
