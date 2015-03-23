@@ -75,12 +75,7 @@ def chrome_cookies(url):
     domain = urllib.parse.urlparse(url).netloc
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
-    try:
-        conn = sqlite3.connect(cookie_file)
-    except sqlite3.OperationalError as e:
-        msg = "Unable to connect to cookie file, please make sure it exists: "
-        print(msg.format(cookie_file))
-        sys.exit(0)
+    conn = sqlite3.connect(cookie_file)
 
     sql = 'select name, value, encrypted_value from cookies where host_key '\
           'like "%{}%"'.format(domain_no_sub)
