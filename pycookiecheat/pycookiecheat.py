@@ -2,11 +2,11 @@
 '''pyCookieCheat.py
 See relevant post at http://n8h.me/HufI1w
 
-Use your browser's cookies to make grabbing data from login-protected sites easier.
-Intended for use with Python Requests http://python-requests.org
+Use your browser's cookies to make grabbing data from login-protected sites
+easier. Intended for use with Python Requests http://python-requests.org
 
-Accepts a URL from which it tries to extract a domain. If you want to force the domain,
-just send it the domain you'd like to use instead.
+Accepts a URL from which it tries to extract a domain. If you want to force the
+domain, just send it the domain you'd like to use instead.
 
 Adapted from my code at http://n8h.me/HufI1w
 
@@ -23,6 +23,7 @@ import keyring
 import sys
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
+
 
 def chrome_cookies(url):
 
@@ -69,18 +70,20 @@ def chrome_cookies(url):
     # Generate key from values above
     key = PBKDF2(my_pass, salt, length, iterations)
 
-    # Part of the domain name that will help the sqlite3 query pick it from the Chrome cookies
+    # Part of the domain name that will help the sqlite3 query pick it from the
+    # Chrome cookies
     domain = urllib.parse.urlparse(url).netloc
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     try:
         conn = sqlite3.connect(cookie_file)
     except sqlite3.OperationalError as e:
-        print("Unable to connect to cookie file, please make sure it exists: {}".format(cookie_file))
+        msg = "Unable to connect to cookie file, please make sure it exists: "
+        print(msg.format(cookie_file))
         sys.exit(0)
 
-    sql = 'select name, value, encrypted_value from cookies '\
-            'where host_key like "%{}%"'.format(domain_no_sub)
+    sql = 'select name, value, encrypted_value from cookies where host_key '\
+          'like "%{}%"'.format(domain_no_sub)
 
     cookies = {}
     cookies_list = []
