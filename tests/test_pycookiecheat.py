@@ -12,14 +12,41 @@ import shutil
 
 
 @pytest.fixture(scope='module')
-def travis_setup():
-    if (os.getenv('TRAVIS', False) == 'true') and (sys.platform == 'linux'):
-        cookies_dest = os.path.expanduser('~/.config/chromium/Default')
-        curdir = os.path.dirname(os.path.abspath(__file__))
-        cookies_path = os.path.join(curdir, 'Cookies')
+def travis_setup(request):
+    """Sets up chromium's cookies file and directory if it seems to be running
+    on travis-ci. Appropriately throws an error if this dir already exists,
+    preventing it from getting to the teardown function which would otherwise
+    risk deleting someone's ~/.config/chromium directory (if they had the
+    TRAVIS=true environment set for some reason)."""
 
-        os.makedirs(cookies_dest)
-        shutil.copy(cookies_path, cookies_dest)
+    def teardown():
+        os.remove(cookies_dest)
+        try:
+            os.removedirs(cookies_dest_dir)
+        except OSError:
+            # Directory wasn't empty, expected at '~'
+            pass
+
+    # Where the cookies file should be
+    cookies_dest_dir = os.path.expanduser('~/.config/chromium/Default')
+    cookies_dest = os.path.join(cookies_dest_dir, 'Cookies')
+
+    # Where the test cookies file is
+    cookies_dir = os.path.dirname(os.path.abspath(__file__))
+    cookies_path = os.path.join(cookies_dir, 'Cookies')
+
+    if all([os.getenv('TRAVIS', False) == 'true',
+           sys.platform == 'linux',
+           not os.path.isfile(cookies_dest)]):
+
+        os.makedirs(cookies_dest_dir)
+        shutil.copy(cookies_path, cookies_dest_dir)
+
+        # Only teardown if running on travis
+        request.addfinalizer(teardown)
+        return
+    # Not running on travis, just return since nothing should have been made.
+    return
 
 
 def test_raises_on_empty():
