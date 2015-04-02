@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
-"""
-test_pycookiecheat
-----------------------------------
-
+"""test_pycookiecheat.py
 Tests for `pycookiecheat` module.
 """
 
@@ -11,27 +6,37 @@ from pycookiecheat import chrome_cookies
 from uuid import uuid4
 import pytest
 import os
+import os.path
+import sys
+import shutil
+
+
+@pytest.fixture(scope='module')
+def travis_setup():
+    if (os.getenv('TRAVIS', False) == 'true') and (sys.platform == 'linux'):
+        cookies_dest = os.path.expanduser('~/.config/chromium/Default')
+        curdir = os.path.dirname(os.path.abspath(__file__))
+        cookies_path = os.path.join(curdir, 'Cookies')
+
+        os.mkdirs(cookies_dest)
+        shutil.copy(cookies_path, cookies_dest)
 
 
 def test_raises_on_empty():
     with pytest.raises(TypeError):
         broken = chrome_cookies()
+        return broken
 
 
-def test_no_cookies():
-    if os.getenv('TRAVIS', False) != 'true':
-        never_been_here = 'http://{}.com'.format(uuid4())
-        empty_dict = chrome_cookies(never_been_here)
-        assert empty_dict == dict()
-    else:
-        assert True
+def test_no_cookies(travis_setup):
+    never_been_here = 'http://{}.com'.format(uuid4())
+    empty_dict = chrome_cookies(never_been_here)
+    assert empty_dict == dict()
 
 
-def test_n8henrie_com():
-    """Tests a wordpress cookie that I think should be set. NB: Will fail
-    unless you've visited my site in Chrome."""
-    if os.getenv('TRAVIS', False) != 'true':
-        cookies = chrome_cookies('http://n8henrie.com')
-        assert cookies['wordpress_test_cookie'] == 'WP+Cookie+check'
-    else:
-        assert True
+def test_fake_cookie(travis_setup):
+    """Tests a fake cookie from the website below. For this to pass, you'll
+    have to visit the url and put in "TestCookie" and "Just_a_test!" to set
+    a temporary cookie with the appropriate values."""
+    cookies = chrome_cookies('http://www.html-kit.com/tools/cookietester')
+    assert cookies['TestCookie'] == 'Just_a_test!'
