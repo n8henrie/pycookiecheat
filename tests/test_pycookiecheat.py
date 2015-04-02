@@ -18,7 +18,7 @@ def travis_setup():
         curdir = os.path.dirname(os.path.abspath(__file__))
         cookies_path = os.path.join(curdir, 'Cookies')
 
-        os.mkdirs(cookies_dest)
+        os.makedirs(cookies_dest)
         shutil.copy(cookies_path, cookies_dest)
 
 
