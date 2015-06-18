@@ -33,3 +33,6 @@ cookies-file: `chrome_cookies(url, cookie_file=/abspath/to/cookies)`
 ## Features
 *  Returns decrypted cookies from Google Chrome on OSX or Linux.
 
+## FAQ
+### How about Windows?
+I don't use Windows or have a PC, so I won't be adding support myself. Feel free to make a PR :)
