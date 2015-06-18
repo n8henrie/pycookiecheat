@@ -28,7 +28,7 @@ r = requests.get(url, cookies=cookies)
 ```
 
 Use the `cookie_file` keyword-argument to specify a different filepath for the
-cookies-file.
+cookies-file: `chrome_cookies(url, cookie_file=/abspath/to/cookies)`
 
 ## Features
 *  Returns decrypted cookies from Google Chrome on OSX or Linux.
