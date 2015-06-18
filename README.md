@@ -23,9 +23,12 @@ import requests
 
 url = 'http://example.com/fake.html'
 
-cookies = chrome_cookies(url)
+cookies = chrome_cookies(url) ## Platform's default filepath.
 r = requests.get(url, cookies=cookies)
 ```
+
+Use the `cookie_file` keyword-argument to specify a different filepath for the
+cookies-file.
 
 ## Features
 *  Returns decrypted cookies from Google Chrome on OSX or Linux.

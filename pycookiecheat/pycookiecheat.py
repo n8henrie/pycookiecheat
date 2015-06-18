@@ -25,7 +25,7 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 
 
-def chrome_cookies(url):
+def chrome_cookies(url, cookie_file=None):
 
     salt = b'saltysalt'
     iv = b' ' * 16
@@ -53,7 +53,7 @@ def chrome_cookies(url):
         my_pass = keyring.get_password('Chrome Safe Storage', 'Chrome')
         my_pass = my_pass.encode('utf8')
         iterations = 1003
-        cookie_file = os.path.expanduser(
+        cookie_file = cookie_file or os.path.expanduser(
             '~/Library/Application Support/Google/Chrome/Default/Cookies'
         )
 
@@ -61,7 +61,7 @@ def chrome_cookies(url):
     elif sys.platform == 'linux':
         my_pass = 'peanuts'.encode('utf8')
         iterations = 1
-        cookie_file = os.path.expanduser(
+        cookie_file = cookie_file or os.path.expanduser(
             '~/.config/chromium/Default/Cookies'
         )
     else:
