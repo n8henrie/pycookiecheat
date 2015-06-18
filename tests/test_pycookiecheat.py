@@ -14,10 +14,10 @@ import shutil
 @pytest.fixture(scope='module')
 def travis_setup(request):
     """Sets up chromium's cookies file and directory if it seems to be running
-    on travis-ci. Appropriately throws an error if this dir already exists,
-    preventing it from getting to the teardown function which would otherwise
-    risk deleting someone's ~/.config/chromium directory (if they had the
-    TRAVIS=true environment set for some reason)."""
+    on travis-ci. Appropriately doesn't load teardown() this dir already
+    exists, preventing it from getting to the teardown function which would
+    otherwise risk deleting someone's ~/.config/chromium directory (if they had
+    the TRAVIS=true environment set for some reason)."""
 
     def teardown():
         os.remove(cookies_dest)
@@ -35,7 +35,7 @@ def travis_setup(request):
     cookies_dir = os.path.dirname(os.path.abspath(__file__))
     cookies_path = os.path.join(cookies_dir, 'Cookies')
 
-    if all([os.getenv('TRAVIS', False) == 'true',
+    if all([os.getenv('TRAVIS') == 'true',
            sys.platform == 'linux',
            not os.path.isfile(cookies_dest)]):
 
