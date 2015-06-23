@@ -12,7 +12,7 @@ Borrow cookies from your browser's authenticated session for use in Python scrip
 * Unsupported (yet)
 
 ### GitHub
-1. `git clone -b python2 https://github.com/n8henrie/pycookiecheat.git`
+1. `git clone -b python2 https://github.com/dani14-96/pycookiecheat.git` (change user after PR)
 2. `cd pycookiecheat`
 3. `python setup.py install`
 
