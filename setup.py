@@ -34,8 +34,8 @@ setup(
     packages=[
         'pycookiecheat',
     ],
-    package_dir={'pycookiecheat (python2)':
-                 'pycookiecheat (python2)'},
+    package_dir={'pycookiecheat':
+                 'pycookiecheat'},
     include_package_data=True,
     install_requires=requirements,
     license="GPLv3",
