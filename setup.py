@@ -34,8 +34,8 @@ setup(
     packages=[
         'pycookiecheat',
     ],
-    package_dir={'pycookiecheat':
-                 'pycookiecheat'},
+    package_dir={'pycookiecheat (python2)':
+                 'pycookiecheat (python2)'},
     include_package_data=True,
     install_requires=requirements,
     license="GPLv3",
@@ -43,9 +43,9 @@ setup(
     keywords='pycookiecheat',
     classifiers=[
         'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
     ],
     test_suite='tests',
     tests_require=test_requirements
