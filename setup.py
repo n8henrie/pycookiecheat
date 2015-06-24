@@ -29,7 +29,7 @@ setup(
     name='pycookiecheat',
     version=_pc_version,
     description="Borrow cookies from your browser's authenticated session for"
-            "use in Python scripts.",
+                "use in Python scripts.",
     long_description=readme + '\n\n' + history,
     author='Nathan Henrie',
     author_email='nate@n8henrie.com',
