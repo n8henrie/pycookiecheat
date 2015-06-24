@@ -13,10 +13,15 @@ Borrow cookies from your browser's authenticated session for use in Python scrip
 - `pip3 install pycookiecheat`
 
 ### GitHub
+####Python3
 1. `git clone https://github.com/n8henrie/pycookiecheat.git`
 2. `cd pycookiecheat`
 3. `python3 setup.py install`
 
+####Python2
+1. `git clone -b py2 https://github.com/n8henrie/pycookiecheat.git`
+2. `cd pycookiecheat`
+3. `python setup.py install`
 
 ## Usage
 ```python
