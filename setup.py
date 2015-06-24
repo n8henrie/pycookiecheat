@@ -11,8 +11,9 @@ try:
     readme = pypandoc.convert('README.md', 'rst')
     history = pypandoc.convert('HISTORY.md', 'rst')
 except ImportError:
-    with open('README.md') as readme_file, open('HISTORY.md') as history_file:
+    with open('README.md') as readme_file:
         readme = readme_file.read()
+    with open('HISTORY.md') as history_file:
         history = history_file.read()
 
 from pycookiecheat import __version__ as _pc_version

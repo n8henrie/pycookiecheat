@@ -85,7 +85,7 @@ def chrome_cookies(url, cookie_file=None):
     conn = sqlite3.connect(cookie_file)
 
     sql = 'select name, value, encrypted_value from cookies where host_key '\
-          'like "%{}%"'.format(domain_no_sub)
+          'like "%{0}%"'.format(domain_no_sub)
 
     cookies = {}
     cookies_list = []

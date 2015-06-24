@@ -56,7 +56,7 @@ def test_raises_on_empty():
 
 
 def test_no_cookies(travis_setup):
-    never_been_here = 'http://{}.com'.format(uuid4())
+    never_been_here = 'http://{0}.com'.format(uuid4())
     empty_dict = chrome_cookies(never_been_here)
     assert empty_dict == dict()
 
