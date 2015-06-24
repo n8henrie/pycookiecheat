@@ -65,7 +65,7 @@ def chrome_cookies(url, cookie_file=None):
         )
 
     # If running Chromium on Linux
-    elif sys.platform == 'linux':
+    elif sys.platform.startswith('linux'):
         my_pass = 'peanuts'.encode('utf8')
         iterations = 1
         cookie_file = cookie_file or os.path.expanduser(
