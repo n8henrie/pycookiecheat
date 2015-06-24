@@ -28,6 +28,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+
 def chrome_cookies(url, cookie_file=None):
 
     salt = b'saltysalt'
@@ -42,9 +43,12 @@ def chrome_cookies(url, cookie_file=None):
 
         # Strip padding by taking off number indicated by padding
         # eg if last is '\x0e' then ord('\x0e') == 14, so take off 14.
-        # Modified function using ord() for python2.
         def clean(x):
-            return x[:-ord(x[-1])].decode('utf8')
+            last = x[-1]
+            if isinstance(last, int):
+                return x[:-last].decode('utf8')
+            else:
+                return x[:-ord(last)].decode('utf8')
 
         cipher = AES.new(key, AES.MODE_CBC, IV=iv)
         decrypted = cipher.decrypt(encrypted_value)
@@ -75,7 +79,7 @@ def chrome_cookies(url, cookie_file=None):
 
     # Part of the domain name that will help the sqlite3 query pick it from the
     # Chrome cookies
-    domain = urlparse.urlparse(url).netloc #used urlparse instead of urllib.parse for python2
+    domain = urlparse(url).netloc
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     conn = sqlite3.connect(cookie_file)

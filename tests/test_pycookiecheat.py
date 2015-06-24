@@ -1,5 +1,5 @@
 """test_pycookiecheat.py
-Tests for `pycookiecheat` module.
+Tests for pycookiecheat module.
 """
 
 from pycookiecheat import chrome_cookies

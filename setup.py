@@ -15,8 +15,11 @@ except ImportError:
         readme = readme_file.read()
         history = history_file.read()
 
+from pycookiecheat import __version__ as _pc_version
+
 with open('requirements.txt') as requirements_file:
     requirements = requirements_file.read().splitlines()
+
 
 test_requirements = [
     'pytest>=2.6.4'
@@ -24,7 +27,7 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version='0.1.5',
+    version=_pc_verion,
     description="Borrow cookies from your browser's authenticated session for"
             "use in Python scripts.",
     long_description=readme + '\n\n' + history,
@@ -46,6 +49,9 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ],
     test_suite='tests',
     tests_require=test_requirements

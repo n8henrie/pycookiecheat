@@ -1,5 +1,13 @@
 # History
 
+## 0.1.8
+
+* Python2 support (thanks [dani14-96](https://github.com/dani14-96))
+
+## 0.1.7
+
+* Configurable cookies file (thanks [ankostis](https://github.com/ankostis))
+
 ## 0.1.6
 
 * OSError instead of Exception for wrong OS.
