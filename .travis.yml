@@ -8,9 +8,9 @@ env:
     - TOX_ENV=py34
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install:
-  - pip install tox
+install: pip install tox
 
 # command to run tests, e.g. python setup.py test
 # script: py.test tests
 script: tox -e $TOX_ENV
+after_failure: cat .tox/log/tox-*.log
