@@ -18,7 +18,7 @@ Helpful Links:
 
 import sqlite3
 import os.path
-import urllib.parse
+import urlparse #imported urlparse instead of urllib.parse for python2
 import keyring
 import sys
 from Crypto.Cipher import AES
@@ -39,9 +39,9 @@ def chrome_cookies(url, cookie_file=None):
 
         # Strip padding by taking off number indicated by padding
         # eg if last is '\x0e' then ord('\x0e') == 14, so take off 14.
-        # You'll need to change this function to use ord() for python2.
+        # Modified function using ord() for python2.
         def clean(x):
-            return x[:-x[-1]].decode('utf8')
+            return x[:-ord(x[-1])].decode('utf8')
 
         cipher = AES.new(key, AES.MODE_CBC, IV=iv)
         decrypted = cipher.decrypt(encrypted_value)
@@ -72,7 +72,7 @@ def chrome_cookies(url, cookie_file=None):
 
     # Part of the domain name that will help the sqlite3 query pick it from the
     # Chrome cookies
-    domain = urllib.parse.urlparse(url).netloc
+    domain = urlparse.urlparse(url).netloc #used urlparse instead of urllib.parse for python2
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     conn = sqlite3.connect(cookie_file)
