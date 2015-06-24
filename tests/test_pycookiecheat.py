@@ -36,7 +36,7 @@ def travis_setup(request):
     cookies_path = os.path.join(cookies_dir, 'Cookies')
 
     if all([os.getenv('TRAVIS') == 'true',
-           sys.platform == 'linux',
+           sys.platform.startswith('linux'),
            not os.path.isfile(cookies_dest)]):
 
         os.makedirs(cookies_dest_dir)
