@@ -1,5 +1,10 @@
 # History
 
+## 0.1.10
+
+- Read version to separate file so it can be imported in setup.py
+- Bugfix for python2 on linux
+
 ## 0.1.9
 
 - Bugfix for python2 on linux
