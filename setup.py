@@ -16,7 +16,7 @@ except ImportError:
     with open('HISTORY.md') as history_file:
         history = history_file.read()
 
-from pycookiecheat import __version__ as _pc_version
+from pycookiecheat._version import __version__
 
 with open('requirements.txt') as requirements_file:
     requirements = requirements_file.read().splitlines()
@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version=_pc_version,
+    version=__version__,
     description="Borrow cookies from your browser's authenticated session for"
                 "use in Python scripts.",
     long_description=readme + '\n\n' + history,
