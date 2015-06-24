@@ -1,12 +1,10 @@
-Credits
-=======
+# Credits
 
-Development Lead
-----------------
+## Development Lead
 
--   Nathan Henrie <nate@n8henrie.com>
+- [Nathan Henrie](http://n8henrie.com) <nate@n8henrie.com>
 
-Contributors
-------------
+## Contributors
 
-None yet. Why not be the first?
+- [Kostis Anagnostopoulos](https://github.com/ankostis)
+- [Dani García](https://github.com/dani14-96)

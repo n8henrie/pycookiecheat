@@ -18,11 +18,15 @@ Helpful Links:
 
 import sqlite3
 import os.path
-import urllib.parse
 import keyring
 import sys
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 def chrome_cookies(url, cookie_file=None):
@@ -39,9 +43,12 @@ def chrome_cookies(url, cookie_file=None):
 
         # Strip padding by taking off number indicated by padding
         # eg if last is '\x0e' then ord('\x0e') == 14, so take off 14.
-        # You'll need to change this function to use ord() for python2.
         def clean(x):
-            return x[:-x[-1]].decode('utf8')
+            last = x[-1]
+            if isinstance(last, int):
+                return x[:-last].decode('utf8')
+            else:
+                return x[:-ord(last)].decode('utf8')
 
         cipher = AES.new(key, AES.MODE_CBC, IV=iv)
         decrypted = cipher.decrypt(encrypted_value)
@@ -58,7 +65,7 @@ def chrome_cookies(url, cookie_file=None):
         )
 
     # If running Chromium on Linux
-    elif sys.platform == 'linux':
+    elif sys.platform.startswith('linux'):
         my_pass = 'peanuts'.encode('utf8')
         iterations = 1
         cookie_file = cookie_file or os.path.expanduser(
@@ -72,13 +79,13 @@ def chrome_cookies(url, cookie_file=None):
 
     # Part of the domain name that will help the sqlite3 query pick it from the
     # Chrome cookies
-    domain = urllib.parse.urlparse(url).netloc
+    domain = urlparse(url).netloc
     domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     conn = sqlite3.connect(cookie_file)
 
     sql = 'select name, value, encrypted_value from cookies where host_key '\
-          'like "%{}%"'.format(domain_no_sub)
+          'like "%{0}%"'.format(domain_no_sub)
 
     cookies = {}
     cookies_list = []

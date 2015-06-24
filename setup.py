@@ -11,12 +11,16 @@ try:
     readme = pypandoc.convert('README.md', 'rst')
     history = pypandoc.convert('HISTORY.md', 'rst')
 except ImportError:
-    with open('README.md') as readme_file, open('HISTORY.md') as history_file:
+    with open('README.md') as readme_file:
         readme = readme_file.read()
+    with open('HISTORY.md') as history_file:
         history = history_file.read()
+
+exec(open('pycookiecheat/_version.py').read())
 
 with open('requirements.txt') as requirements_file:
     requirements = requirements_file.read().splitlines()
+
 
 test_requirements = [
     'pytest>=2.6.4'
@@ -24,9 +28,9 @@ test_requirements = [
 
 setup(
     name='pycookiecheat',
-    version='0.1.5',
+    version=__version__,  # noqa
     description="Borrow cookies from your browser's authenticated session for"
-            "use in Python scripts.",
+                "use in Python scripts.",
     long_description=readme + '\n\n' + history,
     author='Nathan Henrie',
     author_email='nate@n8henrie.com',
@@ -43,6 +47,9 @@ setup(
     keywords='pycookiecheat',
     classifiers=[
         'Natural Language :: English',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
