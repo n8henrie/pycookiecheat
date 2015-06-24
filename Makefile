@@ -54,9 +54,8 @@ docs:
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html
 
-release: clean
-	python3 setup.py sdist upload
-	python3 setup.py bdist_wheel upload
+release: dist
+	twine upload dist/*
 
 dist: clean
 	python3 setup.py sdist
