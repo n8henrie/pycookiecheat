@@ -1,5 +1,11 @@
 # History
 
+## 0.2.0
+
+- Fix domain and subdomain matching
+- Make SQL query more secure by avoiding string formatting
+- Many thanks to [Brandon Rhodes](https://github.com/brandon-rhodes) for 24c4234 !
+
 ## 0.1.10
 
 - Read version to separate file so it can be imported in setup.py
