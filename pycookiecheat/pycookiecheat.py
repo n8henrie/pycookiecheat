@@ -80,19 +80,17 @@ def chrome_cookies(url, cookie_file=None):
     # Part of the domain name that will help the sqlite3 query pick it from the
     # Chrome cookies
     domain = urlparse(url).netloc
-    domain_no_sub = '.'.join(domain.split('.')[-2:])
 
     conn = sqlite3.connect(cookie_file)
 
     sql = 'select name, value, encrypted_value from cookies where host_key '\
-          'like "%{0}%"'.format(domain_no_sub)
+          'like ?'
 
     cookies = {}
-    cookies_list = []
 
-    with conn:
-        for k, v, ev in conn.execute(sql):
-
+    for host_key in generate_host_keys(domain):
+        cookies_list = []
+        for k, v, ev in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v10' prefix, return v
             if v or (ev[:3] != b'v10'):
@@ -102,4 +100,23 @@ def chrome_cookies(url, cookie_file=None):
                 cookies_list.append(decrypted_tuple)
         cookies.update(cookies_list)
 
+    conn.rollback()
     return cookies
+
+
+def generate_host_keys(hostname):
+    """Yield Chrome keys for `hostname`, from least to most specific.
+
+    Given a hostname like foo.example.com, this yields the key sequence:
+
+    example.com
+    .example.com
+    foo.example.com
+    .foo.example.com
+
+    """
+    labels = hostname.split('.')
+    for i in range(2, len(labels) + 1):
+        domain = '.'.join(labels[-i:])
+        yield domain
+        yield '.' + domain
