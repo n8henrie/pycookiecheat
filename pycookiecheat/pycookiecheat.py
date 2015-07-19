@@ -116,9 +116,7 @@ def generate_host_keys(hostname):
 
     """
     labels = hostname.split('.')
-    is_country_tld = (len(labels[-1]) == 2)
-    start = 3 if is_country_tld else 2
-    for i in range(start, len(labels) + 1):
+    for i in range(2, len(labels) + 1):
         domain = '.'.join(labels[-i:])
         yield domain
         yield '.' + domain
