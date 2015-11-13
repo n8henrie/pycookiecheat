@@ -1,5 +1,7 @@
 # pycookiecheat
 
+[![Build Status](https://travis-ci.org/n8henrie/pycookiecheat.svg?branch=master)](https://travis-ci.org/n8henrie/pycookiecheat)
+
 Borrow cookies from your browser's authenticated session for use in Python scripts.
 
 -   Free software: GPLv3
