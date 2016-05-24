@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''pyCookieCheat.py
+"""pyCookieCheat.py
 See relevant post at http://n8h.me/HufI1w
 
 Use your browser's cookies to make grabbing data from login-protected sites
@@ -10,18 +10,19 @@ domain, just send it the domain you'd like to use instead.
 
 Adapted from my code at http://n8h.me/HufI1w
 
-Helpful Links:
-* Chromium Mac os_crypt: http://n8h.me/QWRgK8
-* Chromium Linux os_crypt: http://n8h.me/QWTglz
-* Python Crypto: http://n8h.me/QWTqte
-'''
+"""
 
 import sqlite3
 import os.path
 import keyring
 import sys
-from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import PBKDF2
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.hashes import SHA1
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 try:
     from urllib.parse import urlparse
@@ -50,8 +51,13 @@ def chrome_cookies(url, cookie_file=None):
             else:
                 return x[:-ord(last)].decode('utf8')
 
-        cipher = AES.new(key, AES.MODE_CBC, IV=iv)
-        decrypted = cipher.decrypt(encrypted_value)
+        cipher = Cipher(
+            algorithm=AES(key),
+            mode=CBC(iv),
+            backend=default_backend(),
+        )
+        decryptor = cipher.decryptor()
+        decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
 
         return clean(decrypted)
 
@@ -75,7 +81,14 @@ def chrome_cookies(url, cookie_file=None):
         raise OSError("This script only works on OSX or Linux.")
 
     # Generate key from values above
-    key = PBKDF2(my_pass, salt, length, iterations)
+    kdf = PBKDF2HMAC(
+        algorithm=SHA1(),
+        length=length,
+        salt=salt,
+        iterations=iterations,
+        backend=default_backend(),
+    )
+    key = kdf.derive(bytes(my_pass))
 
     # Part of the domain name that will help the sqlite3 query pick it from the
     # Chrome cookies
