@@ -8,3 +8,4 @@
 
 - [Kostis Anagnostopoulos](https://github.com/ankostis)
 - [Dani García](https://github.com/dani14-96)
+- [Thinh Nguyen](https://github.com/Taik)
