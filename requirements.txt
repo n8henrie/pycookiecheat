@@ -1,2 +1,2 @@
-keyring>=5.0
+keyring==9.0
 cryptography==1.3.2
