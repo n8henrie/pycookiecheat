@@ -4,9 +4,8 @@
 
 Borrow cookies from your browser's authenticated session for use in Python scripts.
 
--   Free software: GPLv3
+-   Free software: MIT
 -   Documentation: http://n8h.me/HufI1w
-
 
 ## Installation
 **NB:** Use `pip` and `python` instead of `pip3` and `python3` if you're still on Python 2.
