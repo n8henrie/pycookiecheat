@@ -1,12 +1,14 @@
 language: python
-python: 3.5
-env:
-    - TOXENV=py27
-    - TOXENV=py34
-    - TOXENV=py35
-    - TOXENV=pypy
+matrix:
+  include:
+    - python: 3.5
+      env:
+        - TOXENV=py27
+        - TOXENV=py34
+        - TOXENV=py35
+    - python: pypy
+      env: TOXENV=pypy
 
 install: pip install tox
-
 script: tox
 after_failure: cat .tox/log/tox-*.log
