@@ -1,13 +1,12 @@
+sudo: required
+dist: trusty
 language: python
-matrix:
-  include:
-    - python: 3.5
-      env:
-        - TOXENV=py27
-        - TOXENV=py34
-        - TOXENV=py35
-    - python: pypy
-      env: TOXENV=pypy
+python: 3.5
+env:
+  - TOXENV=py27
+  - TOXENV=py34
+  - TOXENV=py35
+  - TOXENV=pypy
 
 install: pip install tox
 script: tox
