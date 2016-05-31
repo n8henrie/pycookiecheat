@@ -1,5 +1,13 @@
 # History
 
+## 0.3.0
+
+- Use [`cryptography`](https://cryptography.io/en/latest/) instead of
+  `pycrypto` (thanks to [Taik](https://github.com/Taik)!)
+  - Seems to be [significantly
+    faster](https://github.com/n8henrie/pycookiecheat/pull/11#issuecomment-221950400)
+  - Works with PyPy >= 2.6.0 (no support for PyPy3 yet)
+
 ## 0.2.0
 
 - Fix domain and subdomain matching
