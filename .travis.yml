@@ -8,6 +8,10 @@ env:
   - TOXENV=py35
   - TOXENV=pypy
 
+addons:
+  apt:
+    packages:
+    - pandoc
 install: pip install tox
 script: tox
 after_failure: cat .tox/log/tox-*.log
