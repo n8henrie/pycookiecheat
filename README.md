@@ -13,14 +13,14 @@ scripts.
 **NB:** Use `pip` and `python` instead of `pip3` and `python3` if you're still
 on Python 2.
 
-### PyPI
+### Quickstart
 - `pip3 install pycookiecheat`
 
-### GitHub
+### Development Setup
 1. `git clone https://github.com/n8henrie/pycookiecheat.git`
 1. `cd pycookiecheat`
 1. `python3 -m venv venv`
-1. `venv/bin/pip install -e .`
+1. `venv/bin/pip install -e .[dev]`
 
 ## Usage
 ```python
