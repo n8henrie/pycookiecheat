@@ -1,3 +1,6 @@
 flake8==2.5.4
 pytest==2.9.1
 tox==2.3.1
+wheel==0.26.0
+twine==1.6.5
+pypandoc==1.1.3
