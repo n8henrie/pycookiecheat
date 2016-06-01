@@ -7,10 +7,9 @@ try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
     history = pypandoc.convert('HISTORY.md', 'rst')
-except ImportError:
-    with open('README.md') as readme_file:
+except (ImportError, OSError):
+    with open('README.md') as readme_file, open('HISTORY.md') as history_file:
         readme = readme_file.read()
-    with open('HISTORY.md') as history_file:
         history = history_file.read()
 
 version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
