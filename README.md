@@ -10,19 +10,23 @@ scripts.
 -   Documentation: http://n8h.me/HufI1w
 
 ## Installation
+
 **NB:** Use `pip` and `python` instead of `pip3` and `python3` if you're still
 on Python 2.
 
 ### Quickstart
+
 - `pip3 install pycookiecheat`
 
 ### Development Setup
+
 1. `git clone https://github.com/n8henrie/pycookiecheat.git`
 1. `cd pycookiecheat`
 1. `python3 -m venv venv`
 1. `venv/bin/pip install -e .[dev]`
 
 ## Usage
+
 ```python
 from pycookiecheat import chrome_cookies
 import requests
@@ -38,6 +42,7 @@ Use the `cookie_file` keyword-argument to specify a different filepath for the
 cookies-file: `chrome_cookies(url, cookie_file='/abspath/to/cookies')`
 
 ## Features
+
 -  Returns decrypted cookies from Google Chrome on OSX or Linux.
 
 ## FAQ / Troubleshooting
