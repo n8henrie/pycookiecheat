@@ -11,6 +11,12 @@ import sys
 import shutil
 
 
+try:
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import URLError
+
+
 @pytest.fixture(scope='module')
 def travis_setup(request):
     """Sets up chromium's cookies file and directory if it seems to be running
@@ -51,8 +57,12 @@ def travis_setup(request):
 
 def test_raises_on_empty():
     with pytest.raises(TypeError):
-        broken = chrome_cookies()
-        return broken
+        chrome_cookies()
+
+
+def test_raises_without_scheme():
+    with pytest.raises(URLError):
+        chrome_cookies('n8henrie.com')
 
 
 def test_no_cookies(travis_setup):

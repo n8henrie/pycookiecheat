@@ -25,8 +25,10 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import keyring
 
 try:
+    from urllib.error import URLError
     from urllib.parse import urlparse
 except ImportError:
+    from urllib2 import URLError
     from urlparse import urlparse
 
 
@@ -90,8 +92,10 @@ def chrome_cookies(url, cookie_file=None):
     )
     key = kdf.derive(bytes(my_pass))
 
-    # Part of the domain name that will help the sqlite3 query pick it from the
-    # Chrome cookies
+    parsed_url = urlparse(url)
+
+    if not parsed_url.scheme:
+        raise URLError("You must include a scheme with your URL")
     domain = urlparse(url).netloc
 
     conn = sqlite3.connect(cookie_file)
