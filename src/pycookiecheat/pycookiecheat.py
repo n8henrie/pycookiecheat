@@ -12,9 +12,8 @@ Adapted from my code at http://n8h.me/HufI1w
 
 """
 
-import sqlite3
 import os.path
-import keyring
+import sqlite3
 import sys
 
 from cryptography.hazmat.backends import default_backend
@@ -23,6 +22,7 @@ from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import keyring
 
 try:
     from urllib.parse import urlparse
