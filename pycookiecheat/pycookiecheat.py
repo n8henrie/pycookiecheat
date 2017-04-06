@@ -66,7 +66,6 @@ def chrome_cookies(url, cookie_file=None):
     # If running Chrome on OSX
     if sys.platform == 'darwin':
         my_pass = keyring.get_password('Chrome Safe Storage', 'Chrome')
-        my_pass = my_pass.encode('utf8')
         iterations = 1003
         cookie_file = cookie_file or os.path.expanduser(
             '~/Library/Application Support/Google/Chrome/Default/Cookies'
@@ -114,7 +113,7 @@ def chrome_cookies(url, cookie_file=None):
         iterations=iterations,
         backend=default_backend(),
     )
-    key = kdf.derive(bytes(my_pass))
+    key = kdf.derive(my_pass.encode('utf8'))
 
     parsed_url = urlparse(url)
 
