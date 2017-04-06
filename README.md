@@ -14,9 +14,22 @@ scripts.
 **NB:** Use `pip` and `python` instead of `pip3` and `python3` if you're still
 on Python 2.
 
-### Quickstart
-
 - `pip3 install pycookiecheat`
+
+### Installation notes regarding alternative keyrings on Linux
+
+See [#12](https://github.com/n8henrie/pycookiecheat/issues/12). Chrome is now
+using a few different keyrings to store your `Chrome Safe Storage` password,
+instead of a hard-coded password. Pycookiecheat doesn't work with most of these
+so far, and to be honest my enthusiasm for adding support for ones I don't use
+is limited. However, users have contributed code that seems to work with some
+of the recent Ubuntu desktops. To get it working, you may have to `sudo apt-get
+install libsecret-1-dev python-gi python3-gi`, and if you're installing into a
+virtualenv (highly recommended), you need to use the `--system-site-packages`
+flag to get access to the necessary libraries.
+
+Alternatively, some users have suggested running Chrome with the
+`--password-store=basic` or `--use-mock-keychain` flags.
 
 ### Development Setup
 
@@ -40,6 +53,11 @@ r = requests.get(url, cookies=cookies)
 
 Use the `cookie_file` keyword-argument to specify a different filepath for the
 cookies-file: `chrome_cookies(url, cookie_file='/abspath/to/cookies')`
+
+Keep in mind that pycookiecheat defaults to looking for cookies for
+Chromium, not Google Chrome, so if you're using the latter, you'll need to
+manually specify something like
+`"/home/username/.config/google-chrome/Default/Cookies"` as your `cookie_file`.
 
 ## Features
 
