@@ -16,20 +16,20 @@ import os.path
 import sqlite3
 import sys
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.hashes import SHA1
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import keyring
-
 try:
     from urllib.error import URLError
     from urllib.parse import urlparse
 except ImportError:
     from urllib2 import URLError
     from urlparse import urlparse
+
+import keyring
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.hashes import SHA1
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 def chrome_cookies(url, cookie_file=None):
