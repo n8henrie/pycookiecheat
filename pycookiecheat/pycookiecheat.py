@@ -83,19 +83,19 @@ def chrome_cookies(url, cookie_file=None):
         except ImportError:
             my_pass = 'peanuts'
         else:
-            my_pass = None
             flags = Secret.ServiceFlags.LOAD_COLLECTIONS
             service = Secret.Service.get_sync(flags)
 
-            gnome_keyring = service.get_collections()[0]
-            unlocked_keyring = service.unlock_sync([gnome_keyring]).unlocked[0]
+            gnome_keyring = service.get_collections()
+            unlocked_keyring = service.unlock_sync(gnome_keyring).unlocked[0]
 
             for item in unlocked_keyring.get_items():
                 if item.get_label() == "Chrome Safe Storage":
                     item.load_secret_sync()
                     my_pass = item.get_secret().get_text()
+                    break
 
-            if my_pass is None:
+            else:
                 my_pass = 'peanuts'
 
         iterations = 1
