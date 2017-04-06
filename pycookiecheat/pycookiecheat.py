@@ -123,8 +123,8 @@ def chrome_cookies(url, cookie_file=None):
 
     conn = sqlite3.connect(cookie_file)
 
-    sql = 'select name, value, encrypted_value from cookies where host_key '\
-          'like ?'
+    sql = ('select name, value, encrypted_value from cookies where host_key '
+           'like ?')
 
     cookies = {}
 
