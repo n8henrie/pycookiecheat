@@ -40,8 +40,8 @@ def chrome_cookies(url, cookie_file=None):
 
     def chrome_decrypt(encrypted_value, key=None):
 
-        # Encrypted cookies should be prefixed with 'v10' according to the
-        # Chromium code. Strip it off.
+        # Encrypted cookies should be prefixed with 'v10' or 'v11' according to
+        # the Chromium code. Strip it off.
         encrypted_value = encrypted_value[3:]
 
         # Strip padding by taking off number indicated by padding
@@ -74,7 +74,31 @@ def chrome_cookies(url, cookie_file=None):
 
     # If running Chromium on Linux
     elif sys.platform.startswith('linux'):
-        my_pass = 'peanuts'.encode('utf8')
+
+        # Try to get from Gnome / libsecret if it seems available
+        # https://github.com/n8henrie/pycookiecheat/issues/12
+        try:
+            import gi
+            gi.require_version('Secret', '1')
+            from gi.repository import Secret
+        except ImportError:
+            my_pass = 'peanuts'
+        else:
+            my_pass = None
+            flags = Secret.ServiceFlags.LOAD_COLLECTIONS
+            service = Secret.Service.get_sync(flags)
+
+            gnome_keyring = service.get_collections()[0]
+            unlocked_keyring = service.unlock_sync([gnome_keyring]).unlocked[0]
+
+            for item in unlocked_keyring.get_items():
+                if item.get_label() == "Chrome Safe Storage":
+                    item.load_secret_sync()
+                    my_pass = item.get_secret().get_text()
+
+            if my_pass is None:
+                my_pass = 'peanuts'
+
         iterations = 1
         cookie_file = cookie_file or os.path.expanduser(
             '~/.config/chromium/Default/Cookies'
@@ -109,8 +133,8 @@ def chrome_cookies(url, cookie_file=None):
         cookies_list = []
         for k, v, ev in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
-            # doesn't start with the 'v10' prefix, return v
-            if v or (ev[:3] != b'v10'):
+            # doesn't start with the 'v1[01]' prefix, return v
+            if v or (ev[:3] not in (b'v10', b'v11')):
                 cookies_list.append((k, v))
             else:
                 decrypted_tuple = (k, chrome_decrypt(ev, key=key))
