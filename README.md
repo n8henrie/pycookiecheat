@@ -85,3 +85,7 @@ openssl)/include"` and try again.
 Please check the official cryptography docs. On some systems (e.g. Ubuntu), you
 may need to do something like `sudo apt-get install build-essential libssl-dev
 libffi-dev python-dev` prior to installing with `pip`.
+
+### How do I install the dev branch with pip?
+
+- `pip install git+https://github.com/n8henrie/pycookiecheat@dev`
