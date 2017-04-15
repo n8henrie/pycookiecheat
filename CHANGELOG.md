@@ -1,4 +1,10 @@
-# History
+# [Changelog](https://keepachangelog.com)
+
+## v0.3.4 :: 20170414
+
+- Add support for new Ubuntu keyring / libsecret
+  - See <https://github.com/n8henrie/pycookiecheat/issues/12> for details
+  - Many thanks to @stat1c1c3au and @trideceth12 for contributions
 
 ## 0.3.0
 

@@ -1,17 +1,8 @@
-include AUTHORS.md
-include CONTRIBUTING.md
-include HISTORY.md
-include LICENSE
-include README.md
-include requirements.txt
-include requirements-dev.txt
+include *.md LICENSE requirements.txt requirements-dev.txt
 
 graft pycookiecheat
-recursive-include *.md *.rst conf.py Makefile
+recursive-include docs *.md *.rst conf.py Makefile
 
 prune docs/md
 
-global-exclude __pycache__/*
-
-global-exclude *.swp
-global-exclude *.py[co]
+global-exclude __pycache__/* *.swp *.py[co]
