@@ -71,8 +71,10 @@ def chrome_cookies(url, cookie_file=None):
             '~/Library/Application Support/Google/Chrome/Default/Cookies'
         )
 
-    # If running Chromium on Linux
     elif sys.platform.startswith('linux'):
+
+        # Set the default linux password
+        my_pass = 'peanuts'
 
         # Try to get from Gnome / libsecret if it seems available
         # https://github.com/n8henrie/pycookiecheat/issues/12
@@ -87,16 +89,20 @@ def chrome_cookies(url, cookie_file=None):
             service = Secret.Service.get_sync(flags)
 
             gnome_keyring = service.get_collections()
-            unlocked_keyring = service.unlock_sync(gnome_keyring).unlocked[0]
+            unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
-            for item in unlocked_keyring.get_items():
-                if item.get_label() == "Chrome Safe Storage":
-                    item.load_secret_sync()
-                    my_pass = item.get_secret().get_text()
-                    break
+            for unlocked_keyring in unlocked_keyrings:
+                for item in unlocked_keyring.get_items():
+                    if item.get_label() == "Chrome Safe Storage":
+                        item.load_secret_sync()
+                        my_pass = item.get_secret().get_text()
+                        break
+                else:
+                    # Inner loop didn't `break`, keep looking
+                    continue
 
-            else:
-                my_pass = 'peanuts'
+                # Inner loop did `break`, so `break` outer loop
+                break
 
         iterations = 1
         cookie_file = cookie_file or os.path.expanduser(
