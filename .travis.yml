@@ -1,17 +1,18 @@
-sudo: required
-dist: trusty
 language: python
-python: 3.5
-env:
-  - TOXENV=py27
-  - TOXENV=py34
-  - TOXENV=py35
-  - TOXENV=pypy
+python:
+  - 3.5
+  - 3.6
 
 addons:
   apt:
     packages:
     - pandoc
+
 install: pip install tox
-script: tox
+
+# http://stackoverflow.com/a/42309035
+script: 
+  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/') 
+  - tox -e docs
+
 after_failure: cat .tox/log/tox-*.log
