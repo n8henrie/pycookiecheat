@@ -1,31 +1,29 @@
-"""test_pycookiecheat.py
-Tests for pycookiecheat module.
-"""
+"""test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
-from pycookiecheat import chrome_cookies
-from uuid import uuid4
-import pytest
 import os
 import os.path
-import sys
 import shutil
+import sys
+from urllib.error import URLError
+from uuid import uuid4
 
+import pytest
 
-try:
-    from urllib.error import URLError
-except ImportError:
-    from urllib2 import URLError
+from pycookiecheat import chrome_cookies
 
 
 @pytest.fixture(scope='module')
-def travis_setup(request):
-    """Sets up chromium's cookies file and directory if it seems to be running
-    on travis-ci. Appropriately doesn't load teardown() this dir already
+def travis_setup(request: pytest.fixture) -> None:
+    """Set up chromium's cookies file and directory on Travis.
+
+    Appropriately doesn't load teardown() this dir already
     exists, preventing it from getting to the teardown function which would
     otherwise risk deleting someone's ~/.config/chromium directory (if they had
-    the TRAVIS=true environment set for some reason)."""
+    the TRAVIS=true environment set for some reason).
 
-    def teardown():
+    """
+    def teardown() -> None:
+        """Remove the cookies directory."""
         os.remove(cookies_dest)
         try:
             os.removedirs(cookies_dest_dir)
@@ -42,38 +40,46 @@ def travis_setup(request):
     cookies_path = os.path.join(cookies_dir, 'Cookies')
 
     if all([os.getenv('TRAVIS') == 'true',
-           sys.platform.startswith('linux'),
-           not os.path.isfile(cookies_dest)]):
+            sys.platform.startswith('linux'),
+            not os.path.isfile(cookies_dest)]):
 
         os.makedirs(cookies_dest_dir)
         shutil.copy(cookies_path, cookies_dest_dir)
 
         # Only teardown if running on travis
         request.addfinalizer(teardown)
-        return
-    # Not running on travis, just return since nothing should have been made.
-    return
 
 
-def test_raises_on_empty():
+def test_raises_on_empty() -> None:
+    """Ensure that `chrome_cookies()` raises."""
     with pytest.raises(TypeError):
-        chrome_cookies()
+        chrome_cookies()  # type: ignore
 
 
-def test_raises_without_scheme():
+def test_raises_without_scheme() -> None:
+    """Ensure that `chrome_cookies("domain.com")` raises.
+
+    The domain must specify a scheme (http or https).
+
+    """
     with pytest.raises(URLError):
         chrome_cookies('n8henrie.com')
 
 
-def test_no_cookies(travis_setup):
+def test_no_cookies(travis_setup: pytest.fixture) -> None:
+    """Ensure that no cookies are returned for a fake url."""
     never_been_here = 'http://{0}.com'.format(uuid4())
     empty_dict = chrome_cookies(never_been_here)
     assert empty_dict == dict()
 
 
-def test_fake_cookie(travis_setup):
-    """Tests a fake cookie from the website below. For this to pass, you'll
+def test_fake_cookie(travis_setup: pytest.fixture) -> None:
+    """Tests a fake cookie from the website below.
+
+    For this to pass, you'll
     have to visit the url and put in "TestCookie" and "Just_a_test!" to set
-    a temporary cookie with the appropriate values."""
+    a temporary cookie with the appropriate values.
+
+    """
     cookies = chrome_cookies('http://www.html-kit.com/tools/cookietester')
     assert cookies['TestCookie'] == 'Just_a_test!'

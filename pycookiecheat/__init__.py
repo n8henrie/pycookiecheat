@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+"""__init__.py :: Exposes chrome_cookies function."""
 
-from .pycookiecheat import chrome_cookies  # noqa
+from pycookiecheat.pycookiecheat import chrome_cookies  # noqa
 
 __author__ = 'Nathan Henrie'
 __email__ = 'nate@n8henrie.com'

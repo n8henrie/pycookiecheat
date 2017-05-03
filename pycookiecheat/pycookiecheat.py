@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""pyCookieCheat.py
+"""pycookiecheat.py :: Retrieve and decrypt cookies from Chrome.
+
 See relevant post at http://n8h.me/HufI1w
 
 Use your browser's cookies to make grabbing data from login-protected sites
@@ -12,16 +12,12 @@ Adapted from my code at http://n8h.me/HufI1w
 
 """
 
-import os.path
+import pathlib
 import sqlite3
 import sys
-
-try:
-    from urllib.error import URLError
-    from urllib.parse import urlparse
-except ImportError:
-    from urllib2 import URLError
-    from urlparse import urlparse
+import urllib.error
+import urllib.parse
+from typing import Any, Dict, Iterator  # noqa
 
 import keyring
 from cryptography.hazmat.backends import default_backend
@@ -32,125 +28,180 @@ from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
-def chrome_cookies(url, cookie_file=None):
+def clean(decrypted: bytes) -> str:
+    r"""Strip padding from decrypted value.
 
-    salt = b'saltysalt'
-    iv = b' ' * 16
-    length = 16
+    Remove number indicated by padding
+    e.g. if last is '\x0e' then ord('\x0e') == 14, so take off 14.
 
-    def chrome_decrypt(encrypted_value, key=None):
+    Args:
+        decrypted: decrypted value
+    Returns:
+        Decrypted stripped of junk padding
 
-        # Encrypted cookies should be prefixed with 'v10' or 'v11' according to
-        # the Chromium code. Strip it off.
-        encrypted_value = encrypted_value[3:]
+    """
+    last = decrypted[-1]
+    if isinstance(last, int):
+        return decrypted[:-last].decode('utf8')
+    return decrypted[:-ord(last)].decode('utf8')
 
-        # Strip padding by taking off number indicated by padding
-        # eg if last is '\x0e' then ord('\x0e') == 14, so take off 14.
-        def clean(x):
-            last = x[-1]
-            if isinstance(last, int):
-                return x[:-last].decode('utf8')
+
+def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
+        -> str:
+    """Decrypt Chrome's encrypted cookies.
+
+    Args:
+        encrypted_value: Encrypted cookie value from Chrome's cookie file
+        key: Key to decrypt encrypted_value
+        init_vector: Initialization vector for decrypting encrypted_value
+    Returns:
+        Decrypted value of encrypted_value
+
+    """
+    # Encrypted cookies should be prefixed with 'v10' or 'v11' according to the
+    # Chromium code. Strip it off.
+    encrypted_value = encrypted_value[3:]
+
+    cipher = Cipher(
+        algorithm=AES(key),
+        mode=CBC(init_vector),
+        backend=default_backend(),
+    )
+    decryptor = cipher.decryptor()
+    decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
+
+    return clean(decrypted)
+
+
+def get_osx_config() -> dict:
+    """Get settings for getting Chrome cookies on OSX.
+
+    Returns:
+        Config dictionary for Chrome cookie decryption
+
+    """
+    config = {
+        'my_pass': keyring.get_password('Chrome Safe Storage', 'Chrome'),
+        'iterations': 1003,
+        'cookie_file': ('~/Library/Application Support/Google/Chrome/Default/'
+                        'Cookies'),
+        }
+    return config
+
+
+def get_linux_config() -> dict:
+    """Get the settings for Chrome cookies on Linux.
+
+    Returns:
+        Config dictionary for Chrome cookie decryption
+
+    """
+    # Set the default linux password
+    config = dict()  # type: Dict[str, Any]
+
+    # Try to get from Gnome / libsecret if it seems available
+    # https://github.com/n8henrie/pycookiecheat/issues/12
+    try:
+        import gi
+        gi.require_version('Secret', '1')
+        from gi.repository import Secret
+    except ImportError:
+        config['my_pass'] = 'peanuts'
+    else:
+        flags = Secret.ServiceFlags.LOAD_COLLECTIONS
+        service = Secret.Service.get_sync(flags)
+
+        gnome_keyring = service.get_collections()
+        unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
+
+        for unlocked_keyring in unlocked_keyrings:
+            for item in unlocked_keyring.get_items():
+                if item.get_label() == "Chrome Safe Storage":
+                    item.load_secret_sync()
+                    config['my_pass'] = item.get_secret().get_text()
+                    break
             else:
-                return x[:-ord(last)].decode('utf8')
+                # Inner loop didn't `break`, keep looking
+                continue
 
-        cipher = Cipher(
-            algorithm=AES(key),
-            mode=CBC(iv),
-            backend=default_backend(),
-        )
-        decryptor = cipher.decryptor()
-        decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
+            # Inner loop did `break`, so `break` outer loop
+            break
+    config.update({
+        'iterations': 1,
+        'cookie_file': '~/.config/chromium/Default/Cookies',
+        })
+    return config
 
-        return clean(decrypted)
 
+def chrome_cookies(url: str, cookie_file: str = None) -> dict:
+    """Retrieve cookies from Chrome or Chromium on OSX or Linux.
+
+    Args:
+        url: Domain from which to retrieve cookies, starting with http(s)
+        cookie_file: Path to alternate file to search for cookies
+    Returns:
+        Dictionary of cookie values for URL
+
+    """
     # If running Chrome on OSX
     if sys.platform == 'darwin':
-        my_pass = keyring.get_password('Chrome Safe Storage', 'Chrome')
-        iterations = 1003
-        cookie_file = cookie_file or os.path.expanduser(
-            '~/Library/Application Support/Google/Chrome/Default/Cookies'
-        )
+        config = get_osx_config()
 
     elif sys.platform.startswith('linux'):
-
-        # Set the default linux password
-        my_pass = 'peanuts'
-
-        # Try to get from Gnome / libsecret if it seems available
-        # https://github.com/n8henrie/pycookiecheat/issues/12
-        try:
-            import gi
-            gi.require_version('Secret', '1')
-            from gi.repository import Secret
-        except ImportError:
-            my_pass = 'peanuts'
-        else:
-            flags = Secret.ServiceFlags.LOAD_COLLECTIONS
-            service = Secret.Service.get_sync(flags)
-
-            gnome_keyring = service.get_collections()
-            unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
-
-            for unlocked_keyring in unlocked_keyrings:
-                for item in unlocked_keyring.get_items():
-                    if item.get_label() == "Chrome Safe Storage":
-                        item.load_secret_sync()
-                        my_pass = item.get_secret().get_text()
-                        break
-                else:
-                    # Inner loop didn't `break`, keep looking
-                    continue
-
-                # Inner loop did `break`, so `break` outer loop
-                break
-
-        iterations = 1
-        cookie_file = cookie_file or os.path.expanduser(
-            '~/.config/chromium/Default/Cookies'
-        )
+        config = get_linux_config()
     else:
         raise OSError("This script only works on OSX or Linux.")
+
+    config.update({
+        'init_vector': b' ' * 16,
+        'length': 16,
+        'salt': b'saltysalt',
+    })
+
+    if cookie_file:
+        cookie_file = str(pathlib.Path(cookie_file).expanduser())
+    else:
+        cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
     # Generate key from values above
     kdf = PBKDF2HMAC(
         algorithm=SHA1(),
-        length=length,
-        salt=salt,
-        iterations=iterations,
         backend=default_backend(),
+        iterations=config['iterations'],
+        length=config['length'],
+        salt=config['salt'],
     )
-    key = kdf.derive(my_pass.encode('utf8'))
+    enc_key = kdf.derive(config['my_pass'].encode('utf8'))
 
-    parsed_url = urlparse(url)
-
-    if not parsed_url.scheme:
-        raise URLError("You must include a scheme with your URL")
-    domain = urlparse(url).netloc
+    parsed_url = urllib.parse.urlparse(url)
+    if parsed_url.scheme:
+        domain = parsed_url.netloc
+    else:
+        raise urllib.error.URLError("You must include a scheme with your URL.")
 
     conn = sqlite3.connect(cookie_file)
 
     sql = ('select name, value, encrypted_value from cookies where host_key '
            'like ?')
 
-    cookies = {}
+    cookies = dict()
 
     for host_key in generate_host_keys(domain):
-        cookies_list = []
-        for k, v, ev in conn.execute(sql, (host_key,)):
+        for cookie_key, val, enc_val in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v1[01]' prefix, return v
-            if v or (ev[:3] not in (b'v10', b'v11')):
-                cookies_list.append((k, v))
+            if val or (enc_val[:3] not in (b'v10', b'v11')):
+                pass
             else:
-                decrypted_tuple = (k, chrome_decrypt(ev, key=key))
-                cookies_list.append(decrypted_tuple)
-        cookies.update(cookies_list)
+                val = chrome_decrypt(enc_val, key=enc_key,
+                                     init_vector=config['init_vector'])
+            cookies[cookie_key] = val
 
     conn.rollback()
     return cookies
 
 
-def generate_host_keys(hostname):
+def generate_host_keys(hostname: str) -> Iterator[str]:
     """Yield Chrome keys for `hostname`, from least to most specific.
 
     Given a hostname like foo.example.com, this yields the key sequence:
