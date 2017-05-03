@@ -1,2 +1,2 @@
-cryptography==1.8.1
 keyring==10.3.2
+pycrypto==2.6.1

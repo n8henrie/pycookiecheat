@@ -17,15 +17,11 @@ import sqlite3
 import sys
 import urllib.error
 import urllib.parse
+from hashlib import pbkdf2_hmac
 from typing import Any, Dict, Iterator  # noqa
 
 import keyring
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.hashes import SHA1
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from Crypto.Cipher import AES
 
 
 def clean(decrypted: bytes) -> str:
@@ -62,13 +58,8 @@ def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
     # Chromium code. Strip it off.
     encrypted_value = encrypted_value[3:]
 
-    cipher = Cipher(
-        algorithm=AES(key),
-        mode=CBC(init_vector),
-        backend=default_backend(),
-    )
-    decryptor = cipher.decryptor()
-    decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
+    cipher = AES.new(key, AES.MODE_CBC, IV=init_vector)
+    decrypted = cipher.decrypt(encrypted_value)
 
     return clean(decrypted)
 
@@ -163,15 +154,12 @@ def chrome_cookies(url: str, cookie_file: str = None) -> dict:
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
-    # Generate key from values above
-    kdf = PBKDF2HMAC(
-        algorithm=SHA1(),
-        backend=default_backend(),
-        iterations=config['iterations'],
-        length=config['length'],
-        salt=config['salt'],
-    )
-    enc_key = kdf.derive(config['my_pass'].encode('utf8'))
+    # https://github.com/python/typeshed/pull/1241
+    enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
+                          password=config['my_pass'].encode('utf8'),
+                          salt=config['salt'],
+                          iterations=config['iterations'],
+                          dklen=config['length'])
 
     parsed_url = urllib.parse.urlparse(url)
     if parsed_url.scheme:

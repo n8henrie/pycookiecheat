@@ -71,6 +71,7 @@ I don't use Windows or have a PC, so I won't be adding support myself. Feel
 free to make a PR :)
 
 ### I get an installation error with the `cryptography` module on OS X
+(pycookiecheat <v0.4.0)
 
 If you're getting [this
 error](https://github.com/n8henrie/pycookiecheat/pull/11#issuecomment-221918807)
@@ -80,7 +81,7 @@ X](https://cryptography.io/en/latest/installation/?highlight=cflags#building-cry
 and `export LDFLAGS="-L$(brew --prefix openssl)/lib" CFLAGS="-I$(brew --prefix
 openssl)/include"` and try again.
 
-### I get an installation error with the `cryptography` module on Linux
+### I get an installation error with the `cryptography` module on Linux (pycookiecheat <v0.4.0)
 
 Please check the official cryptography docs. On some systems (e.g. Ubuntu), you
 may need to do something like `sudo apt-get install build-essential libssl-dev
