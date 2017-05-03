@@ -1,0 +1,8 @@
+flake8==3.3.0
+flake8-docstrings==1.1.0
+flake8-import-order==0.12
+mypy==0.501
+pep8-naming==0.4.1
+pylint==1.7.1
+pytest==3.0.7
+tox==2.7.0

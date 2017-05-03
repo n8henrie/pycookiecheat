@@ -23,6 +23,10 @@ with open('requirements.txt') as requirements_file:
 with open('requirements-dev.txt') as dev_requirements_file:
     dev_requirements = dev_requirements_file.read().splitlines()
 
+with open("requirements-test.txt") as test_requirements_file:
+    test_requirements = test_requirements_file.read().splitlines()
+    dev_requirements.extend(test_requirements)
+
 setup(
     name='pycookiecheat',
     version=__version__,
@@ -48,5 +52,5 @@ setup(
         "dev": dev_requirements
         },
     test_suite='tests',
-    tests_require=['pytest==2.9.2']
+    tests_require=test_requirements,
 )

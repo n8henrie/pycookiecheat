@@ -1,4 +1,4 @@
-include *.md LICENSE requirements.txt requirements-dev.txt
+include *.md LICENSE requirements*.txt
 
 graft pycookiecheat
 recursive-include docs *.md *.rst conf.py Makefile
