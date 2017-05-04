@@ -14,6 +14,5 @@ install: pip install tox
 script: 
   - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/') 
   - tox -e lint
-  - tox -e docs
 
 after_failure: cat .tox/log/tox-*.log
