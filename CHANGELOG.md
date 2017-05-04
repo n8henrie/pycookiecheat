@@ -1,5 +1,14 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.0 :: 20170504
+
+- Remove compatibility for Python <3.5
+- Add type hints
+- Refactor for smaller functions
+- Expand docstrings
+- Revert from `cryptography` back to `PyCrypto` and `hashlib` for easier
+  installation.
+
 ## v0.3.4 :: 20170414
 
 - Add support for new Ubuntu keyring / libsecret
