@@ -88,7 +88,7 @@ def get_linux_config() -> dict:
 
     """
     # Set the default linux password
-    config = dict()  # type: Dict[str, Any]
+    config = {'my_pass': 'peanuts'}
 
     # Try to get from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
@@ -97,7 +97,7 @@ def get_linux_config() -> dict:
         gi.require_version('Secret', '1')
         from gi.repository import Secret
     except ImportError:
-        config['my_pass'] = 'peanuts'
+        pass
     else:
         flags = Secret.ServiceFlags.LOAD_COLLECTIONS
         service = Secret.Service.get_sync(flags)
@@ -118,7 +118,7 @@ def get_linux_config() -> dict:
             # Inner loop did `break`, so `break` outer loop
             break
     config.update({
-        'iterations': 1,
+        'iterations': '1',
         'cookie_file': '~/.config/chromium/Default/Cookies',
         })
     return config
