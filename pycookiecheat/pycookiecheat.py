@@ -18,7 +18,7 @@ import sys
 import urllib.error
 import urllib.parse
 from hashlib import pbkdf2_hmac
-from typing import Any, Dict, Iterator  # noqa
+from typing import Any, Dict, Iterator, Union  # noqa
 
 import keyring
 from Crypto.Cipher import AES
@@ -88,7 +88,7 @@ def get_linux_config() -> dict:
 
     """
     # Set the default linux password
-    config = {'my_pass': 'peanuts'}
+    config = {'my_pass': 'peanuts'}  # type: Dict[str, Union[int, str]]
 
     # Try to get from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
@@ -118,7 +118,7 @@ def get_linux_config() -> dict:
             # Inner loop did `break`, so `break` outer loop
             break
     config.update({
-        'iterations': '1',
+        'iterations': 1,
         'cookie_file': '~/.config/chromium/Default/Cookies',
         })
     return config
