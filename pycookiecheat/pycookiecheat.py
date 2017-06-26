@@ -47,7 +47,7 @@ def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
     """Decrypt Chrome/Chromium's encrypted cookies.
 
     Args:
-        encrypted_value: Encrypted cookie value from Chrome/Chromium's cookie file
+        encrypted_value: Encrypted cookie from Chrome/Chromium's cookie file
         key: Key to decrypt encrypted_value
         init_vector: Initialization vector for decrypting encrypted_value
     Returns:
@@ -78,7 +78,8 @@ def get_osx_config(browser_name: str = None) -> dict:
     else:
         cookie_dir = browser_name
     config = {
-        'my_pass': keyring.get_password(browser_name + ' Safe Storage', browser_name),
+        'my_pass': keyring.get_password(
+            browser_name + ' Safe Storage', browser_name),
         'iterations': 1003,
         'cookie_file': ('~/Library/Application Support/%s/Default/'
                         'Cookies') % (cookie_dir,),
@@ -137,7 +138,10 @@ def get_linux_config(browser_name: str = None) -> dict:
     return config
 
 
-def chrome_cookies(url: str, cookie_file: str = None, browser_name: str = None) -> dict:
+def chrome_cookies(
+        url: str,
+        cookie_file: str = None,
+        browser_name: str = None) -> dict:
     """Retrieve cookies from Chrome or Chromium on OSX or Linux.
 
     Args:
