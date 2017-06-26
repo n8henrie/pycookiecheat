@@ -137,7 +137,7 @@ def get_linux_config(browser_name: str = None) -> dict:
     return config
 
 
-def chrome_cookies(url: str, cookie_file: str = None, , browser_name: str = None) -> dict:
+def chrome_cookies(url: str, cookie_file: str = None, browser_name: str = None) -> dict:
     """Retrieve cookies from Chrome or Chromium on OSX or Linux.
 
     Args:
