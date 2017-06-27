@@ -44,10 +44,10 @@ def clean(decrypted: bytes) -> str:
 
 def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
         -> str:
-    """Decrypt Chrome's encrypted cookies.
+    """Decrypt Chrome/Chromium's encrypted cookies.
 
     Args:
-        encrypted_value: Encrypted cookie value from Chrome's cookie file
+        encrypted_value: Encrypted cookie from Chrome/Chromium's cookie file
         key: Key to decrypt encrypted_value
         init_vector: Initialization vector for decrypting encrypted_value
     Returns:
@@ -64,27 +64,33 @@ def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
     return clean(decrypted)
 
 
-def get_osx_config() -> dict:
-    """Get settings for getting Chrome cookies on OSX.
+def get_osx_config(browser: str) -> dict:
+    """Get settings for getting Chrome/Chromium cookies on OSX.
 
     Returns:
-        Config dictionary for Chrome cookie decryption
+        Config dictionary for Chrome/Chromium cookie decryption
 
     """
+    if browser == 'Chrome':
+        cookie_dir = 'Google/' + browser
+    else:
+        cookie_dir = browser
+
     config = {
-        'my_pass': keyring.get_password('Chrome Safe Storage', 'Chrome'),
+        'my_pass': keyring.get_password(
+            '{} Safe Storage'.format(browser), browser),
         'iterations': 1003,
-        'cookie_file': ('~/Library/Application Support/Google/Chrome/Default/'
-                        'Cookies'),
+        'cookie_file': ('~/Library/Application Support'
+                        '/{}/Default/Cookies'.format(cookie_dir)),
         }
     return config
 
 
-def get_linux_config() -> dict:
-    """Get the settings for Chrome cookies on Linux.
+def get_linux_config(browser: str) -> dict:
+    """Get the settings for Chrome/Chromium cookies on Linux.
 
     Returns:
-        Config dictionary for Chrome cookie decryption
+        Config dictionary for Chrome/Chromium cookie decryption
 
     """
     # Set the default linux password
@@ -105,9 +111,11 @@ def get_linux_config() -> dict:
         gnome_keyring = service.get_collections()
         unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
+        keyring_name = "{} Safe Storage".format(browser)
+
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
-                if item.get_label() == "Chrome Safe Storage":
+                if item.get_label() == keyring_name:
                     item.load_secret_sync()
                     config['my_pass'] = item.get_secret().get_text()
                     break
@@ -117,29 +125,42 @@ def get_linux_config() -> dict:
 
             # Inner loop did `break`, so `break` outer loop
             break
+
+    if browser == 'Chrome':
+        cookie_dir = 'google-chrome'
+    else:
+        cookie_dir = browser.lower()
+
     config.update({
         'iterations': 1,
-        'cookie_file': '~/.config/chromium/Default/Cookies',
+        'cookie_file': '~/.config/{}/Default/Cookies'.format(cookie_dir),
         })
     return config
 
 
-def chrome_cookies(url: str, cookie_file: str = None) -> dict:
-    """Retrieve cookies from Chrome or Chromium on OSX or Linux.
+def chrome_cookies(
+        url: str,
+        cookie_file: str = None,
+        browser: str = "Chrome") -> dict:
+    """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
         cookie_file: Path to alternate file to search for cookies
+        browser: Name of the browser's cookies to read ('Chrome' or 'Chromium')
     Returns:
         Dictionary of cookie values for URL
 
     """
+    # Check that the requested browser is supported
+    if browser not in ("Chrome", "Chromium"):
+        raise ValueError("Please use either Chrome or Chromium as browser.")
+
     # If running Chrome on OSX
     if sys.platform == 'darwin':
-        config = get_osx_config()
-
+        config = get_osx_config(browser)
     elif sys.platform.startswith('linux'):
-        config = get_linux_config()
+        config = get_linux_config(browser)
     else:
         raise OSError("This script only works on OSX or Linux.")
 
@@ -190,7 +211,7 @@ def chrome_cookies(url: str, cookie_file: str = None) -> dict:
 
 
 def generate_host_keys(hostname: str) -> Iterator[str]:
-    """Yield Chrome keys for `hostname`, from least to most specific.
+    """Yield Chrome/Chromium keys for `hostname`, from least to most specific.
 
     Given a hostname like foo.example.com, this yields the key sequence:
 
