@@ -67,21 +67,26 @@ def chrome_decrypt(encrypted_value: bytes, key: bytes, init_vector: bytes) \
 def get_osx_config(browser: str) -> dict:
     """Get settings for getting Chrome/Chromium cookies on OSX.
 
+    Args:
+        browser: Either "Chrome" or "Chromium"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    if browser == 'Chrome':
-        cookie_dir = 'Google/' + browser
+    # Verify supported browser, fail early otherwise
+    if browser.lower() == 'chrome':
+        cookie_file = ('~/Library/Application Support/Google/Chrome/Default/'
+                       'Cookies')
+    elif browser.lower() == "chromium":
+        cookie_file = '~/Library/Application Support/Chromium/Default/Cookies'
     else:
-        cookie_dir = browser
+        raise ValueError("Browser must be either Chrome or Chromium.")
 
     config = {
         'my_pass': keyring.get_password(
             '{} Safe Storage'.format(browser), browser),
         'iterations': 1003,
-        'cookie_file': ('~/Library/Application Support'
-                        '/{}/Default/Cookies'.format(cookie_dir)),
+        'cookie_file': cookie_file,
         }
     return config
 
@@ -89,14 +94,28 @@ def get_osx_config(browser: str) -> dict:
 def get_linux_config(browser: str) -> dict:
     """Get the settings for Chrome/Chromium cookies on Linux.
 
+    Args:
+        browser: Either "Chrome" or "Chromium"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    # Set the default linux password
-    config = {'my_pass': 'peanuts'}  # type: Dict[str, Union[int, str]]
+    # Verify supported browser, fail early otherwise
+    if browser.lower() == 'chrome':
+        cookie_file = '~/.config/google-chrome/Default/Cookies'
+    elif browser.lower() == "chromium":
+        cookie_file = '~/.config/chromium/Default/Cookies'
+    else:
+        raise ValueError("Browser must be either Chrome or Chromium.")
 
-    # Try to get from Gnome / libsecret if it seems available
+    # Set the default linux password
+    config = {
+        'my_pass': 'peanuts',
+        'iterations': 1,
+        'cookie_file': cookie_file,
+    }
+
+    # Try to get pass from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
     try:
         import gi
@@ -111,7 +130,7 @@ def get_linux_config(browser: str) -> dict:
         gnome_keyring = service.get_collections()
         unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
-        keyring_name = "{} Safe Storage".format(browser)
+        keyring_name = "{} Safe Storage".format(browser.capitalize())
 
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
@@ -126,15 +145,6 @@ def get_linux_config(browser: str) -> dict:
             # Inner loop did `break`, so `break` outer loop
             break
 
-    if browser == 'Chrome':
-        cookie_dir = 'google-chrome'
-    else:
-        cookie_dir = browser.lower()
-
-    config.update({
-        'iterations': 1,
-        'cookie_file': '~/.config/{}/Default/Cookies'.format(cookie_dir),
-        })
     return config
 
 
@@ -152,10 +162,6 @@ def chrome_cookies(
         Dictionary of cookie values for URL
 
     """
-    # Check that the requested browser is supported
-    if browser not in ("Chrome", "Chromium"):
-        raise ValueError("Please use either Chrome or Chromium as browser.")
-
     # If running Chrome on OSX
     if sys.platform == 'darwin':
         config = get_osx_config(browser)

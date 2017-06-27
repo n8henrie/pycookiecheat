@@ -14,12 +14,12 @@ from pycookiecheat import chrome_cookies
 
 @pytest.fixture(scope='module')
 def travis_setup(request: pytest.fixture) -> None:
-    """Set up chromium's cookies file and directory on Travis.
+    """Set up Chrome's cookies file and directory on Travis.
 
     Appropriately doesn't load teardown() this dir already
     exists, preventing it from getting to the teardown function which would
-    otherwise risk deleting someone's ~/.config/chromium directory (if they had
-    the TRAVIS=true environment set for some reason).
+    otherwise risk deleting someone's ~/.config/google-chrome directory (if
+    they had the TRAVIS=true environment set for some reason).
 
     """
     def teardown() -> None:
@@ -32,7 +32,7 @@ def travis_setup(request: pytest.fixture) -> None:
             pass
 
     # Where the cookies file should be
-    cookies_dest_dir = os.path.expanduser('~/.config/chromium/Default')
+    cookies_dest_dir = os.path.expanduser('~/.config/google-chrome/Default')
     cookies_dest = os.path.join(cookies_dest_dir, 'Cookies')
 
     # Where the test cookies file is
@@ -83,3 +83,10 @@ def test_fake_cookie(travis_setup: pytest.fixture) -> None:
     """
     cookies = chrome_cookies('http://www.html-kit.com/tools/cookietester')
     assert cookies['TestCookie'] == 'Just_a_test!'
+
+
+def test_raises_on_wrong_browser() -> None:
+    """Passing a browser other than Chrome or Chromium raises ValueError."""
+    with pytest.raises(ValueError):
+        chrome_cookies('http://www.html-kit.com/tools/cookietester',
+                       browser="Safari")
