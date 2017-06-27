@@ -1,8 +1,6 @@
 include *.md LICENSE requirements*.txt
 
-graft pycookiecheat
-recursive-include docs *.md *.rst conf.py Makefile
-
-prune docs/md
+graft src
+recursive-include *.md *.rst conf.py Makefile
 
 global-exclude __pycache__/* *.swp *.py[co]

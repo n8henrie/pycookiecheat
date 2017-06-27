@@ -13,7 +13,7 @@ except (ImportError, OSError):
         history = history_file.read()
 
 version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
-with open('pycookiecheat/__init__.py') as f:
+with open('src/pycookiecheat/__init__.py') as f:
     vlines = f.readlines()
 __version__ = next(re.match(version_regex, line).group(1) for line in vlines
                    if re.match(version_regex, line))
@@ -37,7 +37,8 @@ setup(
     author='Nathan Henrie',
     author_email='nate@n8henrie.com',
     url='https://github.com/n8henrie/pycookiecheat',
-    packages=find_packages(),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     include_package_data=True,
     install_requires=requirements,
     license="MIT",
