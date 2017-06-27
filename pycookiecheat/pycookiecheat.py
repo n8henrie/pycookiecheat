@@ -98,7 +98,7 @@ def get_linux_config(browser_name: str = None) -> dict:
     config = {'my_pass': 'peanuts'}  # type: Dict[str, Union[int, str]]
 
     if browser_name is None:
-        browser_name = 'Chromium'
+        browser_name = 'Chrome'
 
     # Try to get from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
@@ -131,6 +131,7 @@ def get_linux_config(browser_name: str = None) -> dict:
 
             # Inner loop did `break`, so `break` outer loop
             break
+
     config.update({
         'iterations': 1,
         'cookie_file': '~/.config/chromium/Default/Cookies',
