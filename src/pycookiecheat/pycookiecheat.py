@@ -194,7 +194,11 @@ def chrome_cookies(
     else:
         raise urllib.error.URLError("You must include a scheme with your URL.")
 
-    conn = sqlite3.connect(cookie_file)
+    try:
+        conn = sqlite3.connect(cookie_file)
+    except sqlite3.OperationalError:
+        print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
+        raise
 
     sql = ('select name, value, encrypted_value from cookies where host_key '
            'like ?')
