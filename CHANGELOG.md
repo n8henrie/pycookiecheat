@@ -1,5 +1,10 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.3 :: 20170627
+
+- Consistently use Chrome as default across platforms, allow user to specify
+  Chromium as desired (thanks @jtbraun)
+
 ## v0.4.0 :: 20170504
 
 - Remove compatibility for Python <3.5
