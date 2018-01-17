@@ -91,3 +91,7 @@ libffi-dev python-dev` prior to installing with `pip`.
 ### How do I install the dev branch with pip?
 
 - `pip install git+https://github.com/n8henrie/pycookiecheat@dev`
+
+## Buy Me a Coffee
+
+[☕️](https://n8henrie.com/donate)
