@@ -202,7 +202,14 @@ def chrome_cookies(
         print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
         raise
 
-    sql = ('select host_key, path, is_secure, expires_utc, name, value, encrypted_value '
+    # Check whether the column name is `secure` or `is_secure`
+    secure_column_name = 'is_secure'
+    for sl_no, column_name, data_type, is_null, default_val, pk in conn.execute('PRAGMA table_info(cookies)'):
+        if column_name == 'secure':
+            secure_column_name = 'secure'
+            break
+
+    sql = ('select host_key, path, ' + secure_column_name + ', expires_utc, name, value, encrypted_value '
            'from cookies where host_key like ?')
 
     cookies = dict()
