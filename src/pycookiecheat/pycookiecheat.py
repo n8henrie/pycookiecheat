@@ -159,7 +159,7 @@ def chrome_cookies(
         url: Domain from which to retrieve cookies, starting with http(s)
         cookie_file: Path to alternate file to search for cookies
         browser: Name of the browser's cookies to read ('Chrome' or 'Chromium')
-        curl_cookie_file: Path to save the generated cookie file to be used with cURL
+        curl_cookie_file: Path to save the cookie file to be used with cURL
     Returns:
         Dictionary of cookie values for URL
 
@@ -204,19 +204,22 @@ def chrome_cookies(
 
     # Check whether the column name is `secure` or `is_secure`
     secure_column_name = 'is_secure'
-    for sl_no, column_name, data_type, is_null, default_val, pk in conn.execute('PRAGMA table_info(cookies)'):
+    for sl_no, column_name, data_type, is_null, default_val, pk \
+            in conn.execute('PRAGMA table_info(cookies)'):
         if column_name == 'secure':
             secure_column_name = 'secure'
             break
 
-    sql = ('select host_key, path, ' + secure_column_name + ', expires_utc, name, value, encrypted_value '
+    sql = ('select host_key, path, ' + secure_column_name +
+           ', expires_utc, name, value, encrypted_value '
            'from cookies where host_key like ?')
 
     cookies = dict()
     curl_cookies = []
 
     for host_key in generate_host_keys(domain):
-        for host_key, path, is_secure, expires_utc, cookie_key, val, enc_val in conn.execute(sql, (host_key,)):
+        for hk, path, is_secure, expires_utc, cookie_key, val, enc_val \
+                in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v1[01]' prefix, return v
             if val or (enc_val[:3] not in (b'v10', b'v11')):
@@ -227,8 +230,10 @@ def chrome_cookies(
             cookies[cookie_key] = val
             if curl_cookie_file:
                 # http://www.cookiecentral.com/faq/#3.5
-                curl_cookies.append('\t'.join([host_key, 'TRUE', path, 'TRUE' if is_secure else 'FALSE',
-                                               str(expires_utc), cookie_key, val]))
+                curl_cookies.append('\t'.join(
+                    [hk, 'TRUE', path, 'TRUE' if is_secure else 'FALSE',
+                     str(expires_utc), cookie_key, val]
+                ))
 
     conn.rollback()
 
