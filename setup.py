@@ -2,17 +2,12 @@ import re
 
 from setuptools import find_packages, setup
 
-try:
-    import pypandoc
-    readme = pypandoc.convert('README.md', 'rst')
-    history = pypandoc.convert('CHANGELOG.md', 'rst')
-except (ImportError, OSError):
-    with open('README.md') as readme_file, \
-            open('CHANGELOG.md') as history_file:
-        readme = readme_file.read()
-        history = history_file.read()
+with open('README.md', encoding='utf8') as readme_file, \
+        open('CHANGELOG.md', encoding='utf8') as history_file:
+    readme = readme_file.read()
+    history = history_file.read()
 
-version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
+version_regex = re.compile(r'__version__ = [\'\"]v((\d+\.?)+)[\'\"]')
 with open('src/pycookiecheat/__init__.py') as f:
     vlines = f.readlines()
 __version__ = next(re.match(version_regex, line).group(1) for line in vlines
@@ -34,6 +29,7 @@ setup(
     description="Borrow cookies from your browser's authenticated session for"
                 "use in Python scripts.",
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/markdown',
     author='Nathan Henrie',
     author_email='nate@n8henrie.com',
     url='https://github.com/n8henrie/pycookiecheat',
@@ -49,6 +45,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     extras_require={
         "dev": dev_requirements
