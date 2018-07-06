@@ -1,5 +1,10 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.4 :: 20180706
+
+- Optionally outputs cookies to a file compatible with cURL (thanks to
+  Muntashir Al-Islam!)
+
 ## v0.4.3 :: 20170627
 
 - Consistently use Chrome as default across platforms, allow user to specify
