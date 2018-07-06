@@ -1,8 +1,8 @@
-flake8==3.3.0
-flake8-docstrings==1.1.0
-flake8-import-order==0.12
-mypy==0.511
-pep8-naming==0.4.1
-pylint==1.7.1
-pytest==3.0.7
-tox==2.7.0
+flake8-docstrings==1.3.0
+flake8-import-order==0.17.1
+mypy==0.610
+pep8-naming==0.7.0
+pycodestyle==2.3.1 # Pinned due to https://github.com/PyCQA/pycodestyle/issues/741
+pylint==1.9.2
+pytest==3.6.3
+tox==3.0.0
