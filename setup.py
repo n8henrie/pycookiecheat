@@ -7,7 +7,7 @@ with open('README.md', encoding='utf8') as readme_file, \
     readme = readme_file.read()
     history = history_file.read()
 
-version_regex = re.compile(r'__version__ = [\'\"]((\d+\.?)+)[\'\"]')
+version_regex = re.compile(r'__version__ = [\'\"]v((\d+\.?)+)[\'\"]')
 with open('src/pycookiecheat/__init__.py') as f:
     vlines = f.readlines()
 __version__ = next(re.match(version_regex, line).group(1) for line in vlines
