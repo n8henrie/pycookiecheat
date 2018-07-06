@@ -9,7 +9,6 @@ Accepts a URL from which it tries to extract a domain. If you want to force the
 domain, just send it the domain you'd like to use instead.
 
 Adapted from my code at http://n8h.me/HufI1w
-
 """
 
 import pathlib
@@ -184,8 +183,7 @@ def chrome_cookies(
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
-    # https://github.com/python/typeshed/pull/1241
-    enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
+    enc_key = pbkdf2_hmac(hash_name='sha1',
                           password=config['my_pass'].encode('utf8'),
                           salt=config['salt'],
                           iterations=config['iterations'],

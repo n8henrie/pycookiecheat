@@ -8,7 +8,6 @@ from urllib.error import URLError
 from uuid import uuid4
 
 import pytest
-
 from pycookiecheat import chrome_cookies
 
 
