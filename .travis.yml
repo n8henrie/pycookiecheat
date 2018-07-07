@@ -12,3 +12,13 @@ script:
   - tox -e lint
 
 after_failure: cat .tox/log/tox-*.log
+
+deploy:
+  provider: pypi
+  user: n8henrie
+  password:
+    secure: axvmJF5WeLLaTy9oTOHPrnM5NQT5FC3Ef1+taIuIHa+BclN6JRbz7wUd/GdcAVwzEWv9Gaq4Au/sLMjgXgb+9bJ+pjZHAns4yVxjhDY46bX4OkRsrZvvrC3dpUGmmFAmKyVlB77DO9sVXu5CQjZtX/vVvEamAbAzbUdzWzwI630=
+  distributions: sdist bdist_wheel
+  on:
+    branch: master
+    tags: true
