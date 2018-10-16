@@ -1,18 +1,29 @@
 language: python
-python:
-  - 3.5
-  - 3.6
 
-addons:
-  apt:
-    packages:
-    - pandoc
+# Workaround for https://github.com/travis-ci/travis-ci/issues/9815
+matrix:
+  include:
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
+      dist: xenial
+      sudo: true
 
 install: pip install tox
 
 # http://stackoverflow.com/a/42309035
-script: 
-  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/') 
+script:
+  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/')
   - tox -e lint
 
 after_failure: cat .tox/log/tox-*.log
+
+deploy:
+  provider: pypi
+  user: n8henrie
+  password:
+    secure: axvmJF5WeLLaTy9oTOHPrnM5NQT5FC3Ef1+taIuIHa+BclN6JRbz7wUd/GdcAVwzEWv9Gaq4Au/sLMjgXgb+9bJ+pjZHAns4yVxjhDY46bX4OkRsrZvvrC3dpUGmmFAmKyVlB77DO9sVXu5CQjZtX/vVvEamAbAzbUdzWzwI630=
+  distributions: sdist bdist_wheel
+  on:
+    branch: master
+    tags: true
