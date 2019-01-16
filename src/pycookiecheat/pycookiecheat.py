@@ -146,20 +146,13 @@ def get_linux_config(browser: str) -> dict:
             # Inner loop did `break`, so `break` outer loop
             break
 
-    # Try to get pass from KDE / KWallet if it seems available
+    # Try to get pass from keyring, which should support KDE / KWallet
+    # if dbus-python is installed.
     if not pass_found:
-        try:
-            kwallet_ring = keyring.core.load_keyring(
-                "keyring.backends.kwallet.DBusKeyring")
-        except RuntimeError:  # keyring dependencies missing
-            pass
-        else:
-            keyring.set_keyring(kwallet_ring)
-            browser = browser.capitalize()
-            my_pass = keyring.get_password("{} Keys".format(browser),
-                                           "{} Safe Storage".format(browser))
-            if my_pass:
-                config['my_pass'] = my_pass
+        my_pass = keyring.get_password("{} Keys".format(browser),
+                                       "{} Safe Storage".format(browser))
+        if my_pass:
+            config['my_pass'] = my_pass
 
     return config
 
