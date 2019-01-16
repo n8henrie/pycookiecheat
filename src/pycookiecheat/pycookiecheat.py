@@ -149,10 +149,14 @@ def get_linux_config(browser: str) -> dict:
     # Try to get pass from keyring, which should support KDE / KWallet
     # if dbus-python is installed.
     if not pass_found:
-        my_pass = keyring.get_password("{} Keys".format(browser),
-                                       "{} Safe Storage".format(browser))
-        if my_pass:
-            config['my_pass'] = my_pass
+        try:
+            my_pass = keyring.get_password("{} Keys".format(browser),
+                                           "{} Safe Storage".format(browser))
+        except RuntimeError:
+            pass
+        else:
+            if my_pass:
+                config['my_pass'] = my_pass
 
     return config
 
