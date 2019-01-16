@@ -116,6 +116,7 @@ def get_linux_config(browser: str) -> dict:
 
     # Try to get pass from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
+    pass_found = False
     try:
         import gi
         gi.require_version('Secret', '1')
@@ -136,6 +137,7 @@ def get_linux_config(browser: str) -> dict:
                 if item.get_label() == keyring_name:
                     item.load_secret_sync()
                     config['my_pass'] = item.get_secret().get_text()
+                    pass_found = True
                     break
             else:
                 # Inner loop didn't `break`, keep looking
@@ -143,6 +145,21 @@ def get_linux_config(browser: str) -> dict:
 
             # Inner loop did `break`, so `break` outer loop
             break
+
+    # Try to get pass from KDE / KWallet if it seems available
+    if not pass_found:
+        try:
+            kwallet_ring = keyring.core.load_keyring(
+                "keyring.backends.kwallet.DBusKeyring")
+        except RuntimeError:  # keyring dependencies missing
+            pass
+        else:
+            keyring.set_keyring(kwallet_ring)
+            browser = browser.capitalize()
+            my_pass = keyring.get_password("{} Keys".format(browser),
+                                           "{} Safe Storage".format(browser))
+            if my_pass:
+                config['my_pass'] = my_pass
 
     return config
 
