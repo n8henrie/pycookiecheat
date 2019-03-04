@@ -89,6 +89,10 @@ Please check the official cryptography docs. On some systems (e.g. Ubuntu), you
 may need to do something like `sudo apt-get install build-essential libssl-dev
 libffi-dev python-dev` prior to installing with `pip`.
 
+### How can I use pycookiecheat on KDE-based Linux distros?
+
+On KDE, Chrome defaults to using KDE's own keyring, KWallet. For pycookiecheat to support KWallet the [`dbus-python`](https://pypi.org/project/dbus-python/) package must be installed.
+
 ### How do I install the dev branch with pip?
 
 - `pip install git+https://github.com/n8henrie/pycookiecheat@dev`
