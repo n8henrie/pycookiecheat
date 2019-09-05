@@ -20,6 +20,7 @@ from hashlib import pbkdf2_hmac
 from typing import Any, Dict, Iterator, Union  # noqa
 
 import keyring
+import secretstorage
 from Crypto.Cipher import AES
 
 
@@ -108,8 +109,16 @@ def get_linux_config(browser: str) -> dict:
         raise ValueError("Browser must be either Chrome or Chromium.")
 
     # Set the default linux password
+    bus = secretstorage.dbus_init()
+    collection = secretstorage.get_default_collection(bus)
+    for item in collection.get_all_items():
+        if item.get_label() == 'Chrome Safe Storage':
+            MY_PASS = item.get_secret()
+            break
+    else:
+        MY_PASS = 'peanuts'.encode('utf8')
     config = {
-        'my_pass': 'peanuts',
+        'my_pass': MY_PASS',
         'iterations': 1,
         'cookie_file': cookie_file,
     }
@@ -184,7 +193,7 @@ def chrome_cookies(
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
     enc_key = pbkdf2_hmac(hash_name='sha1',
-                          password=config['my_pass'].encode('utf8'),
+                          password=config['my_pass'],
                           salt=config['salt'],
                           iterations=config['iterations'],
                           dklen=config['length'])
