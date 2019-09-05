@@ -9,6 +9,7 @@ Accepts a URL from which it tries to extract a domain. If you want to force the
 domain, just send it the domain you'd like to use instead.
 
 Adapted from my code at http://n8h.me/HufI1w
+
 """
 
 import pathlib
@@ -20,7 +21,6 @@ from hashlib import pbkdf2_hmac
 from typing import Any, Dict, Iterator, Union  # noqa
 
 import keyring
-import secretstorage
 from Crypto.Cipher import AES
 
 
@@ -109,16 +109,8 @@ def get_linux_config(browser: str) -> dict:
         raise ValueError("Browser must be either Chrome or Chromium.")
 
     # Set the default linux password
-    bus = secretstorage.dbus_init()
-    collection = secretstorage.get_default_collection(bus)
-    for item in collection.get_all_items():
-        if item.get_label() == 'Chrome Safe Storage':
-            MY_PASS = item.get_secret()
-            break
-    else:
-        MY_PASS = 'peanuts'.encode('utf8')
     config = {
-        'my_pass': MY_PASS,
+        'my_pass': 'peanuts',
         'iterations': 1,
         'cookie_file': cookie_file,
     }
@@ -160,15 +152,13 @@ def chrome_cookies(
         url: str,
         cookie_file: str = None,
         browser: str = "Chrome",
-        curl_cookie_file: str = None,
-        ) -> dict:
+        password: str = None) -> dict:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
         cookie_file: Path to alternate file to search for cookies
         browser: Name of the browser's cookies to read ('Chrome' or 'Chromium')
-        curl_cookie_file: Path to save the cookie file to be used with cURL
     Returns:
         Dictionary of cookie values for URL
 
@@ -192,8 +182,9 @@ def chrome_cookies(
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
-    enc_key = pbkdf2_hmac(hash_name='sha1',
-                          password=config['my_pass'],
+    # https://github.com/python/typeshed/pull/1241
+    enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
+                          password=password if password is not None else config['my_pass'].encode('utf8'),
                           salt=config['salt'],
                           iterations=config['iterations'],
                           dklen=config['length'])
@@ -210,24 +201,13 @@ def chrome_cookies(
         print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
         raise
 
-    # Check whether the column name is `secure` or `is_secure`
-    secure_column_name = 'is_secure'
-    for sl_no, column_name, data_type, is_null, default_val, pk \
-            in conn.execute('PRAGMA table_info(cookies)'):
-        if column_name == 'secure':
-            secure_column_name = 'secure'
-            break
-
-    sql = ('select host_key, path, ' + secure_column_name +
-           ', expires_utc, name, value, encrypted_value '
-           'from cookies where host_key like ?')
+    sql = ('select name, value, encrypted_value from cookies where host_key '
+           'like ?')
 
     cookies = dict()
-    curl_cookies = []
 
     for host_key in generate_host_keys(domain):
-        for hk, path, is_secure, expires_utc, cookie_key, val, enc_val \
-                in conn.execute(sql, (host_key,)):
+        for cookie_key, val, enc_val in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v1[01]' prefix, return v
             if val or (enc_val[:3] not in (b'v10', b'v11')):
@@ -236,20 +216,8 @@ def chrome_cookies(
                 val = chrome_decrypt(enc_val, key=enc_key,
                                      init_vector=config['init_vector'])
             cookies[cookie_key] = val
-            if curl_cookie_file:
-                # http://www.cookiecentral.com/faq/#3.5
-                curl_cookies.append('\t'.join(
-                    [hk, 'TRUE', path, 'TRUE' if is_secure else 'FALSE',
-                     str(expires_utc), cookie_key, val]
-                ))
 
     conn.rollback()
-
-    # Save the file to destination
-    if curl_cookie_file:
-        with open(curl_cookie_file, "w") as text_file:
-            text_file.write('\n'.join(curl_cookies) + '\n')
-
     return cookies
 
 
