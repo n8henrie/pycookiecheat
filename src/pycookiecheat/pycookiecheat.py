@@ -118,7 +118,7 @@ def get_linux_config(browser: str) -> dict:
     else:
         MY_PASS = 'peanuts'.encode('utf8')
     config = {
-        'my_pass': MY_PASS',
+        'my_pass': MY_PASS,
         'iterations': 1,
         'cookie_file': cookie_file,
     }
