@@ -152,6 +152,7 @@ def chrome_cookies(
         url: str,
         cookie_file: str = None,
         browser: str = "Chrome",
+        curl_cookie_file: str = None,
         password: str = None) -> dict:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
