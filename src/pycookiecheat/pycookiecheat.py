@@ -184,7 +184,6 @@ def chrome_cookies(
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
 
-    # https://github.com/python/typeshed/pull/1241
     enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
                           password=password if password is not None else config['my_pass'].encode('utf8'),
                           salt=config['salt'],
