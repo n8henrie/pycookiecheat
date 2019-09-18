@@ -183,9 +183,12 @@ def chrome_cookies(
         cookie_file = str(pathlib.Path(cookie_file).expanduser())
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
-
+    
+    if password is not None:
+        config['my_pass'] = password
+    
     enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
-                          password=password if password is not None else config['my_pass'].encode('utf8'),
+                          password=config['my_pass'].encode('utf8'),
                           salt=config['salt'],
                           iterations=config['iterations'],
                           dklen=config['length'])
