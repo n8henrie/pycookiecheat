@@ -166,7 +166,7 @@ def chrome_cookies(
         cookie_file: str = None,
         browser: str = "Chrome",
         curl_cookie_file: str = None,
-        ) -> dict:
+        password: str = None) -> dict:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
     Args:
@@ -174,6 +174,7 @@ def chrome_cookies(
         cookie_file: Path to alternate file to search for cookies
         browser: Name of the browser's cookies to read ('Chrome' or 'Chromium')
         curl_cookie_file: Path to save the cookie file to be used with cURL
+        password: Optional system password
     Returns:
         Dictionary of cookie values for URL
 
@@ -196,8 +197,11 @@ def chrome_cookies(
         cookie_file = str(pathlib.Path(cookie_file).expanduser())
     else:
         cookie_file = str(pathlib.Path(config['cookie_file']).expanduser())
-
-    enc_key = pbkdf2_hmac(hash_name='sha1',
+    
+    if password is not None:
+        config['my_pass'] = password
+    
+    enc_key = pbkdf2_hmac(hash_name='sha1',  # type: ignore
                           password=config['my_pass'].encode('utf8'),
                           salt=config['salt'],
                           iterations=config['iterations'],
