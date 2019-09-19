@@ -1,5 +1,6 @@
 flake8-docstrings==1.4.0
 flake8-import-order==0.18.1
+flake8==3.7.8
 mypy==0.720
 pep8-naming==0.8.2
 pycodestyle==2.5.0
