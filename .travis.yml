@@ -10,10 +10,7 @@ install: pip install tox
 
 # http://stackoverflow.com/a/42309035
 script:
-  - tox -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/')
-  - tox -e lint
-
-after_failure: cat .tox/log/tox-*.log
+  - tox --recreate -e $(echo py${TRAVIS_PYTHON_VERSION} | tr -d . | sed -e 's/pypypy/pypy/') lint
 
 deploy:
   provider: pypi
