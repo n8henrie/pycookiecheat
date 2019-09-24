@@ -83,7 +83,7 @@ X](https://cryptography.io/en/latest/installation/?highlight=cflags#building-cry
 and `export LDFLAGS="-L$(brew --prefix openssl)/lib" CFLAGS="-I$(brew --prefix
 openssl)/include"` and try again.
 
-### I get an installation error with the `cryptography` module on Linux (pycookiecheat <v0.4.0)
+### I get an installation error with the `cryptography` module on Linux
 
 Please check the official cryptography docs. On some systems (e.g. Ubuntu), you
 may need to do something like `sudo apt-get install build-essential libssl-dev
