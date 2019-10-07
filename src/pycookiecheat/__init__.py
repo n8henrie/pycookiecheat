@@ -4,7 +4,7 @@ from pycookiecheat.pycookiecheat import chrome_cookies
 
 __author__ = 'Nathan Henrie'
 __email__ = 'nate@n8henrie.com'
-__version__ = 'v0.4.4'
+__version__ = 'v0.4.5'
 
 __all__ = [
         "chrome_cookies",

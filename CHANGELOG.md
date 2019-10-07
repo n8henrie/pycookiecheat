@@ -1,5 +1,11 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.5 :: 20191007
+
+- db6ac6d Go back to using cryptography due to
+  https://www.cvedetails.com/cve/CVE-2013-7459/
+- c70ad51 Allow users to override password (thanks @alairock)
+
 ## v0.4.4 :: 20180706
 
 - Optionally outputs cookies to a file compatible with cURL (thanks to
