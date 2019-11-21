@@ -232,7 +232,7 @@ def chrome_cookies(
         raise urllib.error.URLError("You must include a scheme with your URL.")
 
     try:
-        conn = sqlite3.connect("file:{}?mode=ro".format(cookie_file))
+        conn = sqlite3.connect("file:{}?mode=ro".format(cookie_file), uri=True)
     except sqlite3.OperationalError:
         print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
         raise
