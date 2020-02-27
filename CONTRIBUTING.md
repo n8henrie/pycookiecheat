@@ -56,40 +56,48 @@ Ready to contribute? Here's how to set up pycookiecheat
 for local development.
 
 1.  Fork the pycookiecheat repo on GitHub.
-2.  Clone your fork locally:
+1.  Clone your fork locally:
 
         $ git clone git@github.com:your_name_here/pycookiecheat.git
+        $ cd pycookiecheat
 
-3.  Install your local copy into a virtualenv. Assuming you have
-    virtualenvwrapper installed, this is how you set up your fork for
-    local development:
+1. Check out the `dev` branch, where development happens prior to
+   being merged into `master`. Your changes should be based on the
+   `dev` branch, and your PR should eventually be requested against
+   my `dev` branch.
+   
+        $ git checkout dev
+        
+1.  Install your local copy into a virtualenv (`venv` in modern python).
+    Some linux distributions will require you to install `python-venv`
+    or `python3-venv`, other times it will already be bundled with python.
+    There are many ways to skin a cat, but this is how I usually set up a
+    fork for local development:
+    
+        $ python3 -m venv .venv # set up hidden virtualenv folder: .venv
+        $ source ./.venv/bin/actiate # activate virtualenv
+        $ which python
+        /Users/me/pycookiecheat/.venv/bin/python
+        $ python -m pip install -e .[dev] # editable install with dev dependencies
 
-        $ mkvirtualenv pycookiecheat
-        $ cd pycookiecheat/
-        $ python3 setup.py develop
+1.  Create a branch for local development:
 
-4.  Create a branch for local development:
-
-        $ git checkout -b name-of-your-bugfix-or-feature
+        $ git checkout -b name-of-your-bugfix-or-feature # or use e.g. issue_13
 
     Now you can make your changes locally.
 
-5.  When you're done making changes, check that your changes pass flake8
+1.  When you're done making changes, check that your changes pass flake8
     and the tests, including testing other Python versions with tox:
 
-        $ flake8 pycookiecheat tests
-        $ python3 setup.py test
         $ tox
 
-    To get flake8 and tox, just pip install them into your virtualenv.
-
-6.  Commit your changes and push your branch to GitHub:
+1.  Commit your changes and push your branch to GitHub:
 
         $ git add .
         $ git commit -m "Your detailed description of your changes."
         $ git push origin name-of-your-bugfix-or-feature
 
-7.  Submit a pull request through the GitHub website.
+1.  Submit a pull request through the GitHub website against my `dev` branch.
 
 Pull Request Guidelines
 -----------------------
@@ -100,8 +108,9 @@ Before you submit a pull request, check that it meets these guidelines:
 2.  If the pull request adds functionality, the docs should be updated.
     Put your new functionality into a function with a docstring, and add
     the feature to the list in README.md
-3.  The pull request should work for Python 3.3, and 3.4, and
-    for PyPy. Check <https://travis-ci.org/n8henrie/pycookiecheat/pull_requests>
+3.  The pull request should work for all Python versions that this project
+    tests against with tox. 
+    Check <https://travis-ci.org/n8henrie/pycookiecheat/pull_requests>
     and make sure that the tests pass for all supported Python versions.
 
 Tips
