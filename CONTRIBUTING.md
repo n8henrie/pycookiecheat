@@ -61,24 +61,23 @@ for local development.
         $ git clone git@github.com:your_name_here/pycookiecheat.git
         $ cd pycookiecheat
 
-1. Check out the `dev` branch, where development happens prior to
-   being merged into `master`. Your changes should be based on the
-   `dev` branch, and your PR should eventually be requested against
-   my `dev` branch.
-   
+1. Check out the `dev` branch, where development happens prior to being merged
+   into `master`. Your changes should be based on the `dev` branch, and your PR
+   should eventually be requested against my `dev` branch.
+
         $ git checkout dev
-        
-1.  Install your local copy into a virtualenv (`venv` in modern python).
-    Some linux distributions will require you to install `python-venv`
-    or `python3-venv`, other times it will already be bundled with python.
-    There are many ways to skin a cat, but this is how I usually set up a
-    fork for local development:
-    
+
+1.  Install your local copy into a virtualenv (`venv` in modern python). Some
+    linux distributions will require you to install `python-venv` or
+    `python3-venv`, other times it will already be bundled with python. There
+    are many ways to skin a cat, but this is how I usually set up a fork for
+    local development:
+
         $ python3 -m venv .venv # set up hidden virtualenv folder: .venv
         $ source ./.venv/bin/actiate # activate virtualenv
         $ which python
         /Users/me/pycookiecheat/.venv/bin/python
-        $ python -m pip install -e .[dev] # editable install with dev dependencies
+        $ python -m pip install -e .[dev] # editable install with dev deps
 
 1.  Create a branch for local development:
 
@@ -105,14 +104,15 @@ Pull Request Guidelines
 Before you submit a pull request, check that it meets these guidelines:
 
 1.  The pull request should include tests.
-2.  If the pull request adds functionality, the docs should be updated.
-    Put your new functionality into a function with a docstring, and add
-    the feature to the list in README.md
+2.  If the pull request adds functionality, the docs should be updated. Put
+    your new functionality into a function with a docstring, and add the
+    feature to the list in README.md
 3.  The pull request should work for all Python versions that this project
-    tests against with tox. 
-    Check <https://travis-ci.org/n8henrie/pycookiecheat/pull_requests>
-    and make sure that the tests pass for all supported Python versions.
+    tests against with tox. Check
+    <https://travis-ci.org/n8henrie/pycookiecheat/pull_requests> and make sure
+    that the tests pass for all supported Python versions.
 
 Tips
 ----
 
+To run a subset of tests: `pytest tests/test_your_test.py`
