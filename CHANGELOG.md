@@ -1,5 +1,9 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.6 :: 2019111
+
+- Try to open Chrome database in read-only mode to avoid db locked errors (#29)
+
 ## v0.4.5 :: 20191007
 
 - db6ac6d Go back to using cryptography due to
