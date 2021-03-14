@@ -19,7 +19,6 @@ import urllib.parse
 from typing import Iterator, Union
 
 import keyring
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
@@ -63,7 +62,8 @@ def chrome_decrypt(
     encrypted_value = encrypted_value[3:]
 
     cipher = Cipher(
-        algorithm=AES(key), mode=CBC(init_vector), backend=default_backend()
+        algorithm=AES(key),
+        mode=CBC(init_vector),
     )
     decryptor = cipher.decryptor()
     decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
@@ -218,7 +218,6 @@ def chrome_cookies(
 
     kdf = PBKDF2HMAC(
         algorithm=SHA1(),
-        backend=default_backend(),
         iterations=config["iterations"],
         length=config["length"],
         salt=config["salt"],
