@@ -1,7 +1,7 @@
 # pycookiecheat
 
-[![Build
-Status](https://travis-ci.org/n8henrie/pycookiecheat.svg?branch=master)](https://travis-ci.org/n8henrie/pycookiecheat)
+[![master branch build
+status](https://github.com/n8henrie/pycookiecheat/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/n8henrie/pycookiecheat/actions/workflows/python-package.yml)
 
 Borrow cookies from your browser's authenticated session for use in Python
 scripts.
