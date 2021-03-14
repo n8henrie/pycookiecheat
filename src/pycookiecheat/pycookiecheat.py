@@ -272,7 +272,7 @@ def chrome_cookies(
         ) in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v1[01]' prefix, return v
-            if val or (enc_val[:3] not in (b"v10", b"v11")):
+            if val or (enc_val[:3] not in {b"v10", b"v11"}):
                 pass
             else:
                 val = chrome_decrypt(
