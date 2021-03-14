@@ -36,10 +36,11 @@ def ci_setup(request: pytest.fixture) -> None:
     https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/os_crypt/keychain_password_mac.mm
     """
     cookies_home = Path("~/.config/google-chrome").expanduser()
-    if sys.platform == "darwin":
-        cookies_home = Path(
-            "~/Library/Application Support/Google/Chrome"
-        ).expanduser()
+    cookies_home = {
+        "darwin": "~/Library/Application Support/Google/Chrome",
+        "linux": "~/.config/google-chrome/",
+    }[sys.platform]
+    cookies_home = Path(cookies_home).expanduser()
 
     options = webdriver.chrome.options.Options()
     # options.add_argument("headless")
