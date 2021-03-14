@@ -1,6 +1,7 @@
 """test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
 import sys
+import typing as t
 from pathlib import Path
 from urllib.error import URLError
 from uuid import uuid4
@@ -12,7 +13,7 @@ from pycookiecheat import chrome_cookies
 
 
 @pytest.fixture(scope="module")
-def ci_setup(request: pytest.fixture) -> None:
+def ci_setup() -> None:
     """Set up Chrome's cookies file and directory.
 
     Unfortunately, at least on MacOS 11, I haven't found a way to do this using
@@ -35,12 +36,11 @@ def ci_setup(request: pytest.fixture) -> None:
 
     https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/os_crypt/keychain_password_mac.mm
     """
-    cookies_home = Path("~/.config/google-chrome").expanduser()
     cookies_home = {
         "darwin": "~/Library/Application Support/Google/Chrome",
-        "linux": "~/.config/google-chrome/",
+        "linux": "~/.config/google-chrome",
     }[sys.platform]
-    cookies_home = Path(cookies_home).expanduser()
+    cookies_home = str(Path(cookies_home).expanduser())
 
     options = webdriver.chrome.options.Options()
     # options.add_argument("headless")
@@ -76,14 +76,14 @@ def test_raises_without_scheme() -> None:
         chrome_cookies("n8henrie.com")
 
 
-def test_no_cookies(travis_setup: pytest.fixture) -> None:
+def test_no_cookies(ci_setup: t.Callable) -> None:
     """Ensure that no cookies are returned for a fake url."""
     never_been_here = "http://{0}.com".format(uuid4())
     empty_dict = chrome_cookies(never_been_here)
     assert empty_dict == dict()
 
 
-def test_fake_cookie(travis_setup: pytest.fixture) -> None:
+def test_fake_cookie(ci_setup: t.Callable) -> None:
     """Tests a fake cookie from the website below.
 
     For this to pass, you'll

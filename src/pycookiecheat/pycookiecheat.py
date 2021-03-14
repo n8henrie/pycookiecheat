@@ -65,7 +65,7 @@ def chrome_decrypt(
         algorithm=AES(key),
         mode=CBC(init_vector),
     )
-    decryptor = cipher.decryptor()
+    decryptor = cipher.decryptor()  # type: ignore
     decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
 
     return clean(decrypted)
