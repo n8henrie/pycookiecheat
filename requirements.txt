@@ -1,2 +1,2 @@
-cryptography==3.3.2
+cryptography==3.4.6
 keyring==19.1.0
