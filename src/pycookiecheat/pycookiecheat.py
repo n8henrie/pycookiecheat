@@ -83,7 +83,7 @@ def get_osx_config(browser: str) -> dict:
     # Verify supported browser, fail early otherwise
     if browser.lower() == "chrome":
         cookie_file = (
-            "~/Library/Application Support/Google/Chrome/Default/" "Cookies"
+            "~/Library/Application Support/Google/Chrome/Default/Cookies"
         )
     elif browser.lower() == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
