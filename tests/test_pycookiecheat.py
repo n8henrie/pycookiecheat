@@ -1,52 +1,62 @@
 """test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
-import os
-import os.path
-import shutil
 import sys
+from pathlib import Path
 from urllib.error import URLError
 from uuid import uuid4
 
 import pytest
+from selenium import webdriver
+
 from pycookiecheat import chrome_cookies
 
 
-@pytest.fixture(scope='module')
-def travis_setup(request: pytest.fixture) -> None:
-    """Set up Chrome's cookies file and directory on Travis.
+@pytest.fixture(scope="module")
+def ci_setup(request: pytest.fixture) -> None:
+    """Set up Chrome's cookies file and directory.
 
-    Appropriately doesn't load teardown() this dir already
-    exists, preventing it from getting to the teardown function which would
-    otherwise risk deleting someone's ~/.config/google-chrome directory (if
-    they had the TRAVIS=true environment set for some reason).
+    Unfortunately, at least on MacOS 11, I haven't found a way to do this using
+    a temporary directory or without accessing my actual keyring and profile.
 
+    Things I've tried:
+        - Use a temp directory for user-data-dir instead of actual Chrome
+          profile
+            - Seems not to work because the password is not correct for the
+              profile.
+            - Chrome generates a random password if one is not found for the
+              profile, but this doesn't get added to Keychain and I haven't
+              found a way to figure out what it's using for a particulary run
+
+    Other notes:
+        - Seems to require the "profile-directory" option instead of usign the
+          path to `Default` directly in user-data-dir
+        - Seems to require a `max-age` for the cookie to last session to
+          session
+
+    https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/os_crypt/keychain_password_mac.mm
     """
-    def teardown() -> None:
-        """Remove the cookies directory."""
-        os.remove(cookies_dest)
-        try:
-            os.removedirs(cookies_dest_dir)
-        except OSError:
-            # Directory wasn't empty, expected at '~'
-            pass
+    cookies_home = Path("~/.config/google-chrome").expanduser()
+    if sys.platform == "darwin":
+        cookies_home = Path(
+            "~/Library/Application Support/Google/Chrome"
+        ).expanduser()
 
-    # Where the cookies file should be
-    cookies_dest_dir = os.path.expanduser('~/.config/google-chrome/Default')
-    cookies_dest = os.path.join(cookies_dest_dir, 'Cookies')
+    options = webdriver.chrome.options.Options()
+    # options.add_argument("headless")
+    options.add_argument("user-data-dir={}".format(cookies_home))
+    options.add_argument("profile-directory=Default")
+    options.add_experimental_option("excludeSwitches", ["use-mock-keychain"])
 
-    # Where the test cookies file is
-    cookies_dir = os.path.dirname(os.path.abspath(__file__))
-    cookies_path = os.path.join(cookies_dir, 'Cookies')
-
-    if all([os.getenv('TRAVIS') == 'true',
-            sys.platform.startswith('linux'),
-            not os.path.isfile(cookies_dest)]):
-
-        os.makedirs(cookies_dest_dir)
-        shutil.copy(cookies_path, cookies_dest_dir)
-
-        # Only teardown if running on travis
-        request.addfinalizer(teardown)
+    driver = webdriver.Chrome(options=options)
+    driver.get("https://n8henrie.com/")
+    driver.add_cookie(
+        {
+            "name": "pycookiecheatTestCookie",
+            "value": "Just_a_test!",
+            "max-age": 60,
+        }
+    )
+    driver.quit()
 
 
 def test_raises_on_empty() -> None:
@@ -62,12 +72,12 @@ def test_raises_without_scheme() -> None:
 
     """
     with pytest.raises(URLError):
-        chrome_cookies('n8henrie.com')
+        chrome_cookies("n8henrie.com")
 
 
 def test_no_cookies(travis_setup: pytest.fixture) -> None:
     """Ensure that no cookies are returned for a fake url."""
-    never_been_here = 'http://{0}.com'.format(uuid4())
+    never_been_here = "http://{0}.com".format(uuid4())
     empty_dict = chrome_cookies(never_been_here)
     assert empty_dict == dict()
 
@@ -80,12 +90,13 @@ def test_fake_cookie(travis_setup: pytest.fixture) -> None:
     a temporary cookie with the appropriate values.
 
     """
-    cookies = chrome_cookies('http://www.html-kit.com/tools/cookietester')
-    assert cookies['TestCookie'] == 'Just_a_test!'
+    cookies = chrome_cookies(
+        "https://n8henrie.com",
+    )
+    assert cookies["pycookiecheatTestCookie"] == "Just_a_test!"
 
 
 def test_raises_on_wrong_browser() -> None:
     """Passing a browser other than Chrome or Chromium raises ValueError."""
     with pytest.raises(ValueError):
-        chrome_cookies('http://www.html-kit.com/tools/cookietester',
-                       browser="Safari")
+        chrome_cookies("https://n8henrie.com", browser="Safari")
