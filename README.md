@@ -15,7 +15,7 @@ scripts.
 on Python 2 and using pycookiecheat < v0.4.0. pycookiecheat >= v0.4.0 requires
 Python 3.5+, and may soon go to 3.6+.
 
-- `pip3 install pycookiecheat`
+- `python3 -m pip install pycookiecheat`
 
 ### Installation notes regarding alternative keyrings on Linux
 
@@ -36,8 +36,8 @@ Alternatively, some users have suggested running Chrome with the
 
 1. `git clone https://github.com/n8henrie/pycookiecheat.git`
 1. `cd pycookiecheat`
-1. `python3 -m venv venv`
-1. `venv/bin/pip install -e .[dev]`
+1. `python3 -m venv .venv`
+1. `./.venv/bin/python -m pip install -e .[dev]`
 
 ## Usage
 
@@ -95,7 +95,7 @@ On KDE, Chrome defaults to using KDE's own keyring, KWallet. For pycookiecheat t
 
 ### How do I install the dev branch with pip?
 
-- `pip install git+https://github.com/n8henrie/pycookiecheat@dev`
+- `python -m pip install git+https://github.com/n8henrie/pycookiecheat@dev`
 
 ## Buy Me a Coffee
 
