@@ -1,6 +1,0 @@
-include *.md LICENSE requirements*.txt
-
-graft src
-recursive-include *.md *.rst conf.py Makefile
-
-global-exclude __pycache__/* *.swp *.py[co]
