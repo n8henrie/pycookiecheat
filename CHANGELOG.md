@@ -1,5 +1,21 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.4.7 :: 20210826
+
+- No noteworthy API changes, hence the bugfix version bump, but some major
+  infrastructure and testing updates:
+    - Now uses GitHub Actions instead of Travis
+    - Now uses Playwright for testing, to actually open a Chromium instance and
+    use a real `Cookies` database
+    - PEP517
+    - black
+- Now requires python >= 3.7
+    - This is largely due to requiremets of Playwright:
+      https://pypi.org/project/playwright/, which is only a *test* dependency
+    - Because I can't *test* with <=3.6, I'm not listing it as compatible,
+      though it *probably* will still work
+- Migrate to pyproject.toml
+
 ## v0.4.6 :: 2019111
 
 - Try to open Chrome database in read-only mode to avoid db locked errors (#29)
