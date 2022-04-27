@@ -75,7 +75,7 @@ def get_osx_config(browser: str) -> dict:
     """Get settings for getting Chrome/Chromium cookies on OSX.
 
     Args:
-        browser: Either "Chrome" or "Chromium"
+        browser: Either "Chrome", "Chromium" or "Slack"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
@@ -87,8 +87,10 @@ def get_osx_config(browser: str) -> dict:
         )
     elif browser.lower() == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
+    elif browser.lower() == "slack":
+        cookie_file = "~/Library/Application Support/Slack/Cookies"
     else:
-        raise ValueError("Browser must be either Chrome or Chromium.")
+        raise ValueError("Browser must be either Chrome, Chromium or Slack.")
 
     config = {
         "my_pass": keyring.get_password(
@@ -114,8 +116,10 @@ def get_linux_config(browser: str) -> dict:
         cookie_file = "~/.config/google-chrome/Default/Cookies"
     elif browser.lower() == "chromium":
         cookie_file = "~/.config/chromium/Default/Cookies"
+    elif browser.lower() == "slack":
+        cookie_file = "~/.config/Slack/Cookies"
     else:
-        raise ValueError("Browser must be either Chrome or Chromium.")
+        raise ValueError("Browser must be either Chrome, Chromium or Slack.")
 
     # Set the default linux password
     config = {
@@ -141,11 +145,19 @@ def get_linux_config(browser: str) -> dict:
         gnome_keyring = service.get_collections()
         unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
-        keyring_name = "{} Safe Storage".format(browser.capitalize())
+        if browser.lower() == "chrome":
+            keyring_name = "Chrome Safe Storage"
+        else:
+            # While Slack on Linux has its own Cookies file, the password is stored in a keyring
+            # named the same as Chromium's, but with an "application" attribute of "Slack".
+            keyring_name = "Chromium Safe Storage"
 
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
                 if item.get_label() == keyring_name:
+                    item_app = item.get_attributes().get('application', browser)
+                    if item_app.lower() != browser.lower():
+                        continue
                     item.load_secret_sync()
                     config["my_pass"] = item.get_secret().get_text()
                     pass_found = True
