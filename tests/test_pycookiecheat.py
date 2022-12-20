@@ -1,5 +1,6 @@
 """test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
+import os
 import time
 import typing as t
 from pathlib import Path
@@ -46,6 +47,7 @@ def ci_setup() -> t.Generator:
             ignore_default_args=[
                 "--use-mock-keychain",
             ],
+            executable_path=os.environ.get("TEST_BROWSER_PATH"),
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")
@@ -87,7 +89,7 @@ def test_no_cookies(ci_setup: str) -> None:
     empty_dict = chrome_cookies(
         never_been_here,
         cookie_file=ci_setup,
-        browser="Chromium",
+        browser=os.environ.get("TEST_BROWSER_NAME", "Chromium"),
     )
     assert empty_dict == dict()
 
@@ -101,7 +103,7 @@ def test_fake_cookie(ci_setup: str) -> None:
     cookies = chrome_cookies(
         "https://n8henrie.com",
         cookie_file=ci_setup,
-        browser="Chromium",
+        browser=os.environ.get("TEST_BROWSER_NAME", "Chromium"),
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
 
