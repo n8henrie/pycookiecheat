@@ -88,7 +88,10 @@ def get_osx_config(browser: str) -> dict:
     elif browser.lower() == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
     elif browser.lower() == "brave":
-        cookie_file = "~/Library/Application Support/BraveSoftware/Brave-Browser/Default/Cookies"
+        cookie_file = (
+            "~/Library/Application Support/"
+            "BraveSoftware/Brave-Browser/Default/Cookies"
+        )
     else:
         raise ValueError("Browser must be either Chrome, Chromium, or Brave.")
 
