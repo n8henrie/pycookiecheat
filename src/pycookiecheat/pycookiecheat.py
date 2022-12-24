@@ -75,7 +75,7 @@ def get_osx_config(browser: str) -> dict:
     """Get settings for getting Chrome/Chromium cookies on OSX.
 
     Args:
-        browser: Either "Chrome" or "Chromium"
+        browser: Either "Chrome", "Chromium", or "Brave"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
@@ -87,8 +87,13 @@ def get_osx_config(browser: str) -> dict:
         )
     elif browser.lower() == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
+    elif browser.lower() == "brave":
+        cookie_file = (
+            "~/Library/Application Support/"
+            "BraveSoftware/Brave-Browser/Default/Cookies"
+        )
     else:
-        raise ValueError("Browser must be either Chrome or Chromium.")
+        raise ValueError("Browser must be either Chrome, Chromium, or Brave.")
 
     config = {
         "my_pass": keyring.get_password(
@@ -104,7 +109,7 @@ def get_linux_config(browser: str) -> dict:
     """Get the settings for Chrome/Chromium cookies on Linux.
 
     Args:
-        browser: Either "Chrome" or "Chromium"
+        browser: Either "Chrome", "Chromium", or "Brave"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
@@ -114,8 +119,10 @@ def get_linux_config(browser: str) -> dict:
         cookie_file = "~/.config/google-chrome/Default/Cookies"
     elif browser.lower() == "chromium":
         cookie_file = "~/.config/chromium/Default/Cookies"
+    elif browser.lower() == "brave":
+        cookie_file = "~/.config/BraveSoftware/Brave-Browser/Default/Cookies"
     else:
-        raise ValueError("Browser must be either Chrome or Chromium.")
+        raise ValueError("Browser must be either Chrome, Chromium, or Brave.")
 
     # Set the default linux password
     config = {
