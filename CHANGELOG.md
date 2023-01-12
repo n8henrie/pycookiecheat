@@ -1,5 +1,10 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.5.0 :: 20230112
+
+- Add support for Brave thanks to Chris Gavin!
+- Migrate config to pyproject.toml alone
+
 ## v0.4.7 :: 20210826
 
 - No noteworthy API changes, hence the bugfix version bump, but some major

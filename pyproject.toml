@@ -1,7 +1,74 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>65", "setuptools_scm[toml]>=7"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 79
-target_version = ['py39']
+target_version = ['py311']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+order_by_type = false
+line_length = 79
+
+[tool.setuptools]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "pycookiecheat.__version__"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+follow_imports = "silent"
+ignore_missing_imports = true
+python_version = "3.11"
+show_column_numbers = true
+warn_incomplete_stub = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[project]
+name = "pycookiecheat"
+urls = {homepage = "https://github.com/n8henrie/pycookiecheat"}
+dynamic = ["version", "readme"]
+license = { text = "MIT" }
+description = "Borrow cookies from your browser's authenticated session for use in Python scripts."
+authors = [ {name = "Nathan Henrie", email = "nate@n8henrie.com"} ]
+keywords = ["pycookiecheat", "chrome", "chromium cookies"]
+classifiers= [
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "cryptography==3.4.6",
+    "keyring==23.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "black==22.12.0",
+    "flake8-docstrings==1.5.0",
+    "flake8-import-order==0.18.1",
+    "flake8==3.8.4",
+    "mypy==0.991",
+    "pep8-naming==0.11.1",
+    "playwright==1.14.1",
+    "pycodestyle==2.6.0",
+    "pylint==2.7.2",
+    "pytest==7.2.0",
+    "tox==4.2.8",
+]
+dev = [
+    "build==0.6.0.post1",
+    "twine==3.4.2",
+    "wheel==0.37.0",
+]

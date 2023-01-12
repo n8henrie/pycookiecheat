@@ -47,7 +47,7 @@ def ci_setup() -> t.Generator:
             ignore_default_args=[
                 "--use-mock-keychain",
             ],
-            executable_path=os.environ.get("TEST_BROWSER_PATH"),
+            executable_path=str(os.environ.get("TEST_BROWSER_PATH")),
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")

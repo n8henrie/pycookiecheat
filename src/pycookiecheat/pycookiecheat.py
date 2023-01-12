@@ -14,9 +14,9 @@ Adapted from my code at http://n8h.me/HufI1w
 import pathlib
 import sqlite3
 import sys
+import typing as t
 import urllib.error
 import urllib.parse
-from typing import Iterator, Union
 
 import keyring
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -182,10 +182,10 @@ def get_linux_config(browser: str) -> dict:
 
 def chrome_cookies(
     url: str,
-    cookie_file: str = None,
+    cookie_file: t.Optional[str] = None,
     browser: str = "Chrome",
-    curl_cookie_file: str = None,
-    password: Union[bytes, str] = None,
+    curl_cookie_file: t.Optional[str] = None,
+    password: t.Optional[t.Union[bytes, str]] = None,
 ) -> dict:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
@@ -312,7 +312,7 @@ def chrome_cookies(
     return cookies
 
 
-def generate_host_keys(hostname: str) -> Iterator[str]:
+def generate_host_keys(hostname: str) -> t.Iterator[str]:
     """Yield Chrome/Chromium keys for `hostname`, from least to most specific.
 
     Given a hostname like foo.example.com, this yields the key sequence:
