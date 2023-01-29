@@ -88,7 +88,11 @@ def get_osx_config(browser: str) -> dict:
     elif browser.lower() == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
     elif browser.lower() == "slack":
-        cookie_file = "~/Library/Application Support/Slack/Cookies"
+        cookie_file = "~/Library/Application Support/Slack/Cookies" # installed via direct download
+        # Alas, the cookies can be in two places on macos (well, one place, but possibly via that insane
+        # sandboxing of the filesystem that goes on now) so we have to hit the filesystem to check.
+        if not pathlib.Path(cookie_file).expanduser().exists():
+            cookie_file = "~/Library/Containers/com.tinyspeck.slackmacgap/Data" + cookie_file[1:] # installed from App Store
     else:
         raise ValueError("Browser must be either Chrome, Chromium or Slack.")
 
