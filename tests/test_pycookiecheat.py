@@ -126,7 +126,7 @@ def test_slack_app_macos_config() -> None:
     cfg2 = get_osx_config("SLACK")
 
     assert cfg1 == cfg2
-    assert "Slack" in cfg1['cookie_file']
+    assert "Slack" in cfg1["cookie_file"]
 
 
 def test_slack_app_linux_config() -> None:
@@ -140,4 +140,4 @@ def test_slack_app_linux_config() -> None:
     cfg2 = get_linux_config("SLACK")
 
     assert cfg1 == cfg2
-    assert "Slack" in cfg1['cookie_file']
+    assert "Slack" in cfg1["cookie_file"]
