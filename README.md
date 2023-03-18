@@ -62,7 +62,7 @@ manually specify something like
 
 ## Features
 
-- Returns decrypted cookies from Google Chrome on OSX or Linux.
+- Returns decrypted cookies from Google Chrome or Slack, on OSX or Linux.
 - Optionally outputs cookies to file (thanks to Muntashir Al-Islam!)
 
 ## FAQ / Troubleshooting
