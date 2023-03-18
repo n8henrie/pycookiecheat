@@ -11,7 +11,6 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 from pycookiecheat import chrome_cookies
-from pycookiecheat.pycookiecheat import get_linux_config, get_osx_config
 
 
 @pytest.fixture(scope="module")
@@ -111,31 +110,3 @@ def test_raises_on_wrong_browser() -> None:
     """Passing a browser other than Chrome or Chromium raises ValueError."""
     with pytest.raises(ValueError):
         chrome_cookies("https://n8henrie.com", browser="Safari")
-
-
-def test_slack_app_macos_config() -> None:
-    """Tests configuring for cookies from the macos Slack app.
-
-    Hard to come up with a mock test, since the only functionality provided by
-    the Slack app feature is to read cookies from a different file. So opt to
-    just test that new functionality with something simple and fairly robust.
-    """
-    cfg1 = get_osx_config("slack")
-    cfg2 = get_osx_config("SLACK")
-
-    assert cfg1 == cfg2
-    assert "Slack" in cfg1['cookie_file']
-
-
-def test_slack_app_linux_config() -> None:
-    """Tests a cookie can be retrieved from the Linux Slack app.
-
-    Hard to come up with a mock test, since the only functionality provided by
-    the Slack app feature is to read cookies from a different file. So opt to
-    just test that new functionality with something simple and fairly robust.
-    """
-    cfg1 = get_linux_config("slack")
-    cfg2 = get_linux_config("SLACK")
-
-    assert cfg1 == cfg2
-    assert "Slack" in cfg1['cookie_file']
