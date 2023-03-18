@@ -75,25 +75,40 @@ def get_osx_config(browser: str) -> dict:
     """Get settings for getting Chrome/Chromium cookies on OSX.
 
     Args:
-        browser: Either "Chrome", "Chromium", or "Brave"
+        browser: Either "Chrome", "Chromium", "Slack", or "Brave"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
     # Verify supported browser, fail early otherwise
-    if browser.lower() == "chrome":
+    browser = browser.lower()
+    if browser == "chrome":
         cookie_file = (
             "~/Library/Application Support/Google/Chrome/Default/Cookies"
         )
-    elif browser.lower() == "chromium":
+    elif browser == "chromium":
         cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
-    elif browser.lower() == "brave":
+    elif browser == "brave":
         cookie_file = (
             "~/Library/Application Support/"
             "BraveSoftware/Brave-Browser/Default/Cookies"
         )
+    elif browser == "slack":
+        # Alas, the cookies can be in two places on macos (well, one place,
+        # but possibly via that insane sandboxing of the filesystem that
+        # goes on now) so we have to hit the filesystem to check.
+        # This is the location is Slack is installed via direct download.
+        cookie_file = "~/Library/Application Support/Slack/Cookies"
+        if not pathlib.Path(cookie_file).expanduser().exists():
+            # And this location if Slack is installed from App Store
+            cookie_file = (
+                "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
+                + cookie_file[1:]
+            )
     else:
-        raise ValueError("Browser must be either Chrome, Chromium, or Brave.")
+        raise ValueError(
+            "Browser must be either Chrome, Chromium, Slack, or Brave."
+        )
 
     config = {
         "my_pass": keyring.get_password(
@@ -109,20 +124,25 @@ def get_linux_config(browser: str) -> dict:
     """Get the settings for Chrome/Chromium cookies on Linux.
 
     Args:
-        browser: Either "Chrome", "Chromium", or "Brave"
+        browser: Either "Chrome", "Chromium", "Slack", or "Brave"
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
     # Verify supported browser, fail early otherwise
-    if browser.lower() == "chrome":
+    browser = browser.lower()
+    if browser == "chrome":
         cookie_file = "~/.config/google-chrome/Default/Cookies"
-    elif browser.lower() == "chromium":
+    elif browser == "chromium":
         cookie_file = "~/.config/chromium/Default/Cookies"
-    elif browser.lower() == "brave":
+    elif browser == "brave":
         cookie_file = "~/.config/BraveSoftware/Brave-Browser/Default/Cookies"
+    elif browser == "slack":
+        cookie_file = "~/.config/Slack/Cookies"
     else:
-        raise ValueError("Browser must be either Chrome, Chromium, or Brave.")
+        raise ValueError(
+            "Browser must be either Chrome, Chromium, Slack, or Brave."
+        )
 
     # Set the default linux password
     config = {
@@ -148,11 +168,22 @@ def get_linux_config(browser: str) -> dict:
         gnome_keyring = service.get_collections()
         unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
-        keyring_name = "{} Safe Storage".format(browser.capitalize())
+        if browser.lower() == "chrome":
+            keyring_name = "Chrome Safe Storage"
+        else:
+            # While Slack on Linux has its own Cookies file, the password
+            # is stored in a keyring named the same as Chromium's, but with
+            # an "application" attribute of "Slack".
+            keyring_name = "Chromium Safe Storage"
 
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
                 if item.get_label() == keyring_name:
+                    item_app = item.get_attributes().get(
+                        "application", browser
+                    )
+                    if item_app.lower() != browser.lower():
+                        continue
                     item.load_secret_sync()
                     config["my_pass"] = item.get_secret().get_text()
                     pass_found = True
