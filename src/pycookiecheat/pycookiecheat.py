@@ -230,6 +230,12 @@ def chrome_cookies(
         Dictionary of cookie values for URL
 
     """
+    parsed_url = urllib.parse.urlparse(url)
+    if parsed_url.scheme:
+        domain = parsed_url.netloc
+    else:
+        raise urllib.error.URLError("You must include a scheme with your URL.")
+
     # If running Chrome on OSX
     if sys.platform == "darwin":
         config = get_osx_config(browser)
@@ -261,12 +267,6 @@ def chrome_cookies(
         salt=config["salt"],
     )
     enc_key = kdf.derive(config["my_pass"])
-
-    parsed_url = urllib.parse.urlparse(url)
-    if parsed_url.scheme:
-        domain = parsed_url.netloc
-    else:
-        raise urllib.error.URLError("You must include a scheme with your URL.")
 
     try:
         conn = sqlite3.connect("file:{}?mode=ro".format(cookie_file), uri=True)
