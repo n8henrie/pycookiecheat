@@ -15,6 +15,8 @@ from playwright.sync_api import sync_playwright
 from pycookiecheat import chrome_cookies
 from pycookiecheat.pycookiecheat import get_linux_config, get_osx_config
 
+BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
+
 
 @pytest.fixture(scope="module")
 def ci_setup() -> t.Generator:
@@ -41,6 +43,7 @@ def ci_setup() -> t.Generator:
     https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/os_crypt/keychain_password_mac.mm
     """
     with TemporaryDirectory() as cookies_home, sync_playwright() as p:
+        ex_path = os.environ.get("TEST_BROWSER_PATH")
         browser = p.chromium.launch_persistent_context(
             cookies_home,
             headless=False,
@@ -49,7 +52,7 @@ def ci_setup() -> t.Generator:
             ignore_default_args=[
                 "--use-mock-keychain",
             ],
-            executable_path=str(os.environ.get("TEST_BROWSER_PATH")),
+            executable_path=ex_path,  # type: ignore
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")
@@ -91,7 +94,7 @@ def test_no_cookies(ci_setup: str) -> None:
     empty_dict = chrome_cookies(
         never_been_here,
         cookie_file=ci_setup,
-        browser=os.environ.get("TEST_BROWSER_NAME", "Chromium"),
+        browser=BROWSER,
     )
     assert empty_dict == dict()
 
@@ -105,7 +108,7 @@ def test_fake_cookie(ci_setup: str) -> None:
     cookies = chrome_cookies(
         "https://n8henrie.com",
         cookie_file=ci_setup,
-        browser=os.environ.get("TEST_BROWSER_NAME", "Chromium"),
+        browser=BROWSER,
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
 

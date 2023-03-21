@@ -80,40 +80,51 @@ def get_osx_config(browser: str) -> dict:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    # Verify supported browser, fail early otherwise
-    browser = browser.lower()
-    if browser == "chrome":
-        cookie_file = (
-            "~/Library/Application Support/Google/Chrome/Default/Cookies"
-        )
-    elif browser == "chromium":
-        cookie_file = "~/Library/Application Support/Chromium/Default/Cookies"
-    elif browser == "brave":
-        cookie_file = (
-            "~/Library/Application Support/"
-            "BraveSoftware/Brave-Browser/Default/Cookies"
-        )
-    elif browser == "slack":
-        # Alas, the cookies can be in two places on macos (well, one place,
-        # but possibly via that insane sandboxing of the filesystem that
-        # goes on now) so we have to hit the filesystem to check.
-        # This is the location is Slack is installed via direct download.
-        cookie_file = "~/Library/Application Support/Slack/Cookies"
-        if not pathlib.Path(cookie_file).expanduser().exists():
-            # And this location if Slack is installed from App Store
-            cookie_file = (
-                "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
-                + cookie_file[1:]
-            )
-    else:
+    # Verify supported browser, fail early otherwise. Mind the capitalization,
+    # which is necessary for the password retrieval.
+    browser = browser.title()
+    try:
+        app_support = "~/Library/Application Support"
+        cookie_file = {
+            "Chrome": f"{app_support}/Google/Chrome/Default/Cookies",
+            "Chromium": f"{app_support}/Chromium/Default/Cookies",
+            "Brave": (
+                f"{app_support}/BraveSoftware/Brave-Browser/Default/Cookies"
+            ),
+            "Slack": f"{app_support}/Slack/Cookies",
+        }[browser]
+    except KeyError:
         raise ValueError(
-            "Browser must be either Chrome, Chromium, Slack, or Brave."
+            "Browser must be either Chrome, Chromium, Slack, or Brave, "
+            "but found {browser}"
+        )
+
+    # Alas, the cookies can be in two places on MacOS (well, one place, but
+    # possibly via that insane sandboxing of the filesystem that goes on now)
+    # so we have to hit the filesystem to check. This is the location is Slack
+    # is installed via direct download.
+    if (
+        browser == "Slack"
+        and not pathlib.Path(cookie_file).expanduser().exists()
+    ):
+        # And this location if Slack is installed from App Store
+        cookie_file = (
+            "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
+            + cookie_file[1:]
+        )
+
+    keyring_lookup = f"{browser} Safe Storage"
+    my_pass = keyring.get_password(keyring_lookup, browser)
+
+    if my_pass is None:
+        raise ValueError(
+            f"Could not find a password for the pair "
+            f"({keyring_lookup}, {browser}). Please manually verify they "
+            "exist in Keychain Access.app"
         )
 
     config = {
-        "my_pass": keyring.get_password(
-            "{} Safe Storage".format(browser), browser
-        ),
+        "my_pass": my_pass,
         "iterations": 1003,
         "cookie_file": cookie_file,
     }
@@ -129,19 +140,21 @@ def get_linux_config(browser: str) -> dict:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    # Verify supported browser, fail early otherwise
-    browser = browser.lower()
-    if browser == "chrome":
-        cookie_file = "~/.config/google-chrome/Default/Cookies"
-    elif browser == "chromium":
-        cookie_file = "~/.config/chromium/Default/Cookies"
-    elif browser == "brave":
-        cookie_file = "~/.config/BraveSoftware/Brave-Browser/Default/Cookies"
-    elif browser == "slack":
-        cookie_file = "~/.config/Slack/Cookies"
-    else:
+    # Verify supported browser, fail early otherwise. Mind the capitalization,
+    # which is necessary for the password retrieval.
+    browser = browser.title()
+
+    try:
+        cookie_file = {
+            "Chrome": "~/.config/google-chrome/Default/Cookies",
+            "Chromium": "~/.config/chromium/Default/Cookies",
+            "Brave": "~/.config/BraveSoftware/Brave-Browser/Default/Cookies",
+            "Slack": "~/.config/Slack/Cookies",
+        }[browser]
+    except KeyError:
         raise ValueError(
-            "Browser must be either Chrome, Chromium, Slack, or Brave."
+            "Browser must be either Chrome, Chromium, Slack, or Brave, "
+            "but found {browser}"
         )
 
     # Set the default linux password
@@ -168,13 +181,10 @@ def get_linux_config(browser: str) -> dict:
         gnome_keyring = service.get_collections()
         unlocked_keyrings = service.unlock_sync(gnome_keyring).unlocked
 
-        if browser.lower() == "chrome":
-            keyring_name = "Chrome Safe Storage"
-        else:
-            # While Slack on Linux has its own Cookies file, the password
-            # is stored in a keyring named the same as Chromium's, but with
-            # an "application" attribute of "Slack".
-            keyring_name = "Chromium Safe Storage"
+        # While Slack on Linux has its own Cookies file, the password
+        # is stored in a keyring named the same as Chromium's, but with
+        # an "application" attribute of "Slack".
+        keyring_name = f"{browser} Safe Storage"
 
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
@@ -200,7 +210,8 @@ def get_linux_config(browser: str) -> dict:
     if not pass_found:
         try:
             my_pass = keyring.get_password(
-                "{} Keys".format(browser), "{} Safe Storage".format(browser)
+                f"{browser} Keys",
+                f"{browser} Safe Storage",
             )
         except RuntimeError:
             pass
