@@ -75,7 +75,7 @@ def ci_setup() -> t.Generator:
 def test_raises_on_empty() -> None:
     """Ensure that `chrome_cookies()` raises."""
     with pytest.raises(TypeError):
-        chrome_cookies()
+        chrome_cookies()  # type: ignore
 
 
 def test_raises_without_scheme() -> None:
