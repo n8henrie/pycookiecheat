@@ -12,7 +12,7 @@ from uuid import uuid4
 import pytest
 from playwright.sync_api import sync_playwright
 
-from pycookiecheat import chrome_cookies
+from pycookiecheat import chrome_cookies, get_linux_config, get_osx_config
 
 BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
 
@@ -74,7 +74,7 @@ def ci_setup() -> t.Generator:
 def test_raises_on_empty() -> None:
     """Ensure that `chrome_cookies()` raises."""
     with pytest.raises(TypeError):
-        chrome_cookies()  # type: ignore
+        chrome_cookies()
 
 
 def test_raises_without_scheme() -> None:
