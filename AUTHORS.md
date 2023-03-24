@@ -6,6 +6,4 @@
 
 ## Contributors
 
-- [Kostis Anagnostopoulos](https://github.com/ankostis)
-- [Dani García](https://github.com/dani14-96)
-- [Thinh Nguyen](https://github.com/Taik)
+- <https://github.com/n8henrie/pycookiecheat/graphs/contributors>

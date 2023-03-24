@@ -1,5 +1,12 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.5.0 :: 20230324
+
+- Add support for Brave thanks to @chrisgavin!
+- Add support for Slack thanks to @hraftery!
+- Migrate config to pyproject.toml alone
+- Minor cleanup to codebase and tests
+
 ## v0.4.7 :: 20210826
 
 - No noteworthy API changes, hence the bugfix version bump, but some major

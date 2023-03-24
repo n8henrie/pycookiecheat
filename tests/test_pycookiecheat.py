@@ -1,5 +1,7 @@
 """test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
+import os
+import sys
 import time
 import typing as t
 from pathlib import Path
@@ -11,6 +13,8 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 from pycookiecheat import chrome_cookies
+
+BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
 
 
 @pytest.fixture(scope="module")
@@ -38,6 +42,7 @@ def ci_setup() -> t.Generator:
     https://chromium.googlesource.com/chromium/src/+/refs/heads/master/components/os_crypt/keychain_password_mac.mm
     """
     with TemporaryDirectory() as cookies_home, sync_playwright() as p:
+        ex_path = os.environ.get("TEST_BROWSER_PATH")
         browser = p.chromium.launch_persistent_context(
             cookies_home,
             headless=False,
@@ -46,6 +51,7 @@ def ci_setup() -> t.Generator:
             ignore_default_args=[
                 "--use-mock-keychain",
             ],
+            executable_path=ex_path,  # type: ignore
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")
@@ -87,7 +93,7 @@ def test_no_cookies(ci_setup: str) -> None:
     empty_dict = chrome_cookies(
         never_been_here,
         cookie_file=ci_setup,
-        browser="Chromium",
+        browser=BROWSER,
     )
     assert empty_dict == dict()
 
@@ -101,7 +107,7 @@ def test_fake_cookie(ci_setup: str) -> None:
     cookies = chrome_cookies(
         "https://n8henrie.com",
         cookie_file=ci_setup,
-        browser="Chromium",
+        browser=BROWSER,
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
 
@@ -110,3 +116,21 @@ def test_raises_on_wrong_browser() -> None:
     """Passing a browser other than Chrome or Chromium raises ValueError."""
     with pytest.raises(ValueError):
         chrome_cookies("https://n8henrie.com", browser="Safari")
+
+
+def test_slack_config() -> None:
+    """Tests configuring for cookies from the macos Slack app.
+
+    Hard to come up with a mock test, since the only functionality provided by
+    the Slack app feature is to read cookies from a different file. So opt to
+    just test that new functionality with something simple and fairly robust.
+    """
+    if sys.platform == "darwin":
+        cfg1 = get_osx_config("slack")
+        cfg2 = get_osx_config("SLACK")
+    else:
+        cfg1 = get_linux_config("slack")
+        cfg2 = get_linux_config("SLACK")
+
+    assert cfg1 == cfg2
+    assert "Slack" in cfg1["cookie_file"]

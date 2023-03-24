@@ -15,9 +15,11 @@ jobs:
           - "3.7"
           - "3.8"
           - "3.9"
+          - "3.10"
+          - "3.11"
 
     env:
-      TOX_TESTENV_PASSENV: "XAUTHORITY DISPLAY"
+      TOX_TESTENV_PASSENV: "XAUTHORITY DISPLAY TEST_BROWSER_NAME TEST_BROWSER_PATH"
 
     steps:
     - uses: actions/checkout@v2
@@ -34,7 +36,20 @@ jobs:
           ${{ runner.os }}-pip-
     - name: Install tox
       run: python -m pip install "tox>=3,<4"
-    - name: Run tests via tox
+    - name: Install Brave
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https curl
+        curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key add -
+        echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+        sudo apt-get update
+        sudo apt-get install --yes brave-browser
+    - name: Run tests via tox (Chromium)
+      run: xvfb-run -- python -m tox -e py
+    - name: Run tests via tox (Brave)
+      env:
+        TEST_BROWSER_NAME: Brave
+        TEST_BROWSER_PATH: /usr/bin/brave-browser
       run: xvfb-run -- python -m tox -e py
     - if: "matrix.python-version == '3.9'"
       name: Lint
