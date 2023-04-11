@@ -92,6 +92,7 @@ def get_osx_config(browser: str) -> dict:
                 f"{app_support}/BraveSoftware/Brave-Browser/Default/Cookies"
             ),
             "Slack": f"{app_support}/Slack/Cookies",
+            "Arc": f"{app_support}/Arc/User Data/Default/Cookies",
         }[browser]
     except KeyError:
         raise ValueError(
