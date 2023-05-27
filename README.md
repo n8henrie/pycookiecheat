@@ -55,10 +55,10 @@ r = requests.get(url, cookies=cookies)
 Use the `cookie_file` keyword-argument to specify a different filepath for the
 cookies-file: `chrome_cookies(url, cookie_file='/abspath/to/cookies')`
 
-Keep in mind that pycookiecheat defaults to looking for cookies for
-Chromium, not Google Chrome, so if you're using the latter, you'll need to
-manually specify something like
-`"/home/username/.config/google-chrome/Default/Cookies"` as your `cookie_file`.
+Keep in mind that pycookiecheat defaults to looking for cookies for Google
+Chrome, not Chromium, so if you're using the latter, you'll need to manually
+specify something like `"/home/username/.config/chromium/Default/Cookies"` (for
+Linux) as your `cookie_file`.
 
 ## Features
 
