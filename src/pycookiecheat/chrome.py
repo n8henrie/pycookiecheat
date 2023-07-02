@@ -25,6 +25,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+from pycookiecheat.common import Cookie
 from pycookiecheat.common import generate_host_keys
 
 
@@ -308,9 +309,7 @@ def chrome_cookies(
         "from cookies where host_key like ?"
     )
 
-    cookies = dict()
-    curl_cookies = []
-
+    cookies: list[Cookie] = []
     for host_key in generate_host_keys(domain):
         for (
             hk,
@@ -329,27 +328,17 @@ def chrome_cookies(
                 val = chrome_decrypt(
                     enc_val, key=enc_key, init_vector=config["init_vector"]
                 )
-            cookies[cookie_key] = val
-            if curl_cookie_file:
-                curl_cookies.append(
-                    "\t".join(
-                        [
-                            hk,
-                            "TRUE",
-                            path,
-                            "TRUE" if is_secure else "FALSE",
-                            str(expires_utc),
-                            cookie_key,
-                            val,
-                        ]
-                    )
+            cookies.append(
+                Cookie.from_chrome(
+                    cookie_key, val, hk, path, expires_utc, is_secure
                 )
+            )
 
     conn.rollback()
 
-    # Save the file to destination
     if curl_cookie_file:
         with open(curl_cookie_file, "w") as text_file:
-            text_file.write("\n".join(curl_cookies) + "\n")
+            for c in cookies:
+                print(c.as_cookie_file_line(), file=text_file)
 
-    return cookies
+    return {c.key: c.value for c in cookies}

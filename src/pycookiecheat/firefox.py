@@ -9,6 +9,7 @@ import urllib
 import urllib.parse
 import urllib.error
 
+from pycookiecheat.common import Cookie
 from pycookiecheat.common import generate_host_keys
 
 FIREFOX_COOKIE_SELECT_SQL = """
@@ -185,8 +186,7 @@ def firefox_cookies(
             + ", ".join(FIREFOX_OS_PROFILE_DIRS.keys())
         )
 
-    cookies = {}
-    curl_cookies = []
+    cookies: list[Cookie] = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         db_file = _load_firefox_cookie_db(
             profiles_dir, Path(tmp_dir), profile_name
@@ -196,23 +196,9 @@ def firefox_cookies(
                 con.row_factory = sqlite3.Row
                 res = con.execute(FIREFOX_COOKIE_SELECT_SQL, (host_key,))
                 for row in res.fetchall():
-                    cookies[row["name"]] = row["value"]
-                    if curl_cookie_file:
-                        # http://www.cookiecentral.com/faq/#3.5
-                        curl_cookies.append(
-                            "\t".join(
-                                [
-                                    row["host"],
-                                    "TRUE",
-                                    row["path"],
-                                    "TRUE" if row["isSecure"] else "FALSE",
-                                    str(row["expiry"]),
-                                    row["key"],
-                                    row["value"],
-                                ]
-                            )
-                        )
+                    cookies.append(Cookie.from_firefox(row))
     if curl_cookie_file:
         with open(curl_cookie_file, "w") as text_file:
-            text_file.write("\n".join(curl_cookies) + "\n")
-    return cookies
+            for c in cookies:
+                print(c.as_cookie_file_line(), file=text_file)
+    return {c.key: c.value for c in cookies}
