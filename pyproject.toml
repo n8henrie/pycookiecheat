@@ -38,7 +38,7 @@ dynamic = ["version", "readme"]
 license = { text = "MIT" }
 description = "Borrow cookies from your browser's authenticated session for use in Python scripts."
 authors = [ {name = "Nathan Henrie", email = "nate@n8henrie.com"} ]
-keywords = ["pycookiecheat", "chrome", "chromium cookies"]
+keywords = ["pycookiecheat", "chrome", "chromium cookies", "cookies", "firefox"]
 classifiers= [
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
