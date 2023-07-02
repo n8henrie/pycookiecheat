@@ -21,13 +21,25 @@ import urllib.parse
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from pycookiecheat.common import generate_host_keys
+from pycookiecheat.common import Cookie, generate_host_keys
 
 
 FIREFOX_COOKIE_SELECT_SQL = """
-    SELECT host, name, value, `path`, isSecure, expiry
+    SELECT
+        `host` AS host_key,
+        name,
+        value,
+        `path`,
+        isSecure AS is_secure,
+        expiry AS expires_utc
     FROM moz_cookies
     WHERE host = ?;
+"""
+"""
+The query for selecting the cookies for a host.
+
+Rename some columns to match the Chrome cookie db row names.
+This makes the common.Cookie class simpler.
 """
 
 FIREFOX_OS_PROFILE_DIRS: Dict[str, Dict[str, str]] = {
@@ -193,8 +205,7 @@ def firefox_cookies(
         )
     profiles_dir = _get_profiles_dir_for_os(os, browser)
 
-    cookies = {}
-    curl_cookies = []
+    cookies: list[Cookie] = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         db_file = _load_firefox_cookie_db(
             profiles_dir, Path(tmp_dir), profile_name
@@ -204,23 +215,9 @@ def firefox_cookies(
                 con.row_factory = sqlite3.Row
                 res = con.execute(FIREFOX_COOKIE_SELECT_SQL, (host_key,))
                 for row in res.fetchall():
-                    cookies[row["name"]] = row["value"]
-                    if curl_cookie_file:
-                        # http://www.cookiecentral.com/faq/#3.5
-                        curl_cookies.append(
-                            "\t".join(
-                                [
-                                    row["host"],
-                                    "TRUE",
-                                    row["path"],
-                                    "TRUE" if row["isSecure"] else "FALSE",
-                                    str(row["expiry"]),
-                                    row["name"],
-                                    row["value"],
-                                ]
-                            )
-                        )
+                    cookies.append(Cookie(**row))
     if curl_cookie_file:
         with open(curl_cookie_file, "w") as text_file:
-            text_file.write("\n".join(curl_cookies) + "\n")
-    return cookies
+            for c in cookies:
+                print(c.as_cookie_file_line(), file=text_file)
+    return {c.name: c.value for c in cookies}
