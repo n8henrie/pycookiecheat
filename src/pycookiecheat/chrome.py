@@ -25,6 +25,8 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+from pycookiecheat.common import generate_host_keys
+
 
 def clean(decrypted: bytes) -> str:
     r"""Strip padding from decrypted value.
@@ -329,7 +331,6 @@ def chrome_cookies(
                 )
             cookies[cookie_key] = val
             if curl_cookie_file:
-                # http://www.cookiecentral.com/faq/#3.5
                 curl_cookies.append(
                     "\t".join(
                         [
@@ -352,21 +353,3 @@ def chrome_cookies(
             text_file.write("\n".join(curl_cookies) + "\n")
 
     return cookies
-
-
-def generate_host_keys(hostname: str) -> t.Iterator[str]:
-    """Yield Chrome/Chromium keys for `hostname`, from least to most specific.
-
-    Given a hostname like foo.example.com, this yields the key sequence:
-
-    example.com
-    .example.com
-    foo.example.com
-    .foo.example.com
-
-    """
-    labels = hostname.split(".")
-    for i in range(2, len(labels) + 1):
-        domain = ".".join(labels[-i:])
-        yield domain
-        yield "." + domain

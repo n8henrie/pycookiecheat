@@ -9,8 +9,10 @@ import urllib
 import urllib.parse
 import urllib.error
 
+from pycookiecheat.common import generate_host_keys
+
 FIREFOX_COOKIE_SELECT_SQL = """
-    SELECT name, value, `path`, isSecure, expiry
+    SELECT host, name, value, `path`, isSecure, expiry
     FROM moz_cookies
     WHERE host = ?;
 """
@@ -152,7 +154,7 @@ def firefox_cookies(
     profile_name: str | None = None,
     browser: str = "Firefox",
     curl_cookie_file: str | None = None,
-) -> dict:
+) -> dict[str, str]:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
 
     Args:
@@ -189,25 +191,27 @@ def firefox_cookies(
         db_file = _load_firefox_cookie_db(
             profiles_dir, Path(tmp_dir), profile_name
         )
-        with sqlite3.connect(db_file) as con:
-            res = con.execute(FIREFOX_COOKIE_SELECT_SQL, (domain,))
-            for key, value, path, is_secure, expiry in res.fetchall():
-                cookies[key] = value
-                if curl_cookie_file:
-                    # http://www.cookiecentral.com/faq/#3.5
-                    curl_cookies.append(
-                        "\t".join(
-                            [
-                                domain,
-                                "TRUE",
-                                path,
-                                "TRUE" if is_secure else "FALSE",
-                                str(expiry),
-                                key,
-                                value,
-                            ]
+        for host_key in generate_host_keys(domain):
+            with sqlite3.connect(db_file) as con:
+                con.row_factory = sqlite3.Row
+                res = con.execute(FIREFOX_COOKIE_SELECT_SQL, (host_key,))
+                for row in res.fetchall():
+                    cookies[row["name"]] = row["value"]
+                    if curl_cookie_file:
+                        # http://www.cookiecentral.com/faq/#3.5
+                        curl_cookies.append(
+                            "\t".join(
+                                [
+                                    row["host"],
+                                    "TRUE",
+                                    row["path"],
+                                    "TRUE" if row["isSecure"] else "FALSE",
+                                    str(row["expiry"]),
+                                    row["key"],
+                                    row["value"],
+                                ]
+                            )
                         )
-                    )
     if curl_cookie_file:
         with open(curl_cookie_file, "w") as text_file:
             text_file.write("\n".join(curl_cookies) + "\n")
