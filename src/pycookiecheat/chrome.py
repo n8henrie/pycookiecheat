@@ -25,6 +25,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+from pycookiecheat.common import Cookie
 from pycookiecheat.common import generate_host_keys
 
 
@@ -287,6 +288,8 @@ def chrome_cookies(
         print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
         raise
 
+    conn.row_factory = sqlite3.Row
+
     # Check whether the column name is `secure` or `is_secure`
     secure_column_name = "is_secure"
     for (
@@ -298,7 +301,7 @@ def chrome_cookies(
         pk,
     ) in conn.execute("PRAGMA table_info(cookies)"):
         if column_name == "secure":
-            secure_column_name = "secure"
+            secure_column_name = "secure AS is_secure"
             break
 
     sql = (
@@ -308,49 +311,28 @@ def chrome_cookies(
         "from cookies where host_key like ?"
     )
 
-    cookies = dict()
-    curl_cookies = []
-
+    cookies: list[Cookie] = []
     for host_key in generate_host_keys(domain):
-        for (
-            hk,
-            path,
-            is_secure,
-            expires_utc,
-            cookie_key,
-            val,
-            enc_val,
-        ) in conn.execute(sql, (host_key,)):
+        for db_row in conn.execute(sql, (host_key,)):
             # if there is a not encrypted value or if the encrypted value
             # doesn't start with the 'v1[01]' prefix, return v
-            if val or (enc_val[:3] not in {b"v10", b"v11"}):
-                pass
-            else:
-                val = chrome_decrypt(
-                    enc_val, key=enc_key, init_vector=config["init_vector"]
+            row = dict(db_row)
+            if not row["value"] and (
+                row["encrypted_value"][:3] in {b"v10", b"v11"}
+            ):
+                row["value"] = chrome_decrypt(
+                    row["encrypted_value"],
+                    key=enc_key,
+                    init_vector=config["init_vector"],
                 )
-            cookies[cookie_key] = val
-            if curl_cookie_file:
-                # http://www.cookiecentral.com/faq/#3.5
-                curl_cookies.append(
-                    "\t".join(
-                        [
-                            hk,
-                            "TRUE",
-                            path,
-                            "TRUE" if is_secure else "FALSE",
-                            str(expires_utc),
-                            cookie_key,
-                            val,
-                        ]
-                    )
-                )
+            del row["encrypted_value"]
+            cookies.append(Cookie(**row))
 
     conn.rollback()
 
-    # Save the file to destination
     if curl_cookie_file:
         with open(curl_cookie_file, "w") as text_file:
-            text_file.write("\n".join(curl_cookies) + "\n")
+            for c in cookies:
+                print(c.as_cookie_file_line(), file=text_file)
 
-    return cookies
+    return {c.name: c.value for c in cookies}

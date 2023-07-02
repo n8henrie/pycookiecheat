@@ -1,4 +1,29 @@
+from dataclasses import dataclass
 from typing import Iterator
+
+
+@dataclass
+class Cookie:
+    name: str
+    value: str
+    host_key: str
+    path: str
+    expires_utc: int
+    is_secure: int
+
+    def as_cookie_file_line(self) -> str:
+        # http://www.cookiecentral.com/faq/#3.5
+        return "\t".join(
+            [
+                self.host_key,
+                "TRUE",
+                self.path,
+                "TRUE" if self.is_secure else "FALSE",
+                str(self.expires_utc),
+                self.name,
+                self.value,
+            ]
+        )
 
 
 def generate_host_keys(hostname: str) -> Iterator[str]:
