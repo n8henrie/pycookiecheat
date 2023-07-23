@@ -21,7 +21,7 @@ class Cookie:
     def as_cookie_file_line(self) -> str:
         """Return a string for a Netscape-style cookie file usable by curl.
 
-        See details athttp://www.cookiecentral.com/faq/#3.5
+        See details at http://www.cookiecentral.com/faq/#3.5
         """
         return "\t".join(
             [
