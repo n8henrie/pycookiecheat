@@ -104,7 +104,7 @@ PROFILES_INI_VERSION2_NO_DEFAULT = dedent(
 def _make_test_profiles(
     tmp_path: Path, profiles_ini_content: str, populate: bool = True
 ) -> Iterator[Path]:
-    """Create populated Firefox data dir with profile & optionally populate it.
+    """Create a Firefox data dir with profile & (optionally) populate it.
 
     All of the fixtures using this function use the pytest builtin `tmp_path`
     or `tmp_path_factory` fixtures to create their temporary directories.
@@ -127,7 +127,7 @@ def _make_test_profiles(
 
 @pytest.fixture(scope="module")
 def profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
-    """Create populated Firefox data dir with profile & cookie DB."""
+    """Create a Firefox data dir with profiles & cookie DBs."""
     yield from _make_test_profiles(
         tmp_path_factory.mktemp("_"), PROFILES_INI_VERSION2
     )
@@ -145,7 +145,7 @@ def profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
 def profiles_ini_versions(
     tmp_path_factory: TempPathFactory, request: FixtureRequest
 ) -> Iterator[Path]:
-    """Create populated Firefox data dir using varius `profiles.ini` types.
+    """Create a Firefox data dir using varius `profiles.ini` types.
 
     Use different file format versions and contents.
     """
@@ -154,7 +154,7 @@ def profiles_ini_versions(
 
 @pytest.fixture(scope="module")
 def no_profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
-    """Create Firefox data dir with `profiles.ini` but no profiles."""
+    """Create a Firefox data dir with a `profiles.ini` with no profiles."""
     yield from _make_test_profiles(
         tmp_path_factory.mktemp("_"), PROFILES_INI_EMPTY
     )
@@ -164,7 +164,7 @@ def no_profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
 #       fixture. Find out why.
 @pytest.fixture
 def profiles_unpopulated(tmp_path: Path) -> Iterator[Path]:
-    """Create Firefox data dir with valid but upopulated `profiles.ini` file.
+    """Create a Firefox data dir with valid but upopulated `profiles.ini` file.
 
     "Unpopulated" means never actually used to launch Firefox with.
     """
