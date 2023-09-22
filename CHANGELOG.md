@@ -1,5 +1,11 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.6.0 :: 20230324
+
+- Add firefox support , thanks to @grandchild
+    - Also would like to welcome @grandchild as a new member of the
+      pycookiecheat team!
+
 ## v0.5.0 :: 20230324
 
 - Add support for Brave thanks to @chrisgavin!
