@@ -49,7 +49,7 @@ classifiers= [
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
-    "cryptography==39.0.1",
+    "cryptography==41.0.4",
     "keyring==23.0.0",
 ]
 
