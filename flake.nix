@@ -20,12 +20,15 @@
       system: let
         pkgs = import nixpkgs {inherit system;};
         pname = "pycookiecheat";
+        propagatedBuildInputs = with pkgs.python311Packages; [
+          cryptography
+          keyring
+        ];
         pycookiecheat = {
           lib,
           python311,
-          fetchPypi,
         }:
-          python311.pkgs.buildPythonApplication {
+          python311.pkgs.buildPythonPackage {
             inherit pname;
             version =
               builtins.elemAt
@@ -43,19 +46,16 @@
             nativeBuildInputs = with pkgs.python311Packages; [
               setuptools-scm
             ];
-            propagatedBuildInputs = with pkgs.python311Packages; [
-              cryptography
-              keyring
-            ];
+            inherit propagatedBuildInputs;
           };
       in {
         packages.${system} = {
-          default = self.packages.${system}.${pname};
           ${pname} = pkgs.callPackage pycookiecheat {};
+          default = pkgs.python311.withPackages (_: [self.packages.${system}.${pname}]);
         };
 
         devShells.${system}.default = pkgs.mkShell {
-          buildInputs = [pkgs.python311];
+          buildInputs = [(pkgs.python311.withPackages (_: propagatedBuildInputs))];
         };
       }
     );
