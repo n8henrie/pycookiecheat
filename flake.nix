@@ -39,7 +39,7 @@
               1;
 
             src = lib.cleanSource ./.;
-            format = "pyproject";
+            pyproject = true;
             nativeBuildInputs = with pkgs.python311Packages; [
               setuptools-scm
             ];
