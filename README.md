@@ -62,8 +62,8 @@ Linux) as your `cookie_file`.
 
 ## Features
 
-- Returns decrypted cookies from Google Chrome, Brave, or Slack, on OSX or
-  Linux.
+- Returns decrypted cookies from Google Chrome, Brave, Slack, on macOS or
+  Linux, and Arc on macOS
 - Optionally outputs cookies to file (thanks to Muntashir Al-Islam!)
 
 ## FAQ / Troubleshooting

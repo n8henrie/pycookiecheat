@@ -85,20 +85,24 @@ def get_osx_config(browser: str) -> dict:
     # Verify supported browser, fail early otherwise. Mind the capitalization,
     # which is necessary for the password retrieval.
     browser = browser.title()
+    app_support = "~/Library/Application Support"
+    browsers = {
+        "Chrome": f"{app_support}/Google/Chrome/Default/Cookies",
+        "Chromium": f"{app_support}/Chromium/Default/Cookies",
+        "Brave": (
+            f"{app_support}/BraveSoftware/Brave-Browser/Default/Cookies"
+        ),
+        "Slack": f"{app_support}/Slack/Cookies",
+        "Arc": f'{app_support}/Arc/User Data/Default/Cookies',
+    }
     try:
-        app_support = "~/Library/Application Support"
-        cookie_file = {
-            "Chrome": f"{app_support}/Google/Chrome/Default/Cookies",
-            "Chromium": f"{app_support}/Chromium/Default/Cookies",
-            "Brave": (
-                f"{app_support}/BraveSoftware/Brave-Browser/Default/Cookies"
-            ),
-            "Slack": f"{app_support}/Slack/Cookies",
-        }[browser]
+        cookie_file = browsers[browser]
     except KeyError:
+        supported_browsers = list(browsers)
         raise ValueError(
-            "Browser must be either Chrome, Chromium, Slack, or Brave, "
-            "but found {browser}"
+            f"Browser must be either {', '.join(supported_browsers[:-1])} "
+            f"or {supported_browsers[-1]}, "
+            f"but found {browser}"
         )
 
     # Alas, the cookies can be in two places on MacOS (well, one place, but
