@@ -115,14 +115,15 @@ def get_osx_config(browser: str) -> dict:
             + cookie_file[1:]
         )
 
-    keyring_lookup = f"{browser} Safe Storage"
-    my_pass = keyring.get_password(keyring_lookup, browser)
+    keyring_service_name = f"{browser} Safe Storage"
+    keyring_username = "Slack Key" if browser == "Slack" else browser
+    my_pass = keyring.get_password(keyring_service_name, keyring_username)
 
     if my_pass is None:
         raise ValueError(
-            f"Could not find a password for the pair "
-            f"({keyring_lookup}, {browser}). Please manually verify they "
-            "exist in Keychain Access.app"
+            "Could not find a password for the pair "
+            f"({keyring_service_name}, {keyring_username}). Please manually "
+            "verify they exist in Keychain Access.app"
         )
 
     config = {
