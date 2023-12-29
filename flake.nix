@@ -67,7 +67,21 @@
         };
 
         devShells.${system}.default = pkgs.mkShell {
-          buildInputs = [(pkgs.python311.withPackages (_: propagatedBuildInputs))];
+          buildInputs = with pkgs; [
+            python37
+            python38
+            python39
+            python310
+            (python311.withPackages (
+              ps:
+                propagatedBuildInputs
+                ++ (with ps; [
+                  mypy
+                  pytest
+                  tox
+                ])
+            ))
+          ];
         };
       }
     );
