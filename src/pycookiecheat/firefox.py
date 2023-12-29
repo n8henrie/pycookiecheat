@@ -21,8 +21,12 @@ import urllib.parse
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from pycookiecheat.common import Cookie, generate_host_keys
-
+from pycookiecheat.common import (
+    _deprecation_warning,
+    BrowserType,
+    Cookie,
+    generate_host_keys,
+)
 
 FIREFOX_COOKIE_SELECT_SQL = """
     SELECT
@@ -44,13 +48,13 @@ This makes the common.Cookie class simpler.
 
 FIREFOX_OS_PROFILE_DIRS: Dict[str, Dict[str, str]] = {
     "linux": {
-        "Firefox": "~/.mozilla/firefox",
+        BrowserType.FIREFOX: "~/.mozilla/firefox",
     },
     "osx": {
-        "Firefox": "~/Library/Application Support/Firefox/Profiles",
+        BrowserType.FIREFOX: "~/Library/Application Support/Firefox/Profiles",
     },
     "windows": {
-        "Firefox": "~/AppData/Roaming/Mozilla/Firefox/Profiles",
+        BrowserType.FIREFOX: "~/AppData/Roaming/Mozilla/Firefox/Profiles",
     },
 }
 
@@ -61,9 +65,10 @@ class FirefoxProfileNotPopulatedError(Exception):
     pass
 
 
-def _get_profiles_dir_for_os(os: str, browser: str = "Firefox") -> Path:
+def _get_profiles_dir_for_os(
+    os: str, browser: BrowserType = BrowserType.FIREFOX
+) -> Path:
     """Retrieve the default directory containing the user profiles."""
-    browser = browser.title()
     try:
         os_config = FIREFOX_OS_PROFILE_DIRS[os]
     except KeyError:
@@ -171,7 +176,7 @@ def _load_firefox_cookie_db(
 def firefox_cookies(
     url: str,
     profile_name: Optional[str] = None,
-    browser: str = "Firefox",
+    browser: BrowserType = BrowserType.FIREFOX,
     curl_cookie_file: Optional[str] = None,
 ) -> Dict[str, str]:
     """Retrieve cookies from Chrome/Chromium on OSX or Linux.
@@ -181,7 +186,7 @@ def firefox_cookies(
         profile_name: Name (or glob pattern) of the Firefox profile to search
                       for cookies -- if none given it will find the configured
                       default profile
-        browser: Name of the browser's cookies to read (must be 'Firefox')
+        browser: Enum variant representing browser of interest
         curl_cookie_file: Path to save the cookie file to be used with cURL
     Returns:
         Dictionary of cookie values for URL
@@ -203,6 +208,15 @@ def firefox_cookies(
             "This script only works on "
             + ", ".join(FIREFOX_OS_PROFILE_DIRS.keys())
         )
+
+    # TODO: 20231229 remove str support after some deprecation period
+    if not isinstance(browser, BrowserType):
+        _deprecation_warning(
+            "Please pass `browser` as a `BrowserType` instead of "
+            f"`{browser.__class__.__qualname__}`."
+        )
+        browser = BrowserType(browser)
+
     profiles_dir = _get_profiles_dir_for_os(os, browser)
 
     cookies: list[Cookie] = []

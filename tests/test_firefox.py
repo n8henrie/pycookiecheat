@@ -14,6 +14,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 from pytest import FixtureRequest, TempPathFactory
 
+from pycookiecheat.common import BrowserType
 from pycookiecheat.firefox import (
     _find_firefox_default_profile,
     _get_profiles_dir_for_os,
@@ -255,7 +256,7 @@ def test_get_profiles_dir_for_os_valid(
     Test only implicit "Firefox" default, since it's the only type we currently
     support.
     """
-    profiles_dir = _get_profiles_dir_for_os(os_name, "Firefox")
+    profiles_dir = _get_profiles_dir_for_os(os_name, BrowserType.FIREFOX)
     assert profiles_dir == Path(expected_dir).expanduser()
 
 
@@ -264,7 +265,7 @@ def test_get_profiles_dir_for_os_invalid() -> None:
     with pytest.raises(ValueError, match="OS must be one of"):
         _get_profiles_dir_for_os("invalid")
     with pytest.raises(ValueError, match="Browser must be one of"):
-        _get_profiles_dir_for_os("linux", "invalid")
+        _get_profiles_dir_for_os("linux", "invalid")  # type: ignore
 
 
 # _find_firefox_default_profile()
@@ -335,6 +336,23 @@ def test_load_firefox_cookie_db_copy_error(
 def test_firefox_cookies(set_cookie: None) -> None:
     """Test getting Firefox cookies after visiting a site with cookies."""
     cookies = firefox_cookies("http://localhost", TEST_PROFILE_DIR)
+    assert len(cookies) > 0
+    assert cookies["foo"] == "bar"
+
+
+def test_warns_for_string_browser(set_cookie: None) -> None:
+    """Browser should be passed as `BrowserType` and warns for strings."""
+    with pytest.warns(
+        DeprecationWarning,
+        match=(
+            "Please pass `browser` as a `BrowserType` " "instead of `str`."
+        ),
+    ):
+        cookies = firefox_cookies(
+            "http://localhost",
+            TEST_PROFILE_DIR,
+            browser="firefox",  # type: ignore
+        )
     assert len(cookies) > 0
     assert cookies["foo"] == "bar"
 
