@@ -12,9 +12,8 @@ from uuid import uuid4
 import pytest
 from playwright.sync_api import sync_playwright
 
-from pycookiecheat import chrome_cookies
+from pycookiecheat import BrowserType, chrome_cookies
 from pycookiecheat.chrome import get_linux_config, get_osx_config
-from pycookiecheat.common import BrowserType
 
 BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
 

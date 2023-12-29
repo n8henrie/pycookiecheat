@@ -14,15 +14,13 @@ import pytest
 from playwright.sync_api import sync_playwright
 from pytest import FixtureRequest, TempPathFactory
 
-from pycookiecheat.common import BrowserType
+from pycookiecheat import BrowserType, firefox_cookies
 from pycookiecheat.firefox import (
     _find_firefox_default_profile,
     _get_profiles_dir_for_os,
     _load_firefox_cookie_db,
-    firefox_cookies,
     FirefoxProfileNotPopulatedError,
 )
-
 
 TEST_PROFILE_NAME = "test-profile"
 TEST_PROFILE_DIR = f"1234abcd.{TEST_PROFILE_NAME}"
