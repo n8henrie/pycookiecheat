@@ -61,7 +61,11 @@ def generate_host_keys(hostname: str) -> Iterator[str]:
         yield "." + domain
 
 
-def _deprecation_warning(msg: str):
+def deprecation_warning(msg: str):
+    """Raise a deprecation warning with the provided message.
+
+    `stacklevel=3` tries to show the appropriate calling code to the user.
+    """
     warn(msg, DeprecationWarning, stacklevel=3)
 
 
