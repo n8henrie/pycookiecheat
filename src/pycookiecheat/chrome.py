@@ -218,7 +218,7 @@ def get_linux_config(browser: BrowserType) -> dict:
 def chrome_cookies(
     url: str,
     cookie_file: t.Optional[t.Union[str, Path]] = None,
-    browser: t.Optional[BrowserType] = None,
+    browser: t.Optional[BrowserType] = BrowserType.CHROME,
     curl_cookie_file: t.Optional[str] = None,
     password: t.Optional[t.Union[bytes, str]] = None,
 ) -> dict:
@@ -240,13 +240,8 @@ def chrome_cookies(
     else:
         raise urllib.error.URLError("You must include a scheme with your URL.")
 
-    # TODO: Refactor to match statement once depending on >= 3.10
-    if browser is None:
-        browser = BrowserType.CHROME
-    elif isinstance(browser, BrowserType):
-        pass
     # TODO: 20231229 remove str support after some deprecation period
-    else:
+    if not isinstance(browser, BrowserType):
         _deprecation_warning(
             "Please pass `browser` as a `BrowserType` instead of "
             f"`{browser.__class__.__qualname__}`."
