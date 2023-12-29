@@ -179,7 +179,7 @@ def firefox_cookies(
     browser: BrowserType = BrowserType.FIREFOX,
     curl_cookie_file: Optional[str] = None,
 ) -> Dict[str, str]:
-    """Retrieve cookies from Chrome/Chromium on OSX or Linux.
+    """Retrieve cookies from Firefox on MacOS or Linux.
 
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
