@@ -22,9 +22,9 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from pycookiecheat.common import (
-    _deprecation_warning,
     BrowserType,
     Cookie,
+    deprecation_warning,
     generate_host_keys,
 )
 
@@ -211,7 +211,7 @@ def firefox_cookies(
 
     # TODO: 20231229 remove str support after some deprecation period
     if not isinstance(browser, BrowserType):
-        _deprecation_warning(
+        deprecation_warning(
             "Please pass `browser` as a `BrowserType` instead of "
             f"`{browser.__class__.__qualname__}`."
         )
