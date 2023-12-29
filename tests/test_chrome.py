@@ -164,4 +164,4 @@ def test_slack_config() -> None:
         cfgs.append(get_linux_config(BrowserType("SLACK")))
 
     for cfg in cfgs:
-        assert "Slack" in cfg["cookie_file"]
+        assert "Slack" in str(cfg["cookie_file"])
