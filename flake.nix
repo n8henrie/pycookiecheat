@@ -1,11 +1,16 @@
 {
   description = "Flake for https://github.com/n8henrie/pycookiecheat";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  inputs = {
+    # For python3.7
+    nixpkgs-old.url = "github:nixos/nixpkgs/release-22.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  };
 
   outputs = {
     self,
     nixpkgs,
+    nixpkgs-old,
   }: let
     inherit (nixpkgs) lib;
     systems = ["aarch64-darwin" "x86_64-linux" "aarch64-linux"];
@@ -18,7 +23,14 @@
   in
     systemClosure (
       system: let
-        pkgs = import nixpkgs {inherit system;};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            (_: _: {
+              inherit (nixpkgs-old.legacyPackages.${system}) python37;
+            })
+          ];
+        };
         pname = "pycookiecheat";
         propagatedBuildInputs = with pkgs.python311Packages; [
           cryptography
