@@ -42,23 +42,25 @@ Alternatively, some users have suggested running Chrome with the
 ## Usage
 
 ```python
-from pycookiecheat import chrome_cookies
+from pycookiecheat import BrowserType, chrome_cookies
 import requests
 
-url = 'http://example.com/fake.html'
+url = 'https://n8henrie.com'
 
 # Uses Chrome's default cookies filepath by default
 cookies = chrome_cookies(url)
 r = requests.get(url, cookies=cookies)
+
+# Using an alternate browser
+cookies = chrome_cookies(url, browser=BrowserType.CHROMIUM)
 ```
 
 Use the `cookie_file` keyword-argument to specify a different filepath for the
 cookies-file: `chrome_cookies(url, cookie_file='/abspath/to/cookies')`
 
-Keep in mind that pycookiecheat defaults to looking for cookies for Google
-Chrome, not Chromium, so if you're using the latter, you'll need to manually
-specify something like `"/home/username/.config/chromium/Default/Cookies"` (for
-Linux) as your `cookie_file`.
+You may be able to retrieve cookies for alternative Chromium-based browsers by
+manually specifying something like
+`"/home/username/.config/BrowserName/Default/Cookies"` as your `cookie_file`.
 
 ## Features
 
