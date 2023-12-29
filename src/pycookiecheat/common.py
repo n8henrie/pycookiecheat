@@ -1,6 +1,8 @@
 """Common code for pycookiecheat."""
+from __future__ import annotations
+
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, unique
 from typing import Iterator
 from warnings import warn
 
@@ -61,7 +63,7 @@ def generate_host_keys(hostname: str) -> Iterator[str]:
         yield "." + domain
 
 
-def deprecation_warning(msg: str):
+def deprecation_warning(msg: str) -> None:
     """Raise a deprecation warning with the provided message.
 
     `stacklevel=3` tries to show the appropriate calling code to the user.
@@ -69,6 +71,7 @@ def deprecation_warning(msg: str):
     warn(msg, DeprecationWarning, stacklevel=3)
 
 
+@unique
 class BrowserType(str, Enum):
     """Provide discrete values for recognized browsers.
 
@@ -89,8 +92,9 @@ class BrowserType(str, Enum):
     FIREFOX = "firefox"
     SLACK = "slack"
 
+    # https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
     @classmethod
-    def _missing_(cls, value: str):
+    def _missing_(cls, value: str) -> BrowserType:  # type: ignore[override]
         """Provide case-insensitive matching for input values.
 
         >>> BrowserType("chrome")
