@@ -260,10 +260,9 @@ def chrome_cookies(
         {"init_vector": b" " * 16, "length": 16, "salt": b"saltysalt"}
     )
 
-    if cookie_file is not None:
-        cookie_file = Path(cookie_file)
-    else:
+    if cookie_file is None:
         cookie_file = config["cookie_file"]
+    cookie_file = Path(cookie_file)
 
     if isinstance(password, bytes):
         config["my_pass"] = password
