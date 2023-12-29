@@ -262,8 +262,10 @@ def test_get_profiles_dir_for_os_invalid() -> None:
     """Test invalid OS and browser names."""
     with pytest.raises(ValueError, match="OS must be one of"):
         _get_profiles_dir_for_os("invalid")
-    with pytest.raises(ValueError, match="Browser must be one of"):
-        _get_profiles_dir_for_os("linux", "invalid")  # type: ignore
+    with pytest.raises(
+        ValueError, match="'invalid' is not a valid BrowserType"
+    ):
+        _get_profiles_dir_for_os("linux", BrowserType("invalid"))
 
 
 # _find_firefox_default_profile()
