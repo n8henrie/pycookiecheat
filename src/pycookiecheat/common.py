@@ -1,6 +1,8 @@
 """Common code for pycookiecheat."""
 from dataclasses import dataclass
+from enum import auto, Enum
 from typing import Iterator
+from warnings import warn
 
 
 @dataclass
@@ -57,3 +59,46 @@ def generate_host_keys(hostname: str) -> Iterator[str]:
         domain = ".".join(labels[-i:])
         yield domain
         yield "." + domain
+
+
+def _deprecation_warning(msg: str):
+    warn(msg, DeprecationWarning, stacklevel=3)
+
+
+class BrowserType(str, Enum):
+    """Provide discrete values for recognized browsers.
+
+    This utility class helps ensure that the requested browser is specified
+    precisely or fails early by matching against user input; internally this
+    enum should be preferred as compared to passing strings.
+
+    >>> "chrome" == BrowserType.CHROME
+    True
+
+    TODO: consider using `enum.StrEnum` once pycookiecheat depends on python >=
+    3.11
+    """
+
+    BRAVE = "brave"
+    CHROME = "chrome"
+    CHROMIUM = "chromium"
+    FIREFOX = "firefox"
+    SLACK = "slack"
+
+    @classmethod
+    def _missing_(cls, value: str):
+        """Provide case-insensitive matching for input values.
+
+        >>> BrowserType("chrome")
+        <BrowserType.CHROME: 'chrome'>
+        >>> BrowserType("FiReFoX")
+        <BrowserType.FIREFOX: 'firefox'>
+        >>> BrowserType("edge")
+        Traceback (most recent call last):
+        ValueError: 'edge' is not a valid BrowserType
+        """
+        folded = value.casefold()
+        for member in cls:
+            if member.value == folded:
+                return member
+        raise ValueError("%r is not a valid %s" % (value, cls.__qualname__))

@@ -11,12 +11,12 @@ domain, just send it the domain you'd like to use instead.
 Adapted from my code at http://n8h.me/HufI1w
 """
 
-import pathlib
 import sqlite3
 import sys
 import typing as t
 import urllib.error
 import urllib.parse
+from pathlib import Path
 
 import keyring
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -25,7 +25,12 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.hashes import SHA1
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from pycookiecheat.common import Cookie, generate_host_keys
+from pycookiecheat.common import (
+    _deprecation_warning,
+    BrowserType,
+    Cookie,
+    generate_host_keys,
+)
 
 
 def clean(decrypted: bytes) -> str:
@@ -73,58 +78,50 @@ def chrome_decrypt(
     return clean(decrypted)
 
 
-def get_osx_config(browser: str) -> dict:
+def get_osx_config(browser: BrowserType) -> dict:
     """Get settings for getting Chrome/Chromium cookies on OSX.
 
     Args:
-        browser: Either "Chrome", "Chromium", "Slack", or "Brave"
+        browser: Enum variant representing browser of interest
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    # Verify supported browser, fail early otherwise. Mind the capitalization,
-    # which is necessary for the password retrieval.
-    browser = browser.title()
-    try:
-        app_support = "~/Library/Application Support"
-        cookie_file = {
-            "Chrome": f"{app_support}/Google/Chrome/Default/Cookies",
-            "Chromium": f"{app_support}/Chromium/Default/Cookies",
-            "Brave": (
-                f"{app_support}/BraveSoftware/Brave-Browser/Default/Cookies"
-            ),
-            "Slack": f"{app_support}/Slack/Cookies",
-        }[browser]
-    except KeyError:
-        raise ValueError(
-            "Browser must be either Chrome, Chromium, Slack, or Brave, "
-            "but found {browser}"
-        )
+    app_support = Path("/Library/Application Support")
+    # TODO: Refactor to match statement once depending on >= 3.10
+    cookies_suffix = {
+        BrowserType.CHROME: "Google/Chrome/Default/Cookies",
+        BrowserType.CHROMIUM: "Chromium/Default/Cookies",
+        BrowserType.BRAVE: "BraveSoftware/Brave-Browser/Default/Cookies",
+        BrowserType.SLACK: "Slack/Cookies",
+    }[browser]
+    cookie_file = "~" / app_support / cookies_suffix
 
-    # Alas, the cookies can be in two places on MacOS (well, one place, but
-    # possibly via that insane sandboxing of the filesystem that goes on now)
-    # so we have to hit the filesystem to check. This is the location is Slack
-    # is installed via direct download.
-    if (
-        browser == "Slack"
-        and not pathlib.Path(cookie_file).expanduser().exists()
-    ):
+    # Slack cookies can be in two places on MacOS depending on whether it was
+    # installed from the App Store or direct download.
+    if browser == BrowserType.SLACK and not cookie_file.exists():
         # And this location if Slack is installed from App Store
         cookie_file = (
             "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
-            + cookie_file[1:]
+            / app_support
+            / cookies_suffix
         )
 
-    keyring_service_name = f"{browser} Safe Storage"
-    keyring_username = "Slack Key" if browser == "Slack" else browser
-    my_pass = keyring.get_password(keyring_service_name, keyring_username)
+    browser_name = browser.title()
+    keyring_service_name = f"{browser_name} Safe Storage"
 
+    keyring_username = browser_name
+    if browser == BrowserType.SLACK:
+        keyring_username = "Slack Key"
+
+    my_pass = keyring.get_password(keyring_service_name, keyring_username)
     if my_pass is None:
-        raise ValueError(
+        errmsg = (
             "Could not find a password for the pair "
             f"({keyring_service_name}, {keyring_username}). Please manually "
-            "verify they exist in Keychain Access.app"
+            "verify they exist in `Keychain Access.app`."
         )
+        raise ValueError(errmsg)
 
     config = {
         "my_pass": my_pass,
@@ -134,31 +131,24 @@ def get_osx_config(browser: str) -> dict:
     return config
 
 
-def get_linux_config(browser: str) -> dict:
+def get_linux_config(browser: BrowserType) -> dict:
     """Get the settings for Chrome/Chromium cookies on Linux.
 
     Args:
-        browser: Either "Chrome", "Chromium", "Slack", or "Brave"
+        browser: Enum variant representing browser of interest
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    # Verify supported browser, fail early otherwise. Mind the capitalization,
-    # which is necessary for the password retrieval.
-    browser = browser.title()
-
-    try:
-        cookie_file = {
-            "Chrome": "~/.config/google-chrome/Default/Cookies",
-            "Chromium": "~/.config/chromium/Default/Cookies",
-            "Brave": "~/.config/BraveSoftware/Brave-Browser/Default/Cookies",
-            "Slack": "~/.config/Slack/Cookies",
+    cookie_file = (
+        Path("~/.config")
+        / {
+            BrowserType.CHROME: "google-chrome/Default/Cookies",
+            BrowserType.CHROMIUM: "chromium/Default/Cookies",
+            BrowserType.BRAVE: "BraveSoftware/Brave-Browser/Default/Cookies",
+            BrowserType.SLACK: "Slack/Cookies",
         }[browser]
-    except KeyError:
-        raise ValueError(
-            "Browser must be either Chrome, Chromium, Slack, or Brave, "
-            "but found {browser}"
-        )
+    )
 
     # Set the default linux password
     config = {
@@ -227,17 +217,17 @@ def get_linux_config(browser: str) -> dict:
 
 def chrome_cookies(
     url: str,
-    cookie_file: t.Optional[str] = None,
-    browser: str = "Chrome",
+    cookie_file: t.Optional[t.Union[str, Path]] = None,
+    browser: t.Optional[BrowserType] = None,
     curl_cookie_file: t.Optional[str] = None,
     password: t.Optional[t.Union[bytes, str]] = None,
 ) -> dict:
-    """Retrieve cookies from Chrome/Chromium on OSX or Linux.
+    """Retrieve cookies from Chrome/Chromium on MacOS or Linux.
 
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
         cookie_file: Path to alternate file to search for cookies
-        browser: Name of the browser's cookies to read ('Chrome' or 'Chromium')
+        browser: Enum variant representing browser of interest
         curl_cookie_file: Path to save the cookie file to be used with cURL
         password: Optional system password
     Returns:
@@ -249,6 +239,19 @@ def chrome_cookies(
         domain = parsed_url.netloc
     else:
         raise urllib.error.URLError("You must include a scheme with your URL.")
+
+    # TODO: Refactor to match statement once depending on >= 3.10
+    if browser is None:
+        browser = BrowserType.CHROME
+    elif isinstance(browser, BrowserType):
+        pass
+    # TODO: 20231229 remove str support after some deprecation period
+    else:
+        _deprecation_warning(
+            "Please pass `browser` as a `BrowserType` instead of "
+            f"`{browser.__class__.__qualname__}`."
+        )
+        browser = BrowserType(browser)
 
     # If running Chrome on OSX
     if sys.platform == "darwin":
@@ -262,10 +265,10 @@ def chrome_cookies(
         {"init_vector": b" " * 16, "length": 16, "salt": b"saltysalt"}
     )
 
-    if cookie_file:
-        cookie_file = str(pathlib.Path(cookie_file).expanduser())
+    if cookie_file is not None:
+        cookie_file = Path(cookie_file)
     else:
-        cookie_file = str(pathlib.Path(config["cookie_file"]).expanduser())
+        cookie_file = config["cookie_file"]
 
     if isinstance(password, bytes):
         config["my_pass"] = password
@@ -283,10 +286,12 @@ def chrome_cookies(
     enc_key = kdf.derive(config["my_pass"])
 
     try:
-        conn = sqlite3.connect("file:{}?mode=ro".format(cookie_file), uri=True)
-    except sqlite3.OperationalError:
-        print("Unable to connect to cookie_file at: {}\n".format(cookie_file))
-        raise
+        conn = sqlite3.connect(
+            f"file:{cookie_file.expanduser()}?mode=ro", uri=True
+        )
+    except sqlite3.OperationalError as e:
+        print(f"Unable to connect to cookie_file at: {cookie_file}\n")
+        raise e
 
     conn.row_factory = sqlite3.Row
 

@@ -14,6 +14,7 @@ from playwright.sync_api import sync_playwright
 
 from pycookiecheat import chrome_cookies
 from pycookiecheat.chrome import get_linux_config, get_osx_config
+from pycookiecheat.common import BrowserType
 
 BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
 
@@ -88,13 +89,30 @@ def test_raises_without_scheme() -> None:
         chrome_cookies("n8henrie.com")
 
 
+def test_warns_for_string_browser(ci_setup: str) -> None:
+    """Browser should be passed as `BrowserType` and warns for strings."""
+    never_been_here = "http://{0}.com".format(uuid4())
+    with pytest.warns(
+        DeprecationWarning,
+        match=(
+            "Please pass `browser` as a `BrowserType` " "instead of `str`."
+        ),
+    ):
+        empty_dict = chrome_cookies(
+            never_been_here,
+            cookie_file=ci_setup,
+            browser=BROWSER,  # type: ignore
+        )
+    assert empty_dict == dict()
+
+
 def test_no_cookies(ci_setup: str) -> None:
     """Ensure that no cookies are returned for a fake url."""
     never_been_here = "http://{0}.com".format(uuid4())
     empty_dict = chrome_cookies(
         never_been_here,
         cookie_file=ci_setup,
-        browser=BROWSER,
+        browser=BrowserType(BROWSER),
     )
     assert empty_dict == dict()
 
@@ -108,7 +126,7 @@ def test_fake_cookie(ci_setup: str) -> None:
     cookies = chrome_cookies(
         "https://n8henrie.com",
         cookie_file=ci_setup,
-        browser=BROWSER,
+        browser=BrowserType(BROWSER),
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
 
@@ -116,7 +134,12 @@ def test_fake_cookie(ci_setup: str) -> None:
 def test_raises_on_wrong_browser() -> None:
     """Passing a browser other than Chrome or Chromium raises ValueError."""
     with pytest.raises(ValueError):
-        chrome_cookies("https://n8henrie.com", browser="Safari")
+        BrowserType("edge")
+
+    with pytest.raises(ValueError):
+        chrome_cookies(
+            "https://n8henrie.com", browser="Safari"  # type: ignore
+        )
 
 
 def test_slack_config() -> None:
@@ -126,12 +149,20 @@ def test_slack_config() -> None:
     the Slack app feature is to read cookies from a different file. So opt to
     just test that new functionality with something simple and fairly robust.
     """
+    cfgs = []
     if sys.platform == "darwin":
-        cfg1 = get_osx_config("slack")
-        cfg2 = get_osx_config("SLACK")
-    else:
-        cfg1 = get_linux_config("slack")
-        cfg2 = get_linux_config("SLACK")
+        cfgs.append(get_osx_config(BrowserType("slack")))
 
-    assert cfg1 == cfg2
-    assert "Slack" in cfg1["cookie_file"]
+        parent = Path(
+            "~/Library/Application Support/BraveSoftware/Brave-Browser/Default"
+        )
+        parent.mkdir(parents=True)
+        (parent / "Cookies").touch()
+        cfgs.append(get_osx_config(BrowserType("slack")))
+
+        assert cfgs[0] != cfgs[1]
+    else:
+        cfgs.append(get_linux_config(BrowserType("SLACK")))
+
+    for cfg in cfgs:
+        assert "Slack" in cfg["cookie_file"]
