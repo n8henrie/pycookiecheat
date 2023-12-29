@@ -75,10 +75,7 @@ def _get_profiles_dir_for_os(
         raise ValueError(
             f"OS must be one of {list(FIREFOX_OS_PROFILE_DIRS.keys())}"
         )
-    try:
-        return Path(os_config[browser]).expanduser()
-    except KeyError:
-        raise ValueError(f"Browser must be one of {list(os_config.keys())}")
+    return Path(os_config[browser]).expanduser()
 
 
 def _find_firefox_default_profile(firefox_dir: Path) -> str:
