@@ -79,7 +79,7 @@ def chrome_decrypt(
 
 
 def get_osx_config(browser: BrowserType) -> dict:
-    """Get settings for getting Chrome/Chromium cookies on OSX.
+    """Get settings for getting Chrome/Chromium cookies on MacOS.
 
     Args:
         browser: Enum variant representing browser of interest
@@ -248,13 +248,13 @@ def chrome_cookies(
         )
         browser = BrowserType(browser)
 
-    # If running Chrome on OSX
+    # If running Chrome on MacOS
     if sys.platform == "darwin":
         config = get_osx_config(browser)
     elif sys.platform.startswith("linux"):
         config = get_linux_config(browser)
     else:
-        raise OSError("This script only works on OSX or Linux.")
+        raise OSError("This script only works on MacOS or Linux.")
 
     config.update(
         {"init_vector": b" " * 16, "length": 16, "salt": b"saltysalt"}
