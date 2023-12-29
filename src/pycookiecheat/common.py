@@ -1,6 +1,6 @@
 """Common code for pycookiecheat."""
 from dataclasses import dataclass
-from enum import auto, Enum
+from enum import Enum
 from typing import Iterator
 from warnings import warn
 
