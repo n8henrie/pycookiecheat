@@ -51,6 +51,6 @@ jobs:
         TEST_BROWSER_NAME: Brave
         TEST_BROWSER_PATH: /usr/bin/brave-browser
       run: xvfb-run -- python -m tox -e py
-    - if: "matrix.python-version == '3.9'"
+    - if: "matrix.python-version == '3.11'"
       name: Lint
       run: python -m tox -e lint
