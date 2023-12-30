@@ -52,7 +52,7 @@ def ci_setup() -> t.Generator:
             ignore_default_args=[
                 "--use-mock-keychain",
             ],
-            executable_path=ex_path,
+            executable_path=ex_path,  # type: ignore
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")
