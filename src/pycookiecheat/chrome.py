@@ -106,7 +106,7 @@ def get_macos_config(browser: BrowserType) -> dict:
 
     # Slack cookies can be in two places on MacOS depending on whether it was
     # installed from the App Store or direct download.
-    if browser == BrowserType.SLACK and not cookie_file.exists():
+    if browser is BrowserType.SLACK and not cookie_file.exists():
         # And this location if Slack is installed from App Store
         cookie_file = (
             "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
@@ -118,7 +118,7 @@ def get_macos_config(browser: BrowserType) -> dict:
     keyring_service_name = f"{browser_name} Safe Storage"
 
     keyring_username = browser_name
-    if browser == BrowserType.SLACK:
+    if browser is BrowserType.SLACK:
         keyring_username = "Slack Key"
 
     my_pass = keyring.get_password(keyring_service_name, keyring_username)

@@ -79,7 +79,7 @@ class BrowserType(str, Enum):
     precisely or fails early by matching against user input; internally this
     enum should be preferred as compared to passing strings.
 
-    >>> "chrome" == BrowserType.CHROME
+    >>> "chrome" is BrowserType.CHROME
     True
 
     TODO: consider using `enum.StrEnum` once pycookiecheat depends on python >=
