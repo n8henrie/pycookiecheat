@@ -150,18 +150,18 @@ def test_slack_config() -> None:
     """
     cfgs = []
     if sys.platform == "darwin":
-        cfgs.append(get_macos_config(BrowserType("slack")))
+        cfgs.append(get_macos_config(BrowserType.SLACK))
 
         parent = Path(
             "~/Library/Application Support/BraveSoftware/Brave-Browser/Default"
         )
         parent.mkdir(parents=True)
         (parent / "Cookies").touch()
-        cfgs.append(get_macos_config(BrowserType("slack")))
+        cfgs.append(get_macos_config(BrowserType.SLACK))
 
         assert cfgs[0] != cfgs[1]
     else:
-        cfgs.append(get_linux_config(BrowserType("SLACK")))
+        cfgs.append(get_linux_config(BrowserType.SLACK))
 
     for cfg in cfgs:
         assert "Slack" in str(cfg["cookie_file"])
