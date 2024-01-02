@@ -169,7 +169,6 @@ def test_slack_config() -> None:
 
 def test_macos_bad_browser_variant() -> None:
     """Tests the error message resulting from unrecognized BrowserType."""
-
     for invalid in [BrowserType.FIREFOX, "foo"]:
         with pytest.raises(
             ValueError, match=f"{invalid} is not a valid BrowserType"
