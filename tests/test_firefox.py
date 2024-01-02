@@ -242,7 +242,7 @@ def set_cookie(profiles: Path, cookie_server: int) -> Iterator[None]:
     "os_name,expected_dir",
     [
         ("linux", "~/.mozilla/firefox"),
-        ("osx", "~/Library/Application Support/Firefox/Profiles"),
+        ("macos", "~/Library/Application Support/Firefox/Profiles"),
         ("windows", "~/AppData/Roaming/Mozilla/Firefox/Profiles"),
     ],
 )

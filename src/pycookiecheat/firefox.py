@@ -50,7 +50,7 @@ FIREFOX_OS_PROFILE_DIRS: Dict[str, Dict[str, str]] = {
     "linux": {
         BrowserType.FIREFOX: "~/.mozilla/firefox",
     },
-    "osx": {
+    "macos": {
         BrowserType.FIREFOX: "~/Library/Application Support/Firefox/Profiles",
     },
     "windows": {
@@ -197,7 +197,7 @@ def firefox_cookies(
     if sys.platform.startswith("linux"):
         os = "linux"
     elif sys.platform == "darwin":
-        os = "osx"
+        os = "macos"
     elif sys.platform == "win32":
         os = "windows"
     else:

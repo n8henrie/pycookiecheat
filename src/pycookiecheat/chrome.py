@@ -78,7 +78,7 @@ def chrome_decrypt(
     return clean(decrypted)
 
 
-def get_osx_config(browser: BrowserType) -> dict:
+def get_macos_config(browser: BrowserType) -> dict:
     """Get settings for getting Chrome/Chromium cookies on MacOS.
 
     Args:
@@ -257,7 +257,7 @@ def chrome_cookies(
 
     # If running Chrome on MacOS
     if sys.platform == "darwin":
-        config = get_osx_config(browser)
+        config = get_macos_config(browser)
     elif sys.platform.startswith("linux"):
         config = get_linux_config(browser)
     else:

@@ -13,7 +13,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 from pycookiecheat import BrowserType, chrome_cookies
-from pycookiecheat.chrome import get_linux_config, get_osx_config
+from pycookiecheat.chrome import get_linux_config, get_macos_config
 
 BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
 
@@ -150,14 +150,14 @@ def test_slack_config() -> None:
     """
     cfgs = []
     if sys.platform == "darwin":
-        cfgs.append(get_osx_config(BrowserType("slack")))
+        cfgs.append(get_macos_config(BrowserType("slack")))
 
         parent = Path(
             "~/Library/Application Support/BraveSoftware/Brave-Browser/Default"
         )
         parent.mkdir(parents=True)
         (parent / "Cookies").touch()
-        cfgs.append(get_osx_config(BrowserType("slack")))
+        cfgs.append(get_macos_config(BrowserType("slack")))
 
         assert cfgs[0] != cfgs[1]
     else:
