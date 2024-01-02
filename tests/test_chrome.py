@@ -165,3 +165,13 @@ def test_slack_config() -> None:
 
     for cfg in cfgs:
         assert "Slack" in str(cfg["cookie_file"])
+
+
+def test_macos_bad_browser_variant() -> None:
+    """Tests the error message resulting from unrecognized BrowserType."""
+
+    for invalid in [BrowserType.FIREFOX, "foo"]:
+        with pytest.raises(
+            ValueError, match=f"{invalid} is not a valid BrowserType"
+        ):
+            get_macos_config(invalid)

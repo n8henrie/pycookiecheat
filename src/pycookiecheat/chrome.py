@@ -88,13 +88,20 @@ def get_osx_config(browser: BrowserType) -> dict:
 
     """
     app_support = Path("/Library/Application Support")
-    # TODO: Refactor to match statement once depending on >= 3.10
-    cookies_suffix = {
-        BrowserType.CHROME: "Google/Chrome/Default/Cookies",
-        BrowserType.CHROMIUM: "Chromium/Default/Cookies",
-        BrowserType.BRAVE: "BraveSoftware/Brave-Browser/Default/Cookies",
-        BrowserType.SLACK: "Slack/Cookies",
-    }[browser]
+    # TODO: Refactor to exhaustive match statement once depending on >= 3.10
+    try:
+        cookies_suffix = {
+            BrowserType.CHROME: "Google/Chrome/Default/Cookies",
+            BrowserType.CHROMIUM: "Chromium/Default/Cookies",
+            BrowserType.BRAVE: "BraveSoftware/Brave-Browser/Default/Cookies",
+            BrowserType.SLACK: "Slack/Cookies",
+        }[browser]
+    except KeyError as e:
+        errmsg = (
+            f"{browser} is not a valid BrowserType for {__name__}"
+            ".get_macos_config"
+        )
+        raise ValueError(errmsg) from e
     cookie_file = "~" / app_support / cookies_suffix
 
     # Slack cookies can be in two places on MacOS depending on whether it was
