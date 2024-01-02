@@ -109,4 +109,4 @@ class BrowserType(str, Enum):
         for member in cls:
             if member.value == folded:
                 return member
-        raise ValueError("%r is not a valid %s" % (value, cls.__qualname__))
+        raise ValueError(f"{value!r} is not a valid {cls.__qualname__}")
