@@ -173,4 +173,4 @@ def test_macos_bad_browser_variant() -> None:
         with pytest.raises(
             ValueError, match=f"{invalid} is not a valid BrowserType"
         ):
-            get_macos_config(invalid)
+            get_macos_config(invalid)  # type: ignore
