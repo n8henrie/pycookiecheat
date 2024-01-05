@@ -2,7 +2,7 @@
 
 ## v0.6.0 :: 20230324
 
-- Add firefox support , thanks to @grandchild
+- Add firefox support, thanks to @grandchild
     - Also would like to welcome @grandchild as a new member of the
       pycookiecheat team!
 
