@@ -65,7 +65,7 @@ test = [
     "pycodestyle==2.11.1",
     "pylint==3.0.3",
     "pytest==7.2.0",
-    "tox==4.2.8",
+    "tox==4.11.4",
 ]
 dev = [
     "build==0.6.0.post1",

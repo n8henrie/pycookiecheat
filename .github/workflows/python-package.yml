@@ -19,7 +19,7 @@ jobs:
           - "3.12"
 
     env:
-      TOX_TESTENV_PASSENV: "XAUTHORITY DISPLAY TEST_BROWSER_NAME TEST_BROWSER_PATH"
+      TOX_OVERRIDE: "testenv.pass_env+=XAUTHORITY,DISPLAY,TEST_BROWSER_NAME,TEST_BROWSER_PATH"
 
     steps:
     - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
     - name: Install tox
-      run: python -m pip install .[dev]
+      run: python -m pip install .[test]
     - name: Install Brave
       run: |
         sudo apt-get update
