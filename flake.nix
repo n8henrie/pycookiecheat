@@ -72,6 +72,8 @@
             python38
             python39
             python310
+            # https://github.com/NixOS/nixpkgs/issues/277591
+            python312
             (python311.withPackages (
               ps:
                 propagatedBuildInputs
