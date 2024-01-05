@@ -13,7 +13,8 @@ scripts.
 
 **NB:** Use `pip` and `python` instead of `pip3` and `python3` if you're still
 on Python 2 and using pycookiecheat < v0.4.0. pycookiecheat >= v0.4.0 requires
-Python 3.5+, and may soon go to 3.6+.
+Python 3 and in general will aim to support python versions that are stable and
+not yet end-of-life: <https://devguide.python.org/versions>.
 
 - `python3 -m pip install pycookiecheat`
 
