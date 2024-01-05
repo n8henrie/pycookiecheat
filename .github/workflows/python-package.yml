@@ -29,7 +29,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
     - name: Install tox
-      run: python -m pip install "tox>=3,<4"
+      run: python -m pip install .[dev]
     - name: Install Brave
       run: |
         sudo apt-get update
