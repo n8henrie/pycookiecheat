@@ -17,6 +17,7 @@ jobs:
           - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
 
     env:
       TOX_TESTENV_PASSENV: "XAUTHORITY DISPLAY TEST_BROWSER_NAME TEST_BROWSER_PATH"
@@ -51,6 +52,6 @@ jobs:
         TEST_BROWSER_NAME: Brave
         TEST_BROWSER_PATH: /usr/bin/brave-browser
       run: xvfb-run -- python -m tox -e py
-    - if: "matrix.python-version == '3.9'"
+    - if: "matrix.python-version == '3.12'"
       name: Lint
       run: python -m tox -e lint
