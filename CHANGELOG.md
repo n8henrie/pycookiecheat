@@ -1,5 +1,18 @@
 # [Changelog](https://keepachangelog.com)
 
+## v0.7.0 :: 20240105
+
+- Now requires python >= 3.8
+    - 3.7 is now EoL: https://devguide.python.org/versions/
+    - pycookiecheat seems to build and run on 3.7, but several test
+      dependencies require versions that are either incompatible with 3.12 or
+      3.7
+- Add `BrowserType` enum
+    - Instead of passing a string (e.g. "chrome"), please import and use a
+      `BrowserType` (e.g. `BrowserType.CHROME`)
+    - Add deprecation warning for passing strings
+- Added a nix flake to facilitate testing multiple python versions
+
 ## v0.6.0 :: 20230324
 
 - Add firefox support, thanks to @grandchild
