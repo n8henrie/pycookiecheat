@@ -11,6 +11,7 @@ domain, just send it the domain you'd like to use instead.
 Adapted from my code at http://n8h.me/HufI1w
 """
 
+import logging
 import sqlite3
 import sys
 import typing as t
@@ -32,6 +33,8 @@ from pycookiecheat.common import (
     generate_host_keys,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def clean(decrypted: bytes) -> str:
     r"""Strip padding from decrypted value.
@@ -48,7 +51,18 @@ def clean(decrypted: bytes) -> str:
     last = decrypted[-1]
     if isinstance(last, int):
         return decrypted[:-last].decode("utf8")
-    return decrypted[: -ord(last)].decode("utf8")
+
+    try:
+        cleaned = decrypted[: -ord(last)].decode("utf8")
+    except UnicodeDecodeError:
+        logging.error(
+            "UTF8 decoding of the decrypted cookie failed. "
+            "This is most often due to attempting decryption with an incorrect key. "
+            "Consider searching the pycookiecheat issues for `UnicodeDecodeError`."
+        )
+        raise
+
+    return cleaned
 
 
 def chrome_decrypt(
@@ -173,7 +187,7 @@ def get_linux_config(browser: BrowserType) -> dict:
         gi.require_version("Secret", "1")
         from gi.repository import Secret
     except ImportError:
-        pass
+        logger.info("Was not able to import `Secret` from `gi.repository`")
     else:
         flags = Secret.ServiceFlags.LOAD_COLLECTIONS
         service = Secret.Service.get_sync(flags)
@@ -214,7 +228,7 @@ def get_linux_config(browser: BrowserType) -> dict:
                 f"{browser} Safe Storage",
             )
         except RuntimeError:
-            pass
+            logger.info("Was not able to access secrets from keyring")
         else:
             if my_pass:
                 config["my_pass"] = my_pass
@@ -291,7 +305,7 @@ def chrome_cookies(
             f"file:{cookie_file.expanduser()}?mode=ro", uri=True
         )
     except sqlite3.OperationalError as e:
-        print(f"Unable to connect to cookie_file at: {cookie_file}\n")
+        logger.error("Unable to connect to cookie_file at %s", cookie_file)
         raise e
 
     conn.row_factory = sqlite3.Row

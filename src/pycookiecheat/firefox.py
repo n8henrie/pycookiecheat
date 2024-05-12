@@ -12,6 +12,7 @@ Example:
     {'logged_in': 'yes', 'user_session': 'n3tZzN45P56Ovg5MB'}
 """
 import configparser
+import logging
 import shutil
 import sqlite3
 import sys
@@ -27,6 +28,8 @@ from pycookiecheat.common import (
     deprecation_warning,
     generate_host_keys,
 )
+
+logger = logging.getLogger(__name__)
 
 FIREFOX_COOKIE_SELECT_SQL = """
     SELECT
