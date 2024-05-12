@@ -101,7 +101,7 @@ def get_macos_config(browser: BrowserType) -> dict:
         Config dictionary for Chrome/Chromium cookie decryption
 
     """
-    app_support = Path("/Library/Application Support")
+    app_support = Path("Library/Application Support")
     # TODO: Refactor to exhaustive match statement once depending on >= 3.10
     try:
         cookies_suffix = {
