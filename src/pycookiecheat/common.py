@@ -1,10 +1,13 @@
 """Common code for pycookiecheat."""
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from enum import Enum, unique
 from typing import Iterator
 from warnings import warn
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
