@@ -1,14 +1,12 @@
 """pycookiecheat.py :: Retrieve and decrypt cookies from Chrome.
 
-See relevant post at http://n8h.me/HufI1w
+See relevant post at https://n8henrie.com/2013/11/use-chromes-cookies-for-easier-downloading-with-python-requests/
 
 Use your browser's cookies to make grabbing data from login-protected sites
 easier. Intended for use with Python Requests http://python-requests.org
 
 Accepts a URL from which it tries to extract a domain. If you want to force the
 domain, just send it the domain you'd like to use instead.
-
-Adapted from my code at http://n8h.me/HufI1w
 """
 
 import logging
