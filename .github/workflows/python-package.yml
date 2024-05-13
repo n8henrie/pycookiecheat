@@ -31,11 +31,13 @@ jobs:
     - name: Install tox
       run: python -m pip install .[test]
     - name: Install Brave
+      # https://brave.com/linux/#release-channel-installation
       run: |
         sudo apt-get update
         sudo apt-get install -y apt-transport-https curl
-        curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key add -
-        echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+        sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" |
+          sudo tee /etc/apt/sources.list.d/brave-browser-release.list
         sudo apt-get update
         sudo apt-get install --yes brave-browser
     - name: Run tests via tox (Chromium)
