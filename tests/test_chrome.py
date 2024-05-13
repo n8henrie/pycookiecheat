@@ -1,7 +1,5 @@
 """test_pycookiecheat.py :: Tests for pycookiecheat module."""
 
-from __future__ import annotations
-
 import os
 import sys
 import time

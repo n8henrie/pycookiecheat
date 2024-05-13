@@ -12,6 +12,8 @@ Example:
     {'logged_in': 'yes', 'user_session': 'n3tZzN45P56Ovg5MB'}
 """
 
+from __future__ import annotations
+
 import configparser
 import logging
 import shutil

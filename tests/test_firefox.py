@@ -1,7 +1,5 @@
 """Tests for Firefox cookies & helper functions."""
 
-from __future__ import annotations
-
 import re
 import typing as t
 from datetime import datetime, timedelta

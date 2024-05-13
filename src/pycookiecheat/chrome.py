@@ -9,6 +9,8 @@ Accepts a URL from which it tries to extract a domain. If you want to force the
 domain, just send it the domain you'd like to use instead.
 """
 
+from __future__ import annotations
+
 import logging
 import sqlite3
 import sys
