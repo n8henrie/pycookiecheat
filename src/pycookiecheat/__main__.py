@@ -29,13 +29,16 @@ def main() -> None:
         "-v",
         action="count",
         default=0,
-        help="Increase logging verbosity (may repeat), default is `logging.ERROR`",
+        help=(
+            "Increase logging verbosity (may repeat), default is "
+            "`logging.ERROR`"
+        ),
     )
     args = parser.parse_args()
 
-    # todo: make this a match statement once MSPV is 3.10
     logging.basicConfig(level=max(logging.ERROR - 10 * args.verbose, 0))
 
+    # todo: make this a match statement once MSPV is 3.10
     browser = BrowserType(args.browser)
 
     # Use separate function calls to make it easier to add other command line
