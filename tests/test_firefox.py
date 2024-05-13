@@ -1,13 +1,13 @@
 """Tests for Firefox cookies & helper functions."""
 
 import re
+import typing as t
 from datetime import datetime, timedelta
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from textwrap import dedent
 from threading import Thread
-from typing import Any, cast, Iterator, Optional
 from unittest.mock import patch
 from urllib.error import URLError
 
@@ -103,7 +103,7 @@ PROFILES_INI_VERSION2_NO_DEFAULT = dedent(
 
 def _make_test_profiles(
     tmp_path: Path, profiles_ini_content: str, populate: bool = True
-) -> Iterator[Path]:
+) -> t.Iterator[Path]:
     """Create a Firefox data dir with profile & (optionally) populate it.
 
     All of the fixtures using this function use the pytest builtin `tmp_path`
@@ -126,7 +126,7 @@ def _make_test_profiles(
 
 
 @pytest.fixture(scope="module")
-def profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
+def profiles(tmp_path_factory: TempPathFactory) -> t.Iterator[Path]:
     """Create a Firefox data dir with profiles & cookie DBs."""
     yield from _make_test_profiles(
         tmp_path_factory.mktemp("_"), PROFILES_INI_VERSION2
@@ -144,7 +144,7 @@ def profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
 )
 def profiles_ini_versions(
     tmp_path_factory: TempPathFactory, request: FixtureRequest
-) -> Iterator[Path]:
+) -> t.Iterator[Path]:
     """Create a Firefox data dir using varius `profiles.ini` types.
 
     Use different file format versions and contents.
@@ -153,7 +153,7 @@ def profiles_ini_versions(
 
 
 @pytest.fixture(scope="module")
-def no_profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
+def no_profiles(tmp_path_factory: TempPathFactory) -> t.Iterator[Path]:
     """Create a Firefox data dir with a `profiles.ini` with no profiles."""
     yield from _make_test_profiles(
         tmp_path_factory.mktemp("_"), PROFILES_INI_EMPTY
@@ -163,7 +163,7 @@ def no_profiles(tmp_path_factory: TempPathFactory) -> Iterator[Path]:
 # TODO: Making this fixture module-scoped breaks the tests using the `profiles`
 #       fixture. Find out why.
 @pytest.fixture
-def profiles_unpopulated(tmp_path: Path) -> Iterator[Path]:
+def profiles_unpopulated(tmp_path: Path) -> t.Iterator[Path]:
     """Create a Firefox data dir with valid but upopulated `profiles.ini` file.
 
     "Unpopulated" means never actually used to launch Firefox with.
@@ -174,7 +174,7 @@ def profiles_unpopulated(tmp_path: Path) -> Iterator[Path]:
 
 
 @pytest.fixture(scope="session")
-def cookie_server() -> Iterator[int]:
+def cookie_server() -> t.Iterator[int]:
     """Start an `HTTPServer` on localhost which sets a cookie.
 
     Replies to GET requests by setting a "foo: bar" cookie.
@@ -201,7 +201,7 @@ def cookie_server() -> Iterator[int]:
             self.send_header("Set-Cookie", cookie["foo"].OutputString())
             self.end_headers()
 
-        def log_message(self, *_: Any) -> None:
+        def log_message(self, *_: t.Any) -> None:
             pass  # Suppress logging
 
     with HTTPServer(("localhost", 0), CookieSetter) as server:
@@ -211,7 +211,7 @@ def cookie_server() -> Iterator[int]:
 
 
 @pytest.fixture
-def set_cookie(profiles: Path, cookie_server: int) -> Iterator[None]:
+def set_cookie(profiles: Path, cookie_server: int) -> t.Iterator[None]:
     """Launch Firefox and visit the cookie-setting server.
 
     The cookie is set, saved to the DB and the browser closes. Ideally the
@@ -304,7 +304,7 @@ def test_load_firefox_cookie_db_populated(
 @pytest.mark.parametrize("profile_name", [TEST_PROFILE_DIR, None])
 def test_load_firefox_cookie_db_unpopulated(
     tmp_path: Path,
-    profile_name: Optional[str],
+    profile_name: t.Optional[str],
     profiles_unpopulated: Path,
 ) -> None:
     """Test loading Firefox cookies DB from an unpopulated profile."""
@@ -336,7 +336,9 @@ def test_load_firefox_cookie_db_copy_error(
 
 def test_firefox_cookies(set_cookie: None) -> None:
     """Test getting Firefox cookies after visiting a site with cookies."""
-    cookies = cast(dict, firefox_cookies("http://localhost", TEST_PROFILE_DIR))
+    cookies = t.cast(
+        dict, firefox_cookies("http://localhost", TEST_PROFILE_DIR)
+    )
     assert len(cookies) > 0
     assert cookies["foo"] == "bar"
 
@@ -349,7 +351,7 @@ def test_warns_for_string_browser(set_cookie: None) -> None:
             "Please pass `browser` as a `BrowserType` " "instead of `str`."
         ),
     ):
-        cookies = cast(
+        cookies = t.cast(
             dict,
             firefox_cookies(
                 "http://localhost",

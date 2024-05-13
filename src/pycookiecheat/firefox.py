@@ -18,10 +18,10 @@ import shutil
 import sqlite3
 import sys
 import tempfile
+import typing as t
 import urllib.error
 import urllib.parse
 from pathlib import Path
-from typing import Dict, List, Optional, Union
 
 from pycookiecheat.common import (
     BrowserType,
@@ -51,7 +51,7 @@ Rename some columns to match the Chrome cookie db row names.
 This makes the common.Cookie class simpler.
 """
 
-FIREFOX_OS_PROFILE_DIRS: Dict[str, Dict[str, str]] = {
+FIREFOX_OS_PROFILE_DIRS: dict[str, dict[str, str]] = {
     "linux": {
         BrowserType.FIREFOX: "~/.mozilla/firefox",
     },
@@ -121,7 +121,7 @@ def _find_firefox_default_profile(firefox_dir: Path) -> str:
         raise Exception("no profiles found at {}".format(firefox_dir))
 
 
-def _copy_if_exists(src: List[Path], dest: Path) -> None:
+def _copy_if_exists(src: list[Path], dest: Path) -> None:
     for file in src:
         try:
             shutil.copy2(file, dest)
@@ -132,7 +132,7 @@ def _copy_if_exists(src: List[Path], dest: Path) -> None:
 def _load_firefox_cookie_db(
     profiles_dir: Path,
     tmp_dir: Path,
-    profile_name: Optional[str] = None,
+    profile_name: t.Optional[str] = None,
 ) -> Path:
     """
     Return a file path to the selected browser profile's cookie database.
@@ -177,11 +177,11 @@ def _load_firefox_cookie_db(
 
 def firefox_cookies(
     url: str,
-    profile_name: Optional[str] = None,
+    profile_name: t.Optional[str] = None,
     browser: BrowserType = BrowserType.FIREFOX,
-    curl_cookie_file: Optional[str] = None,
+    curl_cookie_file: t.Optional[str] = None,
     as_cookies: bool = False,
-) -> Union[dict, list[Cookie]]:
+) -> t.Union[dict, list[Cookie]]:
     """Retrieve cookies from Firefox on MacOS or Linux.
 
     Args:
