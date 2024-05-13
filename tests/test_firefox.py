@@ -389,7 +389,10 @@ def test_firefox_cookies_curl_cookie_file(
     )
     assert cookie_file.exists()
     assert re.fullmatch(
-        r"localhost\tTRUE\t/\tFALSE\t[0-9]+\tfoo\tbar\n",
+        (
+            r"# Netscape HTTP Cookie File\nlocalhost\tTRUE\t/\tFALSE\t[0-9]+"
+            r"\tfoo\tbar\n"
+        ),
         cookie_file.read_text(),
     )
 
