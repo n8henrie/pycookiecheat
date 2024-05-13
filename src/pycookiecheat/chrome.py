@@ -241,7 +241,8 @@ def chrome_cookies(
     browser: t.Optional[BrowserType] = BrowserType.CHROME,
     curl_cookie_file: t.Optional[t.Union[str, Path]] = None,
     password: t.Optional[t.Union[bytes, str]] = None,
-) -> dict:
+    as_cookies: bool = False,
+) -> t.Union[dict, list[Cookie]]:
     """Retrieve cookies from Chrome/Chromium on MacOS or Linux.
 
     Args:
@@ -250,6 +251,7 @@ def chrome_cookies(
         browser: Enum variant representing browser of interest
         curl_cookie_file: Path to save the cookie file to be used with cURL
         password: Optional system password
+        as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
         Dictionary of cookie values for URL
 
@@ -351,5 +353,8 @@ def chrome_cookies(
 
     if curl_cookie_file:
         write_cookie_file(curl_cookie_file, cookies)
+
+    if as_cookies:
+        return cookies
 
     return {c.name: c.value for c in cookies}

@@ -1,7 +1,6 @@
 import argparse
 import json
 
-from .common import BrowserType, write_cookie_file
 from .chrome import chrome_cookies
 from .firefox import firefox_cookies
 
@@ -36,9 +35,7 @@ def main():
         browser=browser,
     )
 
-    if args.output_file:
-        write_cookie_file(args.output_file, cookies)
-    else:
+    if not args.output_file:
         print(json.dumps(cookies, indent=4))
 
 

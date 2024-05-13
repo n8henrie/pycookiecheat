@@ -20,7 +20,7 @@ import tempfile
 import urllib.error
 import urllib.parse
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from pycookiecheat.common import (
     BrowserType,
@@ -179,7 +179,8 @@ def firefox_cookies(
     profile_name: Optional[str] = None,
     browser: BrowserType = BrowserType.FIREFOX,
     curl_cookie_file: Optional[str] = None,
-) -> Dict[str, str]:
+    as_cookies: bool = False,
+) -> Union[dict, list[Cookie]]:
     """Retrieve cookies from Firefox on MacOS or Linux.
 
     Args:
@@ -189,6 +190,7 @@ def firefox_cookies(
                       default profile
         browser: Enum variant representing browser of interest
         curl_cookie_file: Path to save the cookie file to be used with cURL
+        as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
         Dictionary of cookie values for URL
     """
@@ -234,5 +236,8 @@ def firefox_cookies(
 
     if curl_cookie_file:
         write_cookie_file(curl_cookie_file, cookies)
+
+    if as_cookies:
+        return cookies
 
     return {c.name: c.value for c in cookies}

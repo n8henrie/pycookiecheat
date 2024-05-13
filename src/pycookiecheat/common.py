@@ -120,7 +120,10 @@ def write_cookie_file(path: Path | str, cookies: list[Cookie]) -> None:
     path = Path(path)
     # Some programs won't recognize this as a cookie file without this header
     output = (
-        "\n".join(("# Netscape HTTP Cookie File", *(c for c in cookies)))
+        "\n".join(
+            ["# Netscape HTTP Cookie File"]
+            + [c.as_cookie_file_line() for c in cookies]
+        )
         + "\n"
     )
     path.write_text(output)
