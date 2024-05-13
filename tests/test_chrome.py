@@ -122,10 +122,13 @@ def test_fake_cookie(ci_setup: str) -> None:
     For this to pass, you'll have to visit the url and put in "TestCookie" and
     "Just_a_test!" to set a temporary cookie with the appropriate values.
     """
-    cookies = chrome_cookies(
-        "https://n8henrie.com",
-        cookie_file=ci_setup,
-        browser=BrowserType(BROWSER),
+    cookies = t.cast(
+        dict,
+        chrome_cookies(
+            "https://n8henrie.com",
+            cookie_file=ci_setup,
+            browser=BrowserType(BROWSER),
+        ),
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
 
@@ -137,7 +140,8 @@ def test_raises_on_wrong_browser() -> None:
 
     with pytest.raises(ValueError):
         chrome_cookies(
-            "https://n8henrie.com", browser="Safari"  # type: ignore
+            "https://n8henrie.com",
+            browser="Safari",  # type: ignore
         )
 
 

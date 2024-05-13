@@ -1,6 +1,6 @@
 """pycookiecheat.py :: Retrieve and decrypt cookies from Chrome.
 
-See relevant post at https://n8henrie.com/2013/11/use-chromes-cookies-for-easier-downloading-with-python-requests/
+See relevant post at https://n8henrie.com/2013/11/use-chromes-cookies-for-easier-downloading-with-python-requests/  # noqa
 
 Use your browser's cookies to make grabbing data from login-protected sites
 easier. Intended for use with Python Requests http://python-requests.org
@@ -44,8 +44,7 @@ def clean(decrypted: bytes) -> str:
     Args:
         decrypted: decrypted value
     Returns:
-        Decrypted stripped of junk padding
-
+        decrypted, stripped of padding
     """
     last = decrypted[-1]
     if isinstance(last, int):
@@ -55,9 +54,9 @@ def clean(decrypted: bytes) -> str:
         cleaned = decrypted[: -ord(last)].decode("utf8")
     except UnicodeDecodeError:
         logging.error(
-            "UTF8 decoding of the decrypted cookie failed. "
-            "This is most often due to attempting decryption with an incorrect key. "
-            "Consider searching the pycookiecheat issues for `UnicodeDecodeError`."
+            "UTF8 decoding of the decrypted cookie failed. This is most often "
+            "due to attempting decryption with an incorrect key. Consider "
+            "searching the pycookiecheat issues for `UnicodeDecodeError`."
         )
         raise
 
@@ -75,7 +74,6 @@ def chrome_decrypt(
         init_vector: Initialization vector for decrypting encrypted_value
     Returns:
         Decrypted value of encrypted_value
-
     """
     # Encrypted cookies should be prefixed with 'v10' or 'v11' according to the
     # Chromium code. Strip it off.
@@ -98,7 +96,6 @@ def get_macos_config(browser: BrowserType) -> dict:
         browser: Enum variant representing browser of interest
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
-
     """
     app_support = Path("Library/Application Support")
     # TODO: Refactor to exhaustive match statement once depending on >= 3.10
@@ -158,7 +155,6 @@ def get_linux_config(browser: BrowserType) -> dict:
         browser: Enum variant representing browser of interest
     Returns:
         Config dictionary for Chrome/Chromium cookie decryption
-
     """
     cookie_file = (
         Path("~/.config")
@@ -254,7 +250,6 @@ def chrome_cookies(
         as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
         Dictionary of cookie values for URL
-
     """
     parsed_url = urllib.parse.urlparse(url)
     if parsed_url.scheme:

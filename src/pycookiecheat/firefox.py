@@ -11,6 +11,7 @@ Example:
     >>> firefox_cookies("https://github.com")
     {'logged_in': 'yes', 'user_session': 'n3tZzN45P56Ovg5MB'}
 """
+
 import configparser
 import logging
 import shutil

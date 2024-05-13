@@ -1,11 +1,15 @@
+"""Provide a command-line tool for pycookiecheat."""
+
 import argparse
 import json
 
 from .chrome import chrome_cookies
+from .common import BrowserType
 from .firefox import firefox_cookies
 
 
-def main():
+def main() -> None:
+    """Provide a main entrypoint for the command-line tool."""
     parser = argparse.ArgumentParser(
         prog="pycookiecheat",
         description="Copy cookies from Chrome or Firefox and output as json",
@@ -25,15 +29,20 @@ def main():
 
     browser = BrowserType(args.browser)
 
+    # Use separate function calls to make it easier to add other command line
+    # line flags in the future
     if browser == BrowserType.FIREFOX:
-        cookie_func = firefox_cookies
+        cookies = firefox_cookies(
+            url=args.url,
+            browser=browser,
+            curl_cookie_file=args.output_file,
+        )
     else:
-        cookie_func = chrome_cookies
-
-    cookies = cookie_func(
-        url=args.url,
-        browser=browser,
-    )
+        cookies = chrome_cookies(
+            url=args.url,
+            browser=browser,
+            curl_cookie_file=args.output_file,
+        )
 
     if not args.output_file:
         print(json.dumps(cookies, indent=4))

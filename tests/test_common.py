@@ -1,4 +1,5 @@
 """Tests for pycookiecheat.common."""
+
 from typing import Iterable
 
 import pytest

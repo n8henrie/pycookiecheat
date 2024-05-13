@@ -1,4 +1,5 @@
 """Common code for pycookiecheat."""
+
 from __future__ import annotations
 
 import logging
@@ -117,8 +118,10 @@ class BrowserType(str, Enum):
 
 
 def write_cookie_file(path: Path | str, cookies: list[Cookie]) -> None:
+    """Write cookies to a file in Netscape Cookie File format."""
     path = Path(path)
-    # Some programs won't recognize this as a cookie file without this header
+    # Some programs won't recognize this as a valid cookie file without the
+    # header
     output = (
         "\n".join(
             ["# Netscape HTTP Cookie File"]

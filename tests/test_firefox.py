@@ -1,4 +1,5 @@
 """Tests for Firefox cookies & helper functions."""
+
 import re
 from datetime import datetime, timedelta
 from http.cookies import SimpleCookie
@@ -6,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from textwrap import dedent
 from threading import Thread
-from typing import Any, Iterator, Optional
+from typing import Any, cast, Iterator, Optional
 from unittest.mock import patch
 from urllib.error import URLError
 
@@ -335,7 +336,7 @@ def test_load_firefox_cookie_db_copy_error(
 
 def test_firefox_cookies(set_cookie: None) -> None:
     """Test getting Firefox cookies after visiting a site with cookies."""
-    cookies = firefox_cookies("http://localhost", TEST_PROFILE_DIR)
+    cookies = cast(dict, firefox_cookies("http://localhost", TEST_PROFILE_DIR))
     assert len(cookies) > 0
     assert cookies["foo"] == "bar"
 
@@ -348,10 +349,13 @@ def test_warns_for_string_browser(set_cookie: None) -> None:
             "Please pass `browser` as a `BrowserType` " "instead of `str`."
         ),
     ):
-        cookies = firefox_cookies(
-            "http://localhost",
-            TEST_PROFILE_DIR,
-            browser="firefox",  # type: ignore
+        cookies = cast(
+            dict,
+            firefox_cookies(
+                "http://localhost",
+                TEST_PROFILE_DIR,
+                browser="firefox",  # type: ignore
+            ),
         )
     assert len(cookies) > 0
     assert cookies["foo"] == "bar"
