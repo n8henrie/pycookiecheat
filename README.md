@@ -42,6 +42,31 @@ Alternatively, some users have suggested running Chrome with the
 
 ## Usage
 
+### As a Command-Line Tool
+
+As of v0.7.0, pycookiecheat includes a command line tool for ease of use. By
+default it prints the cookies to stdout as JSON but can also output a file in
+Netscape Cookie File Format.
+
+After installation, the CLI tool can be run as a python module `python -m` or
+with a standalone console script:
+
+```console
+$ pycookiecheat --help
+usage: pycookiecheat [-h] -u URL [-b BROWSER] [-o OUTPUT_FILE]
+
+Copy cookies from Chrome or Firefox and output as json
+
+options:
+  -h, --help            show this help message and exit
+  -u URL, --url URL     requires scheme (e.g. `https://`)
+  -b BROWSER, --browser BROWSER
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        Output to this file in netscape cookie file format
+```
+
+### As a Python Library
+
 ```python
 from pycookiecheat import BrowserType, chrome_cookies
 import requests

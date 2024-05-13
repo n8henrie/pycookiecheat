@@ -31,6 +31,7 @@ from pycookiecheat.common import (
     Cookie,
     deprecation_warning,
     generate_host_keys,
+    write_cookie_file,
 )
 
 logger = logging.getLogger(__name__)
@@ -240,7 +241,7 @@ def chrome_cookies(
     url: str,
     cookie_file: t.Optional[t.Union[str, Path]] = None,
     browser: t.Optional[BrowserType] = BrowserType.CHROME,
-    curl_cookie_file: t.Optional[str] = None,
+    curl_cookie_file: t.Optional[t.Union[str, Path]] = None,
     password: t.Optional[t.Union[bytes, str]] = None,
 ) -> dict:
     """Retrieve cookies from Chrome/Chromium on MacOS or Linux.
@@ -351,8 +352,6 @@ def chrome_cookies(
     conn.rollback()
 
     if curl_cookie_file:
-        with open(curl_cookie_file, "w") as text_file:
-            for c in cookies:
-                print(c.as_cookie_file_line(), file=text_file)
+        write_cookie_file(curl_cookie_file, cookies)
 
     return {c.name: c.value for c in cookies}

@@ -72,3 +72,6 @@ dev = [
     "twine==3.4.2",
     "wheel==0.37.0",
 ]
+
+[project.scripts]
+pycookiecheat = "pycookiecheat.__main__:main"

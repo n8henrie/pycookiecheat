@@ -27,6 +27,7 @@ from pycookiecheat.common import (
     Cookie,
     deprecation_warning,
     generate_host_keys,
+    write_cookie_file,
 )
 
 logger = logging.getLogger(__name__)
@@ -230,8 +231,8 @@ def firefox_cookies(
                 res = con.execute(FIREFOX_COOKIE_SELECT_SQL, (host_key,))
                 for row in res.fetchall():
                     cookies.append(Cookie(**row))
+
     if curl_cookie_file:
-        with open(curl_cookie_file, "w") as text_file:
-            for c in cookies:
-                print(c.as_cookie_file_line(), file=text_file)
+        write_cookie_file(curl_cookie_file, cookies)
+
     return {c.name: c.value for c in cookies}

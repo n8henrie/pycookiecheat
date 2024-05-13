@@ -74,6 +74,11 @@
             ))
           ];
         };
+
+        apps.${system}.default = {
+          type = "app";
+          program = "${self.outputs.packages.${system}.pycookiecheat}/bin/pycookiecheat";
+        };
       }
     );
 }

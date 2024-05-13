@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from enum import Enum, unique
+from pathlib import Path
 from typing import Iterator
 from warnings import warn
 
@@ -113,3 +114,13 @@ class BrowserType(str, Enum):
             if member.value == folded:
                 return member
         raise ValueError(f"{value!r} is not a valid {cls.__qualname__}")
+
+
+def write_cookie_file(path: Path | str, cookies: list[Cookie]) -> None:
+    path = Path(path)
+    # Some programs won't recognize this as a cookie file without this header
+    output = (
+        "\n".join(("# Netscape HTTP Cookie File", *(c for c in cookies)))
+        + "\n"
+    )
+    path.write_text(output)
