@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import logging
 
 from .chrome import chrome_cookies
 from .common import BrowserType
@@ -23,9 +24,17 @@ def main() -> None:
         "--output-file",
         help="Output to this file in netscape cookie file format",
     )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="count",
+        default=0,
+        help="Increase logging verbosity (may repeat), default is `logging.ERROR`",
+    )
     args = parser.parse_args()
 
     # todo: make this a match statement once MSPV is 3.10
+    logging.basicConfig(level=max(logging.ERROR - 10 * args.verbose, 0))
 
     browser = BrowserType(args.browser)
 
