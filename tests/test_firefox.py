@@ -219,9 +219,12 @@ def set_cookie(profiles: Path, cookie_server: int) -> t.Iterator[None]:
     synchronous playwright API doesn't support that.
     """
     profile_dir = profiles / TEST_PROFILE_DIR
-    with sync_playwright() as p, p.firefox.launch_persistent_context(
-        user_data_dir=profile_dir
-    ) as context:
+    with (
+        sync_playwright() as p,
+        p.firefox.launch_persistent_context(
+            user_data_dir=profile_dir
+        ) as context,
+    ):
         context.new_page().goto(
             f"http://localhost:{cookie_server}",
             # Fail quickly because it's localhost. If it's not there in 1s the
@@ -321,8 +324,11 @@ def test_load_firefox_cookie_db_copy_error(
 ) -> None:
     """Test loading Firefox cookies DB when copying fails."""
     # deliberately break copy function
-    with patch("shutil.copy2"), pytest.raises(
-        FileNotFoundError, match="no Firefox cookies DB in temp dir"
+    with (
+        patch("shutil.copy2"),
+        pytest.raises(
+            FileNotFoundError, match="no Firefox cookies DB in temp dir"
+        ),
     ):
         _load_firefox_cookie_db(
             profiles,
