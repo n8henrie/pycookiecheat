@@ -133,8 +133,8 @@ def get_macos_config(browser: BrowserType) -> dict:
     if browser is BrowserType.SLACK:
         keyring_username = "Slack Key"
 
-    my_pass = keyring.get_password(keyring_service_name, keyring_username)
-    if my_pass is None:
+    key_material = keyring.get_password(keyring_service_name, keyring_username)
+    if key_material is None:
         errmsg = (
             "Could not find a password for the pair "
             f"({keyring_service_name}, {keyring_username}). Please manually "
@@ -143,7 +143,7 @@ def get_macos_config(browser: BrowserType) -> dict:
         raise ValueError(errmsg)
 
     config = {
-        "my_pass": my_pass,
+        "key_material": key_material,
         "iterations": 1003,
         "cookie_file": cookie_file,
     }
@@ -170,14 +170,14 @@ def get_linux_config(browser: BrowserType) -> dict:
 
     # Set the default linux password
     config = {
-        "my_pass": "peanuts",
+        "key_material": "peanuts",
         "iterations": 1,
         "cookie_file": cookie_file,
     }
 
     # Try to get pass from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
-    pass_found = False
+    key_material = None
     try:
         import gi
 
@@ -206,8 +206,7 @@ def get_linux_config(browser: BrowserType) -> dict:
                     if item_app.lower() != browser.lower():
                         continue
                     item.load_secret_sync()
-                    config["my_pass"] = item.get_secret().get_text()
-                    pass_found = True
+                    key_material = item.get_secret().get_text()
                     break
             else:
                 # Inner loop didn't `break`, keep looking
@@ -218,17 +217,18 @@ def get_linux_config(browser: BrowserType) -> dict:
 
     # Try to get pass from keyring, which should support KDE / KWallet
     # if dbus-python is installed.
-    if not pass_found:
+    if key_material is None:
         try:
-            my_pass = keyring.get_password(
+            key_material = keyring.get_password(
                 f"{browser} Keys",
                 f"{browser} Safe Storage",
             )
         except RuntimeError:
             logger.info("Was not able to access secrets from keyring")
-        else:
-            if my_pass:
-                config["my_pass"] = my_pass
+
+    # Overwrite the default only if a different password has been found
+    if key_material is not None:
+        config["key_material"] = key_material
 
     return config
 
@@ -284,11 +284,11 @@ def chrome_cookies(
     cookie_file = Path(cookie_file)
 
     if isinstance(password, bytes):
-        config["my_pass"] = password
+        config["key_material"] = password
     elif isinstance(password, str):
-        config["my_pass"] = password.encode("utf8")
-    elif isinstance(config["my_pass"], str):
-        config["my_pass"] = config["my_pass"].encode("utf8")
+        config["key_material"] = password.encode("utf8")
+    elif isinstance(config["key_material"], str):
+        config["key_material"] = config["key_material"].encode("utf8")
 
     kdf = PBKDF2HMAC(
         algorithm=SHA1(),
@@ -296,7 +296,7 @@ def chrome_cookies(
         length=config["length"],
         salt=config["salt"],
     )
-    enc_key = kdf.derive(config["my_pass"])
+    enc_key = kdf.derive(config["key_material"])
 
     try:
         conn = sqlite3.connect(
