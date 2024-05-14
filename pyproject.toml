@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 79
-target_version = ['py311']
+target_version = ['py38']
 
 [tool.isort]
 profile = "black"
@@ -25,7 +25,7 @@ disallow_untyped_calls = true
 disallow_untyped_defs = true
 follow_imports = "silent"
 ignore_missing_imports = true
-python_version = "3.11"
+python_version = "3.8"
 show_column_numbers = true
 warn_incomplete_stub = false
 warn_redundant_casts = true
