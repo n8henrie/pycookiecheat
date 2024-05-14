@@ -50,26 +50,26 @@ classifiers= [
 ]
 dependencies = [
     "cryptography==42.*",
-    "keyring==23.*",
+    "keyring==25.*",
 ]
 
 [project.optional-dependencies]
 test = [
-    "black==22.*",
+    "black==24.*",
     "flake8-docstrings==1.*",
     "flake8-import-order==0.18.*",
     "flake8==7.*",
     "mypy==1.*",
-    "pep8-naming==0.11.*",
+    "pep8-naming==0.13.*",
     "playwright==1.*",
     "pycodestyle==2.*",
-    "pytest==7.*",
+    "pytest==8.*",
     "tox==4.*",
 ]
 dev = [
-    "build==0.6.*",
-    "twine==3.*",
-    "wheel==0.37.*",
+    "build==1.*",
+    "twine==5.*",
+    "wheel==0.43.*",
 ]
 
 [project.scripts]
