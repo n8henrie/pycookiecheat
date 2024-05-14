@@ -58,11 +58,11 @@
 
         devShells.${system}.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            python38
-            python39
-            python310
+            (python38.withPackages (ps: [ps.cffi]))
+            (python39.withPackages (ps: [ps.cffi]))
+            (python310.withPackages (ps: [ps.cffi]))
             # https://github.com/NixOS/nixpkgs/issues/277591
-            python312
+            (python312.withPackages (ps: [ps.cffi]))
             (python311.withPackages (
               ps:
                 propagatedBuildInputs
