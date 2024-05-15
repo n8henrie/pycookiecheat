@@ -12,6 +12,11 @@
       `BrowserType` (e.g. `BrowserType.CHROME`)
     - Add deprecation warning for passing strings
 - Added a nix flake to facilitate testing multiple python versions
+- Add basic logging
+- Add CLI tool
+- Add `as_cookies` parameter to allow returning `list[Cookie]` instead of
+  `dict` (without breaking backward compatibility)
+- Loosen dependency constrains, which should make usage as a library easier
 
 ## v0.6.0 :: 20230324
 
