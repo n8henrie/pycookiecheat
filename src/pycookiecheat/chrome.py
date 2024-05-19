@@ -175,6 +175,8 @@ def get_linux_config(browser: BrowserType) -> dict:
         "cookie_file": cookie_file,
     }
 
+    browser_name = browser.title()
+
     # Try to get pass from Gnome / libsecret if it seems available
     # https://github.com/n8henrie/pycookiecheat/issues/12
     key_material = None
@@ -195,7 +197,7 @@ def get_linux_config(browser: BrowserType) -> dict:
         # While Slack on Linux has its own Cookies file, the password
         # is stored in a keyring named the same as Chromium's, but with
         # an "application" attribute of "Slack".
-        keyring_name = f"{browser} Safe Storage"
+        keyring_name = f"{browser_name} Safe Storage"
 
         for unlocked_keyring in unlocked_keyrings:
             for item in unlocked_keyring.get_items():
@@ -220,8 +222,8 @@ def get_linux_config(browser: BrowserType) -> dict:
     if key_material is None:
         try:
             key_material = keyring.get_password(
-                f"{browser} Keys",
-                f"{browser} Safe Storage",
+                f"{browser_name} Keys",
+                f"{browser_name} Safe Storage",
             )
         except RuntimeError:
             logger.info("Was not able to access secrets from keyring")
