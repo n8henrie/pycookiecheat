@@ -6,8 +6,8 @@ status](https://github.com/n8henrie/pycookiecheat/actions/workflows/python-packa
 Borrow cookies from your browser's authenticated session for use in Python
 scripts.
 
--   Free software: MIT
--   Documentation: http://n8h.me/HufI1w
+- Free software: MIT
+- [Documentation](https://n8henrie.com/2013/11/use-chromes-cookies-for-easier-downloading-with-python-requests/)
 
 ## Installation
 
