@@ -131,7 +131,7 @@ def get_macos_config(browser: BrowserType) -> dict:
 
     keyring_username = browser_name
     if browser is BrowserType.SLACK:
-        keyring_username = "Slack Key"
+        keyring_username = "Slack App Store Key"
 
     key_material = keyring.get_password(keyring_service_name, keyring_username)
     if key_material is None:
