@@ -328,7 +328,7 @@ def chrome_cookies(
             cookie_database_version = int(row[0])
         else:
             logger.info("cookie database version not found in meta table")
-    except sqlite3.OperationalError as e:
+    except sqlite3.OperationalError:
         logger.info("cookie database is missing meta table")
 
     # Check whether the column name is `secure` or `is_secure`
