@@ -66,7 +66,7 @@ def clean(decrypted: bytes) -> str:
 
 
 def chrome_decrypt(
-    encrypted_value: bytes, key: bytes, init_vector: bytes
+    encrypted_value: bytes, key: bytes, init_vector: bytes, cookie_database_version: int
 ) -> str:
     """Decrypt Chrome/Chromium's encrypted cookies.
 
@@ -87,6 +87,10 @@ def chrome_decrypt(
     )
     decryptor = cipher.decryptor()
     decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
+
+    if cookie_database_version >= 24:
+        # Cookies in database version 24 and later include a SHA256 hash of the domain to the start of the encrypted value.
+        decrypted = decrypted[32:]
 
     return clean(decrypted)
 
@@ -310,6 +314,9 @@ def chrome_cookies(
 
     conn.row_factory = sqlite3.Row
 
+    sql = "select value from meta where key = 'version';"
+    cookie_database_version = int(conn.execute(sql).fetchone()[0])
+
     # Check whether the column name is `secure` or `is_secure`
     secure_column_name = "is_secure"
     for (
@@ -344,6 +351,7 @@ def chrome_cookies(
                     row["encrypted_value"],
                     key=enc_key,
                     init_vector=config["init_vector"],
+                    cookie_database_version=cookie_database_version,
                 )
             del row["encrypted_value"]
             cookies.append(Cookie(**row))
