@@ -66,7 +66,8 @@ def clean(decrypted: bytes) -> str:
 
 
 def chrome_decrypt(
-    encrypted_value: bytes, key: bytes, init_vector: bytes, cookie_database_version: int
+    encrypted_value: bytes, key: bytes, init_vector: bytes,
+    cookie_database_version: int
 ) -> str:
     """Decrypt Chrome/Chromium's encrypted cookies.
 
@@ -89,7 +90,8 @@ def chrome_decrypt(
     decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
 
     if cookie_database_version >= 24:
-        # Cookies in database version 24 and later include a SHA256 hash of the domain to the start of the encrypted value.
+        # Cookies in database version 24 and later include a SHA256
+        # hash of the domain to the start of the encrypted value.
         decrypted = decrypted[32:]
 
     return clean(decrypted)
