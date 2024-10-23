@@ -313,6 +313,7 @@ def chrome_cookies(
         raise e
 
     conn.row_factory = sqlite3.Row
+    conn.text_factory = bytes
 
     sql = "select value from meta where key = 'version';"
     cookie_database_version = int(conn.execute(sql).fetchone()[0])
@@ -354,6 +355,9 @@ def chrome_cookies(
                     cookie_database_version=cookie_database_version,
                 )
             del row["encrypted_value"]
+            for key, value in row.items():
+                if isinstance(value, bytes):
+                    row[key] = value.decode("utf8")
             cookies.append(Cookie(**row))
 
     conn.rollback()
