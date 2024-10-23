@@ -66,8 +66,10 @@ def clean(decrypted: bytes) -> str:
 
 
 def chrome_decrypt(
-    encrypted_value: bytes, key: bytes, init_vector: bytes,
-    cookie_database_version: int
+    encrypted_value: bytes,
+    key: bytes,
+    init_vector: bytes,
+    cookie_database_version: int,
 ) -> str:
     """Decrypt Chrome/Chromium's encrypted cookies.
 
