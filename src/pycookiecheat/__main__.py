@@ -26,8 +26,8 @@ def main() -> None:
         help="Output to this file in netscape cookie file format",
     )
     parser.add_argument(
-        "--verbose",
         "-v",
+        "--verbose",
         action="count",
         default=0,
         help=(
