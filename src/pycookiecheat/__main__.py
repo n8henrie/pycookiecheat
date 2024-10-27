@@ -34,6 +34,11 @@ def main() -> None:
             "`logging.ERROR`"
         ),
     )
+    parser.add_argument(
+        "-c",
+        "--cookie-file",
+        help="Cookie file",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=max(logging.ERROR - 10 * args.verbose, 0))
@@ -48,12 +53,14 @@ def main() -> None:
             url=args.url,
             browser=browser,
             curl_cookie_file=args.output_file,
+            cookie_file=args.cookie_file,
         )
     else:
         cookies = chrome_cookies(
             url=args.url,
             browser=browser,
             curl_cookie_file=args.output_file,
+            cookie_file=args.cookie_file,
         )
 
     if not args.output_file:
