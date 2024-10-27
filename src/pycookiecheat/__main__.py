@@ -4,6 +4,7 @@ import argparse
 import json
 import logging
 
+from importlib.metadata import version
 from .chrome import chrome_cookies
 from .common import BrowserType
 from .firefox import firefox_cookies
@@ -33,6 +34,12 @@ def main() -> None:
             "Increase logging verbosity (may repeat), default is "
             "`logging.ERROR`"
         ),
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action='version',
+        version=version(parser.prog),
     )
     args = parser.parse_args()
 
