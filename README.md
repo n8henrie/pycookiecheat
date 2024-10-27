@@ -53,7 +53,8 @@ with a standalone console script:
 
 ```console
 $ pycookiecheat --help
-usage: pycookiecheat [-h] -u URL [-b BROWSER] [-o OUTPUT_FILE]
+usage: pycookiecheat [-h] -u URL [-b BROWSER] [-o OUTPUT_FILE] [--verbose]
+                     [-c COOKIE_FILE]
 
 Copy cookies from Chrome or Firefox and output as json
 
@@ -63,6 +64,9 @@ options:
   -b BROWSER, --browser BROWSER
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
                         Output to this file in netscape cookie file format
+  --verbose, -v         Increase logging verbosity (may repeat), default is `logging.ERROR`
+  -c COOKIE_FILE, --cookie-file COOKIE_FILE
+                        Cookie file
 ```
 
 ### As a Python Library
