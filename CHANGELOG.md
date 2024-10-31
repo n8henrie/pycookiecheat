@@ -1,5 +1,11 @@
 # [Changelog](https://keepachangelog.com)
 
+##
+
+- Add `--version` flag (thanks @samiam)
+- Fix new path to Firefox profile on MacOS (thanks @MattMuffin)
+- Support Chrome's new v24 cookies (thanks @chrisgavin)
+
 ## v0.7.0 :: 20240105
 
 - Now requires python >= 3.8
