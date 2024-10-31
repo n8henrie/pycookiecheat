@@ -66,7 +66,10 @@ def clean(decrypted: bytes) -> str:
 
 
 def chrome_decrypt(
-    encrypted_value: bytes, key: bytes, init_vector: bytes
+    encrypted_value: bytes,
+    key: bytes,
+    init_vector: bytes,
+    cookie_database_version: int,
 ) -> str:
     """Decrypt Chrome/Chromium's encrypted cookies.
 
@@ -87,6 +90,14 @@ def chrome_decrypt(
     )
     decryptor = cipher.decryptor()
     decrypted = decryptor.update(encrypted_value) + decryptor.finalize()
+
+    if cookie_database_version >= 24:
+        # Cookies in database version 24 and later include a SHA256
+        # hash of the domain to the start of the encrypted value.
+        # https://github.com/chromium/chromium/blob/
+        # 280265158d778772c48206ffaea788c1030b9aaa/net/extras/
+        # sqlite/sqlite_persistent_cookie_store.cc#L223-L224
+        decrypted = decrypted[32:]
 
     return clean(decrypted)
 
@@ -309,6 +320,18 @@ def chrome_cookies(
         raise e
 
     conn.row_factory = sqlite3.Row
+    conn.text_factory = bytes
+
+    sql = "select value from meta where key = 'version';"
+    cookie_database_version = 0
+    try:
+        row = conn.execute(sql).fetchone()
+        if row:
+            cookie_database_version = int(row[0])
+        else:
+            logger.info("cookie database version not found in meta table")
+    except sqlite3.OperationalError:
+        logger.info("cookie database is missing meta table")
 
     # Check whether the column name is `secure` or `is_secure`
     secure_column_name = "is_secure"
@@ -344,8 +367,12 @@ def chrome_cookies(
                     row["encrypted_value"],
                     key=enc_key,
                     init_vector=config["init_vector"],
+                    cookie_database_version=cookie_database_version,
                 )
             del row["encrypted_value"]
+            for key, value in row.items():
+                if isinstance(value, bytes):
+                    row[key] = value.decode("utf8")
             cookies.append(Cookie(**row))
 
     conn.rollback()
