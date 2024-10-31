@@ -236,9 +236,6 @@ def set_cookie(profiles: Path, cookie_server: int) -> t.Iterator[None]:
     yield
 
 
-# _get_profiles_dir_for_os()
-
-
 @pytest.mark.parametrize(
     "os_name,expected_dir",
     [
