@@ -36,6 +36,11 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "-c",
+        "--cookie-file",
+        help="Cookie file",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         action='version',
@@ -55,12 +60,14 @@ def main() -> None:
             url=args.url,
             browser=browser,
             curl_cookie_file=args.output_file,
+            cookie_file=args.cookie_file,
         )
     else:
         cookies = chrome_cookies(
             url=args.url,
             browser=browser,
             curl_cookie_file=args.output_file,
+            cookie_file=args.cookie_file,
         )
 
     if not args.output_file:
