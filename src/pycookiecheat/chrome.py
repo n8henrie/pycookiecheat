@@ -94,9 +94,7 @@ def chrome_decrypt(
     if cookie_database_version >= 24:
         # Cookies in database version 24 and later include a SHA256
         # hash of the domain to the start of the encrypted value.
-        # https://github.com/chromium/chromium/blob/
-        # 280265158d778772c48206ffaea788c1030b9aaa/net/extras/
-        # sqlite/sqlite_persistent_cookie_store.cc#L223-L224
+        # https://github.com/chromium/chromium/blob/280265158d778772c48206ffaea788c1030b9aaa/net/extras/sqlite/sqlite_persistent_cookie_store.cc#L223-L224  # noqa
         decrypted = decrypted[32:]
 
     return clean(decrypted)
