@@ -58,7 +58,7 @@ FIREFOX_OS_PROFILE_DIRS: dict[str, dict[str, str]] = {
         BrowserType.FIREFOX: "~/.mozilla/firefox",
     },
     "macos": {
-        BrowserType.FIREFOX: "~/Library/Application Support/Firefox/Profiles",
+        BrowserType.FIREFOX: "~/Library/Application Support/Firefox",
     },
     "windows": {
         BrowserType.FIREFOX: "~/AppData/Roaming/Mozilla/Firefox/Profiles",
