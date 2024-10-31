@@ -9,13 +9,15 @@
       inherit (nixpkgs) lib;
       systems = [
         "aarch64-darwin"
-        "x86_64-linux"
         "aarch64-linux"
+        "x86_64-darwin"
+        "x86_64-linux"
       ];
-      systemClosure =
-        attrs: builtins.foldl' (acc: system: lib.recursiveUpdate acc (attrs system)) { } systems;
+      eachSystem =
+        with nixpkgs.lib;
+        f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
     in
-    systemClosure (
+    eachSystem (
       system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -41,31 +43,29 @@
           };
       in
       {
-        packages.${system} = {
+        packages = {
           ${pname} = pkgs.callPackage pycookiecheat { };
           default = pkgs.python311.withPackages (_: [ self.packages.${system}.${pname} ]);
         };
 
-        devShells.${system}.default = pkgs.mkShell {
+        devShells.default = pkgs.mkShell {
+          venvDir = ".venv";
+          postVenvCreation = ''
+            unset SOURCE_DATE_EPOCH
+            pip install -e .[dev,test]
+            python -m playwright install chromium firefox
+          '';
           buildInputs = with pkgs; [
-            (python38.withPackages (ps: [ ps.cffi ]))
-            (python39.withPackages (ps: [ ps.cffi ]))
-            (python310.withPackages (ps: [ ps.cffi ]))
-            # https://github.com/NixOS/nixpkgs/issues/277591
-            (python312.withPackages (ps: [ ps.cffi ]))
-            (python311.withPackages (
-              ps:
-              propagatedBuildInputs
-              ++ (with ps; [
-                mypy
-                pytest
-                tox
-              ])
-            ))
+            (python39.withPackages (ps: [ ]))
+            (python310.withPackages (ps: [ ]))
+            (python311.withPackages (ps: [ ]))
+            (python312.withPackages (ps: [ ]))
+            python313Packages.venvShellHook
+            (python313.withPackages (ps: [ ps.tox ]))
           ];
         };
 
-        apps.${system}.default = {
+        apps.default = {
           type = "app";
           program = "${self.outputs.packages.${system}.pycookiecheat}/bin/pycookiecheat";
         };

@@ -5,6 +5,7 @@
 - Add `--version` flag (thanks @samiam)
 - Fix new path to Firefox profile on MacOS (thanks @MattMuffin)
 - Support Chrome's new v24 cookies (thanks @chrisgavin)
+- Now requires python >= 3.9
 
 ## v0.7.0 :: 20240105
 
