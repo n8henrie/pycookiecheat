@@ -17,10 +17,10 @@ from pytest import FixtureRequest, TempPathFactory
 
 from pycookiecheat import BrowserType, firefox_cookies
 from pycookiecheat.firefox import (
+    FirefoxProfileNotPopulatedError,
     _find_firefox_default_profile,
     _get_profiles_dir_for_os,
     _load_firefox_cookie_db,
-    FirefoxProfileNotPopulatedError,
 )
 
 TEST_PROFILE_NAME = "test-profile"
