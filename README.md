@@ -126,9 +126,9 @@ libffi-dev python-dev` prior to installing with `pip`.
 
 On KDE, Chrome defaults to using KDE's own keyring, KWallet. For pycookiecheat to support KWallet the [`dbus-python`](https://pypi.org/project/dbus-python/) package must be installed.
 
-### How do I install the dev branch with pip?
+### How do I install the (unreleased) master branch with pip?
 
-- `python -m pip install git+https://github.com/n8henrie/pycookiecheat@dev`
+- `python -m pip install git+https://github.com/n8henrie/pycookiecheat@master`
 
 ## Buy Me a Coffee
 
