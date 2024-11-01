@@ -127,8 +127,8 @@ def _copy_if_exists(src: list[Path], dest: Path) -> None:
     for file in src:
         try:
             shutil.copy2(file, dest)
-        except FileNotFoundError:
-            pass
+        except FileNotFoundError as e:
+            logger.exception(e)
 
 
 def _load_firefox_cookie_db(
