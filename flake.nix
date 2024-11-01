@@ -6,7 +6,6 @@
   outputs =
     { self, nixpkgs }:
     let
-      inherit (nixpkgs) lib;
       systems = [
         "aarch64-darwin"
         "aarch64-linux"
