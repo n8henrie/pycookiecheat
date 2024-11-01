@@ -55,15 +55,10 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    "black==24.*",
-    "flake8-docstrings==1.*",
-    "flake8-import-order==0.18.*",
-    "flake8==7.*",
     "mypy==1.*",
-    "pep8-naming==0.13.*",
     "playwright==1.*",
-    "pycodestyle==2.*",
     "pytest==8.*",
+    "ruff==0.7.*",
     "tox==4.*",
 ]
 dev = [
