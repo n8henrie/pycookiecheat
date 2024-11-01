@@ -135,6 +135,7 @@ def _load_firefox_cookie_db(
     profiles_dir: Path,
     tmp_dir: Path,
     profile_name: t.Optional[str] = None,
+    cookie_file: t.Optional[t.Union[str, Path]] = None,
 ) -> Path:
     """
     Return a file path to the selected browser profile's cookie database.
@@ -145,6 +146,7 @@ def _load_firefox_cookie_db(
         profile_name: Name (or glob pattern) of the Firefox profile to search
                       for cookies -- if none given it will find the configured
                       default profile
+        cookie_file: optional custom path to a specific cookie file
     Returns:
         Path to the "deWAL'ed" temporary copy of cookies.sqlite
 
@@ -159,15 +161,22 @@ def _load_firefox_cookie_db(
     WAL file and then merges any outstanding writes, to make sure the cookies
     DB has the most recent data.
     """
-    if not profile_name:
-        profile_name = _find_firefox_default_profile(profiles_dir)
-    for profile_dir in profiles_dir.glob(profile_name):
-        if (profile_dir / "cookies.sqlite").exists():
-            break
+
+    if cookie_file:
+        cookies_db = Path(cookie_file)
+        cookies_wal = Path(cookies_db).parent / "cookies.sqlite-wal"
+
     else:
-        raise FirefoxProfileNotPopulatedError(profiles_dir / profile_name)
-    cookies_db = profile_dir / "cookies.sqlite"
-    cookies_wal = profile_dir / "cookies.sqlite-wal"
+        if not profile_name:
+            profile_name = _find_firefox_default_profile(profiles_dir)
+        for profile_dir in profiles_dir.glob(profile_name):
+            if (profile_dir / "cookies.sqlite").exists():
+                break
+        else:
+            raise FirefoxProfileNotPopulatedError(profiles_dir / profile_name)
+        cookies_db = profile_dir / "cookies.sqlite"
+        cookies_wal = profile_dir / "cookies.sqlite-wal"
+
     _copy_if_exists([cookies_db, cookies_wal], tmp_dir)
     db_file = tmp_dir / "cookies.sqlite"
     if not db_file.exists():
@@ -183,6 +192,7 @@ def firefox_cookies(
     browser: BrowserType = BrowserType.FIREFOX,
     curl_cookie_file: t.Optional[str] = None,
     as_cookies: bool = False,
+    cookie_file: t.Optional[t.Union[str, Path]] = None,
 ) -> t.Union[dict, list[Cookie]]:
     """Retrieve cookies from Firefox on MacOS or Linux.
 
@@ -192,6 +202,7 @@ def firefox_cookies(
                       for cookies -- if none given it will find the configured
                       default profile
         browser: Enum variant representing browser of interest
+        cookie_file: path to alternate file to search for cookies
         curl_cookie_file: Path to save the cookie file to be used with cURL
         as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
@@ -228,7 +239,7 @@ def firefox_cookies(
     cookies: list[Cookie] = []
     with tempfile.TemporaryDirectory() as tmp_dir:
         db_file = _load_firefox_cookie_db(
-            profiles_dir, Path(tmp_dir), profile_name
+            profiles_dir, Path(tmp_dir), profile_name, cookie_file
         )
         for host_key in generate_host_keys(domain):
             with sqlite3.connect(db_file) as con:
