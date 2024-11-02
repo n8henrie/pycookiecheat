@@ -366,14 +366,6 @@ def test_firefox_no_cookies(profiles: Path) -> None:
     assert len(cookies) == 0
 
 
-def test_firefox_cookies_no_scheme() -> None:
-    """Ensure Firefox cookies for a URL with no scheme raises an exception."""
-    with pytest.raises(
-        URLError, match="You must include a scheme with your URL"
-    ):
-        firefox_cookies("localhost")
-
-
 def test_firefox_cookies_curl_cookie_file(
     tmp_path: Path, set_cookie: None
 ) -> None:

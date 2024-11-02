@@ -16,7 +16,6 @@ import sqlite3
 import sys
 import typing as t
 import urllib.error
-import urllib.parse
 from pathlib import Path
 
 import keyring
@@ -30,6 +29,7 @@ from pycookiecheat.common import (
     BrowserType,
     Cookie,
     deprecation_warning,
+    get_domain,
     generate_host_keys,
     write_cookie_file,
 )
@@ -264,11 +264,7 @@ def chrome_cookies(
     Returns:
         Dictionary of cookie values for URL
     """
-    parsed_url = urllib.parse.urlparse(url)
-    if parsed_url.scheme:
-        domain = parsed_url.netloc
-    else:
-        raise urllib.error.URLError("You must include a scheme with your URL.")
+    domain = get_domain(url)
 
     # TODO: 20231229 remove str support after some deprecation period
     if not isinstance(browser, BrowserType):

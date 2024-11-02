@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import urllib.parse
 from dataclasses import dataclass
 from enum import Enum, unique
 from pathlib import Path
@@ -130,3 +131,16 @@ def write_cookie_file(path: Path | str, cookies: list[Cookie]) -> None:
         + "\n"
     )
     path.write_text(output)
+
+
+def get_domain(url: str) -> str:
+    """Return domain for url.
+
+    If the scheme is not specified, `https://` is assumed.
+    """
+    parsed_url = urllib.parse.urlparse(url)
+    if not parsed_url.scheme:
+        parsed_url = urllib.parse.urlparse(f"https://{url}")
+
+    domain = parsed_url.netloc
+    return domain

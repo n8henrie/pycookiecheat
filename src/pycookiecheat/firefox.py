@@ -30,6 +30,7 @@ from pycookiecheat.common import (
     Cookie,
     deprecation_warning,
     generate_host_keys,
+    get_domain,
     write_cookie_file,
 )
 
@@ -208,11 +209,7 @@ def firefox_cookies(
     Returns:
         Dictionary of cookie values for URL
     """
-    parsed_url = urllib.parse.urlparse(url)
-    if parsed_url.scheme:
-        domain = parsed_url.netloc
-    else:
-        raise urllib.error.URLError("You must include a scheme with your URL.")
+    domain = get_domain(url)
 
     if sys.platform.startswith("linux"):
         os = "linux"

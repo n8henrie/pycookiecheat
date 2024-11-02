@@ -78,16 +78,6 @@ def test_raises_on_empty() -> None:
         chrome_cookies()  # type: ignore
 
 
-def test_raises_without_scheme() -> None:
-    """Ensure that `chrome_cookies("domain.com")` raises.
-
-    The domain must specify a scheme (http or https).
-
-    """
-    with pytest.raises(URLError):
-        chrome_cookies("n8henrie.com")
-
-
 def test_warns_for_string_browser(ci_setup: str) -> None:
     """Browser should be passed as `BrowserType` and warns for strings."""
     never_been_here = "http://{0}.com".format(uuid4())

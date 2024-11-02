@@ -58,7 +58,7 @@ usage: pycookiecheat [-h] [-b BROWSER] [-o OUTPUT_FILE] [-v] [-c COOKIE_FILE] [-
 Copy cookies from Chrome or Firefox and output as json
 
 positional arguments:
-  url                   requires scheme (e.g. `https://`)
+  url
 
 options:
   -h, --help            show this help message and exit
