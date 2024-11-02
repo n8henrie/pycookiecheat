@@ -209,6 +209,10 @@ def firefox_cookies(
     """
     domain = get_domain(url)
 
+    # Force a ValueError early if a string of an unreconized browser is passed
+    if browser is not None:
+        browser = BrowserType(browser)
+
     if sys.platform.startswith("linux"):
         os = "linux"
     elif sys.platform == "darwin":

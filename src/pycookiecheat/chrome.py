@@ -265,6 +265,10 @@ def chrome_cookies(
     """
     domain = get_domain(url)
 
+    # Force a ValueError early if a string of an unreconized browser is passed
+    if browser is not None:
+        browser = BrowserType(browser)
+
     # If running Chrome on MacOS
     if sys.platform == "darwin":
         config = get_macos_config(browser)
