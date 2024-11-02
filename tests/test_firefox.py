@@ -343,9 +343,7 @@ def test_warns_for_string_browser(set_cookie: None) -> None:
     """Browser should be passed as `BrowserType` and warns for strings."""
     with pytest.warns(
         DeprecationWarning,
-        match=(
-            "Please pass `browser` as a `BrowserType` " "instead of `str`."
-        ),
+        match=("Please pass `browser` as a `BrowserType` instead of `str`."),
     ):
         cookies = t.cast(
             dict,

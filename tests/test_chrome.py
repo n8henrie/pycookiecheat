@@ -55,17 +55,15 @@ def ci_setup() -> t.Generator:
         )
         page = browser.new_page()
         page.goto("https://n8henrie.com")
-        browser.add_cookies(
-            [
-                {
-                    "name": "test_pycookiecheat",
-                    "value": "It worked!",
-                    "domain": "n8henrie.com",
-                    "path": "/",
-                    "expires": int(time.time()) + 300,
-                }
-            ]
-        )
+        browser.add_cookies([
+            {
+                "name": "test_pycookiecheat",
+                "value": "It worked!",
+                "domain": "n8henrie.com",
+                "path": "/",
+                "expires": int(time.time()) + 300,
+            }
+        ])
         browser.close()
         cookie_file = Path(cookies_home) / "Default" / "Cookies"
         yield cookie_file
@@ -82,9 +80,7 @@ def test_warns_for_string_browser(ci_setup: str) -> None:
     never_been_here = "http://{0}.com".format(uuid4())
     with pytest.warns(
         DeprecationWarning,
-        match=(
-            "Please pass `browser` as a `BrowserType` " "instead of `str`."
-        ),
+        match=("Please pass `browser` as a `BrowserType` instead of `str`."),
     ):
         empty_dict = chrome_cookies(
             never_been_here,
