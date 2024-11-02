@@ -286,13 +286,11 @@ def chrome_cookies(
     else:
         raise OSError("This script only works on MacOS or Linux.")
 
-    config.update(
-        {
-            "init_vector": b" " * 16,
-            "length": 16,
-            "salt": b"saltysalt",
-        }
-    )
+    config.update({
+        "init_vector": b" " * 16,
+        "length": 16,
+        "salt": b"saltysalt",
+    })
 
     if cookie_file is None:
         cookie_file = config["cookie_file"]
