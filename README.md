@@ -52,22 +52,23 @@ After installation, the CLI tool can be run as a python module `python -m` or
 with a standalone console script:
 
 ```console
-$ pycookiecheat --help
-usage: pycookiecheat [-h] -u URL [-b BROWSER] [-o OUTPUT_FILE] [--verbose]
-                     [-c COOKIE_FILE]
+$ python -m pycookiecheat --help
+usage: pycookiecheat [-h] [-b BROWSER] [-o OUTPUT_FILE] [-v] [-c COOKIE_FILE] [-V] url
 
 Copy cookies from Chrome or Firefox and output as json
 
+positional arguments:
+  url                   requires scheme (e.g. `https://`)
+
 options:
   -h, --help            show this help message and exit
-  -u URL, --url URL     requires scheme (e.g. `https://`)
   -b BROWSER, --browser BROWSER
   -o OUTPUT_FILE, --output-file OUTPUT_FILE
                         Output to this file in netscape cookie file format
-  --verbose, -v         Increase logging verbosity (may repeat), default is `logging.ERROR`
+  -v, --verbose         Increase logging verbosity (may repeat), default is `logging.ERROR`
   -c COOKIE_FILE, --cookie-file COOKIE_FILE
                         Cookie file
-```
+  -V, --version         show program's version number and exit```
 
 ### As a Python Library
 

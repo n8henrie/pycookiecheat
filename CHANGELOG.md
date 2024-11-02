@@ -4,6 +4,7 @@
 
 - Add `--version` flag (thanks @samiam)
 - Add `-c` flag to specify custom path to cookie file (thanks @samiam)
+- `url` is now a positional argument (no longer requires `-u`)
 - Fix new path to Firefox profile on MacOS (thanks @MattMuffin)
 - Support Chrome's new v24 cookies (thanks @chrisgavin)
 - Now requires python >= 3.9
