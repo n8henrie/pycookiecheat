@@ -21,13 +21,13 @@
       let
         pkgs = import nixpkgs { inherit system; };
         pname = "pycookiecheat";
-        propagatedBuildInputs = with pkgs.python311Packages; [
+        propagatedBuildInputs = with pkgs.python312Packages; [
           cryptography
           keyring
         ];
         pycookiecheat =
-          { lib, python311 }:
-          python311.pkgs.buildPythonPackage {
+          { lib, python312 }:
+          python312.pkgs.buildPythonPackage {
             inherit pname;
             version = builtins.elemAt (lib.splitString "\"" (
               lib.findSingle (val: builtins.match "^__version__ = \".*\"$" val != null) (abort "none")
@@ -37,14 +37,14 @@
 
             src = lib.cleanSource ./.;
             pyproject = true;
-            nativeBuildInputs = with pkgs.python311Packages; [ setuptools-scm ];
+            nativeBuildInputs = with pkgs.python312Packages; [ setuptools-scm ];
             inherit propagatedBuildInputs;
           };
       in
       {
         packages = {
           ${pname} = pkgs.callPackage pycookiecheat { };
-          default = pkgs.python311.withPackages (_: [ self.packages.${system}.${pname} ]);
+          default = pkgs.python312.withPackages (_: [ self.packages.${system}.${pname} ]);
         };
 
         devShells.default = pkgs.mkShell {
@@ -55,12 +55,13 @@
             python -m playwright install chromium firefox
           '';
           buildInputs = with pkgs; [
-            (python39.withPackages (ps: [ ]))
-            (python310.withPackages (ps: [ ]))
-            (python311.withPackages (ps: [ ]))
-            (python312.withPackages (ps: [ ]))
-            python313Packages.venvShellHook
-            (python313.withPackages (ps: [ ps.tox ]))
+            python39
+            python310
+            python311
+            python313
+
+            python312Packages.venvShellHook
+            (python312.withPackages (ps: [ ps.tox ]))
           ];
         };
 
