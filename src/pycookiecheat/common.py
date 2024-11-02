@@ -33,17 +33,15 @@ class Cookie:
 
         See details at http://www.cookiecentral.com/faq/#3.5
         """
-        return "\t".join(
-            [
-                self.host_key,
-                "TRUE",
-                self.path,
-                "TRUE" if self.is_secure else "FALSE",
-                str(self.expires_utc),
-                self.name,
-                self.value,
-            ]
-        )
+        return "\t".join([
+            self.host_key,
+            "TRUE",
+            self.path,
+            "TRUE" if self.is_secure else "FALSE",
+            str(self.expires_utc),
+            self.name,
+            self.value,
+        ])
 
 
 def generate_host_keys(hostname: str) -> Iterator[str]:
