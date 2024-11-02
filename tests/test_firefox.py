@@ -9,7 +9,6 @@ from pathlib import Path
 from textwrap import dedent
 from threading import Thread
 from unittest.mock import patch
-from urllib.error import URLError
 
 import pytest
 from playwright.sync_api import sync_playwright

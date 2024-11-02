@@ -21,8 +21,6 @@ import sqlite3
 import sys
 import tempfile
 import typing as t
-import urllib.error
-import urllib.parse
 from pathlib import Path
 
 from pycookiecheat.common import (

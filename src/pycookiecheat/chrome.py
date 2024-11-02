@@ -15,7 +15,6 @@ import logging
 import sqlite3
 import sys
 import typing as t
-import urllib.error
 from pathlib import Path
 
 import keyring
@@ -29,8 +28,8 @@ from pycookiecheat.common import (
     BrowserType,
     Cookie,
     deprecation_warning,
-    get_domain,
     generate_host_keys,
+    get_domain,
     write_cookie_file,
 )
 

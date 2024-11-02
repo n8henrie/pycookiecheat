@@ -6,7 +6,6 @@ import time
 import typing as t
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from urllib.error import URLError
 from uuid import uuid4
 
 import pytest
