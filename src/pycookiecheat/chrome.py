@@ -265,14 +265,6 @@ def chrome_cookies(
     """
     domain = get_domain(url)
 
-    # TODO: 20231229 remove str support after some deprecation period
-    if not isinstance(browser, BrowserType):
-        deprecation_warning(
-            "Please pass `browser` as a `BrowserType` instead of "
-            f"`{browser.__class__.__qualname__}`."
-        )
-        browser = BrowserType(browser)
-
     # If running Chrome on MacOS
     if sys.platform == "darwin":
         config = get_macos_config(browser)

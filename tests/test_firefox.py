@@ -339,24 +339,6 @@ def test_firefox_cookies(set_cookie: None) -> None:
     assert cookies["foo"] == "bar"
 
 
-def test_warns_for_string_browser(set_cookie: None) -> None:
-    """Browser should be passed as `BrowserType` and warns for strings."""
-    with pytest.warns(
-        DeprecationWarning,
-        match=("Please pass `browser` as a `BrowserType` instead of `str`."),
-    ):
-        cookies = t.cast(
-            dict,
-            firefox_cookies(
-                "http://localhost",
-                TEST_PROFILE_DIR,
-                browser="firefox",  # type: ignore
-            ),
-        )
-    assert len(cookies) > 0
-    assert cookies["foo"] == "bar"
-
-
 def test_firefox_no_cookies(profiles: Path) -> None:
     """Ensure Firefox cookies for an unvisited site are empty."""
     cookies = firefox_cookies("http://example.org", TEST_PROFILE_DIR)

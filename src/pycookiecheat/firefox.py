@@ -221,14 +221,6 @@ def firefox_cookies(
             + ", ".join(FIREFOX_OS_PROFILE_DIRS.keys())
         )
 
-    # TODO: 20231229 remove str support after some deprecation period
-    if not isinstance(browser, BrowserType):
-        deprecation_warning(
-            "Please pass `browser` as a `BrowserType` instead of "
-            f"`{browser.__class__.__qualname__}`."
-        )
-        browser = BrowserType(browser)
-
     profiles_dir = _get_profiles_dir_for_os(os, browser)
 
     cookies: list[Cookie] = []

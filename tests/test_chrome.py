@@ -75,21 +75,6 @@ def test_raises_on_empty() -> None:
         chrome_cookies()  # type: ignore
 
 
-def test_warns_for_string_browser(ci_setup: str) -> None:
-    """Browser should be passed as `BrowserType` and warns for strings."""
-    never_been_here = "http://{0}.com".format(uuid4())
-    with pytest.warns(
-        DeprecationWarning,
-        match=("Please pass `browser` as a `BrowserType` instead of `str`."),
-    ):
-        empty_dict = chrome_cookies(
-            never_been_here,
-            cookie_file=ci_setup,
-            browser=BROWSER,  # type: ignore
-        )
-    assert empty_dict == dict()
-
-
 def test_no_cookies(ci_setup: str) -> None:
     """Ensure that no cookies are returned for a fake url."""
     never_been_here = "http://{0}.com".format(uuid4())
