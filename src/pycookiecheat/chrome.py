@@ -348,9 +348,8 @@ def chrome_cookies(
             break
 
     sql = (
-        "select host_key, path, "
-        + secure_column_name
-        + ", expires_utc, name, value, encrypted_value "
+        f"select host_key, path, {secure_column_name}, "
+        "expires_utc, name, value, encrypted_value "
         "from cookies where host_key like ?"
     )
 
