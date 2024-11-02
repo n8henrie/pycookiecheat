@@ -44,10 +44,6 @@ Alternatively, some users have suggested running Chrome with the
 
 ### As a Command-Line Tool
 
-As of v0.7.0, pycookiecheat includes a command line tool for ease of use. By
-default it prints the cookies to stdout as JSON but can also output a file in
-Netscape Cookie File Format.
-
 After installation, the CLI tool can be run as a python module `python -m` or
 with a standalone console script:
 
@@ -74,6 +70,9 @@ options:
   -V, --version         show program's version number and exit
 
 ```
+
+By default it prints the cookies to stdout as JSON but can also output a file in
+Netscape Cookie File Format.
 
 ### As a Python Library
 

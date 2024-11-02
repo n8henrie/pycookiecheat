@@ -1,14 +1,26 @@
 # [Changelog](https://keepachangelog.com)
 
-##
+## v0.8.0 :: 20241102
 
+### Breaking Changes
+
+- `url` is now a positional argument (no longer requires `-u`)
+- Browser type must be passed as a variant of the `BrowserType` enum; string
+  is no longer supported
+- Now requires python >= 3.9
+
+### CLI Enhancements
+
+- Assume `https://` if the scheme is not specified
 - Add `--version` flag (thanks @samiam)
 - Add `-c` flag to specify custom path to cookie file (thanks @samiam)
-- `url` is now a positional argument (no longer requires `-u`)
-- Assume `https://` if the scheme is not specified
+
+### Fixes / Other
+
 - Fix new path to Firefox profile on MacOS (thanks @MattMuffin)
 - Support Chrome's new v24 cookies (thanks @chrisgavin)
-- Now requires python >= 3.9
+- Use `ruff` instead of hodgepodge of `flake8` / `pycodestyle` / `black` and
+  others
 
 ## v0.7.0 :: 20240105
 
