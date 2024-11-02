@@ -27,7 +27,6 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from pycookiecheat.common import (
     BrowserType,
     Cookie,
-    deprecation_warning,
     generate_host_keys,
     get_domain,
     write_cookie_file,

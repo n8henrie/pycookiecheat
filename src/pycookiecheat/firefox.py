@@ -26,7 +26,6 @@ from pathlib import Path
 from pycookiecheat.common import (
     BrowserType,
     Cookie,
-    deprecation_warning,
     generate_host_keys,
     get_domain,
     write_cookie_file,
