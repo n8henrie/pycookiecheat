@@ -8,7 +8,7 @@ from importlib.metadata import version
 from .common import BrowserType, get_cookies
 
 
-def cli() -> None:
+def _cli() -> None:
     parser = argparse.ArgumentParser(
         prog="pycookiecheat",
         description="Copy cookies from Chrome or Firefox and output as json",
@@ -43,12 +43,13 @@ def cli() -> None:
         action="version",
         version=version(parser.prog),
     )
-    return parser.parse_args()
+    return parser
 
 
 def main() -> None:
     """Provide a main entrypoint for the command-line tool."""
-    args = cli()
+    parser = _cli()
+    args = parser.parse_args()
 
     logging.basicConfig(level=max(logging.ERROR - 10 * args.verbose, 0))
 

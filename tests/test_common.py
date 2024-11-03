@@ -4,7 +4,12 @@ from typing import Iterable
 
 import pytest
 
-from pycookiecheat.common import Cookie, generate_host_keys
+from pycookiecheat.__main__ import _cli
+from pycookiecheat.common import (
+    BrowserType,
+    Cookie,
+    generate_host_keys,
+)
 
 
 @pytest.mark.parametrize(
@@ -47,3 +52,20 @@ def test_cookie_as_cookie_file_line(
 def test_generate_host_keys(host: str, host_keys: Iterable[str]) -> None:
     """Test `generate_host_keys()` with various example hostnames."""
     assert list(generate_host_keys(host)) == host_keys
+
+
+def test_cli():
+    """Test the cli.
+    When cli tests fail, it probably means that examples in the readme need to
+    be updated, and likely a "leftmost non-zero version number" bump to reflect
+    an API change.
+    """
+    args = _cli().parse_args(["https://n8henrie.com"])
+    assert args.url == "https://n8henrie.com"
+    assert args.browser == BrowserType.CHROME
+
+    args = _cli().parse_args(["github.com", "-vv"])
+    assert args.verbose == 2
+
+    args = _cli().parse_args(["n8henrie.com", "--browser", "firefox"])
+    assert args.browser == BrowserType.FIREFOX
