@@ -8,7 +8,7 @@ from importlib.metadata import version
 from .common import BrowserType, get_cookies
 
 
-def _cli() -> None:
+def _cli() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pycookiecheat",
         description="Copy cookies from Chrome or Firefox and output as json",

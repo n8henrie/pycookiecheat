@@ -179,19 +179,23 @@ def get_cookies(
     Returns:
         Dictionary of cookie values for URL
     """
-    common_kwargs = {
-        "browser": browser,
-        "as_cookies": as_cookies,
-        "cookie_file": cookie_file,
-        "curl_cookie_file": curl_cookie_file,
-    }
     if browser == BrowserType.FIREFOX:
         cookies = pycookiecheat.firefox_cookies(
-            url, **common_kwargs, profile_name=profile_name
+            url,
+            browser=browser,
+            as_cookies=as_cookies,
+            cookie_file=cookie_file,
+            curl_cookie_file=curl_cookie_file,
+            profile_name=profile_name,
         )
     else:
         cookies = pycookiecheat.chrome_cookies(
-            url, **common_kwargs, password=password
+            url,
+            browser=browser,
+            as_cookies=as_cookies,
+            cookie_file=cookie_file,
+            curl_cookie_file=curl_cookie_file,
+            password=password,
         )
 
     return cookies

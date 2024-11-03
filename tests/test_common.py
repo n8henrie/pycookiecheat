@@ -54,7 +54,7 @@ def test_generate_host_keys(host: str, host_keys: t.Iterable[str]) -> None:
     assert list(generate_host_keys(host)) == host_keys
 
 
-def test_cli():
+def test_cli() -> None:
     """Test the cli.
     When cli tests fail, it probably means that examples in the readme need to
     be updated, and likely a "leftmost non-zero version number" bump to reflect
