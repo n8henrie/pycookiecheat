@@ -14,6 +14,7 @@
 - Assume `https://` if the scheme is not specified
 - Add `--version` flag (thanks @samiam)
 - Add `-c` flag to specify custom path to cookie file (thanks @samiam)
+- Convert the `browser` argument into a `BrowserType` at parse time
 
 ### Fixes / Other
 

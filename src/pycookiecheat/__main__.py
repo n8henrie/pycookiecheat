@@ -16,7 +16,9 @@ def cli() -> None:
         description="Copy cookies from Chrome or Firefox and output as json",
     )
     parser.add_argument("url")
-    parser.add_argument("-b", "--browser", default="Chrome")
+    parser.add_argument(
+        "-b", "--browser", type=BrowserType, default=BrowserType.CHROME
+    )
     parser.add_argument(
         "-o",
         "--output-file",
