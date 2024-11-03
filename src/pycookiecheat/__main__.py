@@ -10,8 +10,7 @@ from .common import BrowserType
 from .firefox import firefox_cookies
 
 
-def main() -> None:
-    """Provide a main entrypoint for the command-line tool."""
+def cli() -> None:
     parser = argparse.ArgumentParser(
         prog="pycookiecheat",
         description="Copy cookies from Chrome or Firefox and output as json",
@@ -44,7 +43,12 @@ def main() -> None:
         action="version",
         version=version(parser.prog),
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+def main() -> None:
+    """Provide a main entrypoint for the command-line tool."""
+    args = cli()
 
     logging.basicConfig(level=max(logging.ERROR - 10 * args.verbose, 0))
 
