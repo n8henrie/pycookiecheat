@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Iterator
 from warnings import warn
 
+import pycookiecheat
+
 logger = logging.getLogger(__name__)
 
 
@@ -142,3 +144,54 @@ def get_domain(url: str) -> str:
 
     domain = parsed_url.netloc
     return domain
+
+
+def get_cookies(
+    url: str,
+    *,
+    browser: BrowserType = BrowserType.CHROME,
+    as_cookies: bool = False,
+    cookie_file: t.Optional[t.Union[str, Path]] = None,
+    curl_cookie_file: t.Optional[str] = None,
+    password: t.Optional[t.Union[bytes, str]] = None,
+    profile_name: t.Optional[str] = None,
+) -> t.Union[dict, list[Cookie]]:
+    """Retrieve cookies from supported browsers on MacOS or Linux.
+
+    Common entrypoint that passes parameters on to `chrome_cookies` or
+    `firefox_cookies`
+
+    To facilitate comparison, please try to keep arguments ordered as:
+        - `url`, `browser`
+        - other parameters common to both above functions, alphabetical
+        - parameters with unique to either above function, alphabetical
+
+    Args:
+        url: Domain from which to retrieve cookies, starting with http(s)
+        browser: Enum variant representing browser of interest
+        as_cookies: Return `list[Cookie]` instead of `dict`
+        cookie_file: path to alternate file to search for cookies
+        curl_cookie_file: Path to save the cookie file to be used with cURL
+        password: Optional system password. Unused for Firefox.
+        profile_name: Name (or glob pattern) of the Firefox profile to search
+                      for cookies -- if none given it will find the configured
+                      default profile. Unused for non-Firefox browsers.
+    Returns:
+        Dictionary of cookie values for URL
+    """
+    common_kwargs = {
+        "browser": browser,
+        "as_cookies": as_cookies,
+        "cookie_file": cookie_file,
+        "curl_cookie_file": curl_cookie_file,
+    }
+    if browser == BrowserType.FIREFOX:
+        cookies = pycookiecheat.firefox_cookies(
+            url, **common_kwargs, profile_name=profile_name
+        )
+    else:
+        cookies = pycookiecheat.chrome_cookies(
+            url, **common_kwargs, password=password
+        )
+
+    return cookies

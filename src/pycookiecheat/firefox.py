@@ -186,31 +186,37 @@ def _load_firefox_cookie_db(
 
 def firefox_cookies(
     url: str,
-    profile_name: t.Optional[str] = None,
+    *,
     browser: BrowserType = BrowserType.FIREFOX,
-    curl_cookie_file: t.Optional[str] = None,
     as_cookies: bool = False,
     cookie_file: t.Optional[t.Union[str, Path]] = None,
+    curl_cookie_file: t.Optional[str] = None,
+    profile_name: t.Optional[str] = None,
 ) -> t.Union[dict, list[Cookie]]:
     """Retrieve cookies from Firefox on MacOS or Linux.
 
+    To facilitate comparison, please try to keep arguments in `chrome_cookies`
+    and `firefox_cookies` ordered as:
+        - `url`, `browser`
+        - other parameters common to both above functions, alphabetical
+        - parameters with unique to either above function, alphabetical
+
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
+        browser: Enum variant representing browser of interest
+        as_cookies: Return `list[Cookie]` instead of `dict`
+        cookie_file: path to alternate file to search for cookies
+        curl_cookie_file: Path to save the cookie file to be used with cURL
         profile_name: Name (or glob pattern) of the Firefox profile to search
                       for cookies -- if none given it will find the configured
                       default profile
-        browser: Enum variant representing browser of interest
-        cookie_file: path to alternate file to search for cookies
-        curl_cookie_file: Path to save the cookie file to be used with cURL
-        as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
         Dictionary of cookie values for URL
     """
     domain = get_domain(url)
 
-    # Force a ValueError early if a string of an unreconized browser is passed
-    if browser is not None:
-        browser = BrowserType(browser)
+    # Force a ValueError early if a string of an unrecognized browser is passed
+    browser = BrowserType(browser)
 
     if sys.platform.startswith("linux"):
         os = "linux"

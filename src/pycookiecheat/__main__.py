@@ -5,9 +5,7 @@ import json
 import logging
 from importlib.metadata import version
 
-from .chrome import chrome_cookies
-from .common import BrowserType
-from .firefox import firefox_cookies
+from .common import BrowserType, get_cookies
 
 
 def cli() -> None:
@@ -57,23 +55,12 @@ def main() -> None:
     # todo: make this a match statement once MSPV is 3.10
     browser = BrowserType(args.browser)
 
-    # Use separate function calls to make it easier to add other command line
-    # line flags in the future
-    if browser == BrowserType.FIREFOX:
-        cookies = firefox_cookies(
-            url=args.url,
-            browser=browser,
-            curl_cookie_file=args.output_file,
-            cookie_file=args.cookie_file,
-        )
-    else:
-        cookies = chrome_cookies(
-            url=args.url,
-            browser=browser,
-            curl_cookie_file=args.output_file,
-            cookie_file=args.cookie_file,
-        )
-
+    cookies = get_cookies(
+        url=args.url,
+        browser=browser,
+        curl_cookie_file=args.output_file,
+        cookie_file=args.cookie_file,
+    )
     if not args.output_file:
         print(json.dumps(cookies, indent=4))
 

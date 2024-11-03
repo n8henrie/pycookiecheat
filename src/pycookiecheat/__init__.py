@@ -1,7 +1,7 @@
 """__init__.py :: Exposes chrome_cookies function."""
 
 from pycookiecheat.chrome import chrome_cookies
-from pycookiecheat.common import BrowserType
+from pycookiecheat.common import get_cookies, BrowserType
 from pycookiecheat.firefox import firefox_cookies
 
 __author__ = "Nathan Henrie"
@@ -12,4 +12,5 @@ __all__ = [
     "BrowserType",
     "chrome_cookies",
     "firefox_cookies",
+    "get_cookies",
 ]

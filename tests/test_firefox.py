@@ -14,7 +14,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 from pytest import FixtureRequest, TempPathFactory
 
-from pycookiecheat import BrowserType, firefox_cookies
+from pycookiecheat import BrowserType, firefox_cookies, get_cookies
 from pycookiecheat.firefox import (
     FirefoxProfileNotPopulatedError,
     _find_firefox_default_profile,
@@ -333,15 +333,24 @@ def test_load_firefox_cookie_db_copy_error(
 def test_firefox_cookies(set_cookie: None) -> None:
     """Test getting Firefox cookies after visiting a site with cookies."""
     cookies = t.cast(
-        dict, firefox_cookies("http://localhost", TEST_PROFILE_DIR)
+        dict,
+        firefox_cookies("http://localhost", profile_name=TEST_PROFILE_DIR),
     )
     assert len(cookies) > 0
     assert cookies["foo"] == "bar"
 
+    assert cookies == get_cookies(
+        "http://localhost",
+        browser=BrowserType.FIREFOX,
+        profile_name=TEST_PROFILE_DIR,
+    )
+
 
 def test_firefox_no_cookies(profiles: Path) -> None:
     """Ensure Firefox cookies for an unvisited site are empty."""
-    cookies = firefox_cookies("http://example.org", TEST_PROFILE_DIR)
+    cookies = firefox_cookies(
+        "http://example.org", profile_name=TEST_PROFILE_DIR
+    )
     assert len(cookies) == 0
 
 
@@ -369,7 +378,9 @@ def test_firefox_cookies_curl_cookie_file(
 def test_firefox_cookies_os(fake_os: str, profiles: Path) -> None:
     """Ensure the few lines of OS switching code are covered by a test."""
     with patch("sys.platform", fake_os):
-        cookies = firefox_cookies("http://example.org", TEST_PROFILE_DIR)
+        cookies = firefox_cookies(
+            "http://example.org", profile_name=TEST_PROFILE_DIR
+        )
         assert isinstance(cookies, dict)
 
 

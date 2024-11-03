@@ -20,6 +20,10 @@
 
 - Fix new path to Firefox profile on MacOS (thanks @MattMuffin)
 - Support Chrome's new v24 cookies (thanks @chrisgavin)
+- Add new top-level `get_cookies` function that can be used for all supported
+  browsers
+  - No longer need to use separate `chrome_cookies` or `firefox_cookies`
+    functions, but will leave these around for backwards compatibility
 - Use `ruff` instead of hodgepodge of `flake8` / `pycodestyle` / `black` and
   others
 

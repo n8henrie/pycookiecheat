@@ -11,7 +11,7 @@ from uuid import uuid4
 import pytest
 from playwright.sync_api import sync_playwright
 
-from pycookiecheat import BrowserType, chrome_cookies
+from pycookiecheat import BrowserType, chrome_cookies, get_cookies
 from pycookiecheat.chrome import get_linux_config, get_macos_config
 
 BROWSER = os.environ.get("TEST_BROWSER_NAME", "Chromium")
@@ -101,6 +101,12 @@ def test_fake_cookie(ci_setup: str) -> None:
         ),
     )
     assert cookies.get("test_pycookiecheat") == "It worked!"
+
+    assert cookies == get_cookies(
+        "https://n8henrie.com",
+        browser=BrowserType(BROWSER),
+        cookie_file=ci_setup,
+    )
 
 
 def test_raises_on_wrong_browser() -> None:

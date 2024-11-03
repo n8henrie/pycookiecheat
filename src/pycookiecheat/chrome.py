@@ -244,29 +244,35 @@ def get_linux_config(browser: BrowserType) -> dict:
 
 def chrome_cookies(
     url: str,
+    *,
+    browser: BrowserType = BrowserType.CHROME,
+    as_cookies: bool = False,
     cookie_file: t.Optional[t.Union[str, Path]] = None,
-    browser: t.Optional[BrowserType] = BrowserType.CHROME,
     curl_cookie_file: t.Optional[t.Union[str, Path]] = None,
     password: t.Optional[t.Union[bytes, str]] = None,
-    as_cookies: bool = False,
 ) -> t.Union[dict, list[Cookie]]:
     """Retrieve cookies from Chrome/Chromium on MacOS or Linux.
 
+    To facilitate comparison, please try to keep arguments in `chrome_cookies`
+    and `firefox_cookies` ordered as:
+        - `url`, `browser`
+        - other parameters common to both above functions, alphabetical
+        - parameters with unique to either above function, alphabetical
+
     Args:
         url: Domain from which to retrieve cookies, starting with http(s)
-        cookie_file: Path to alternate file to search for cookies
         browser: Enum variant representing browser of interest
+        as_cookies: Return `list[Cookie]` instead of `dict`
+        cookie_file: Path to alternate file to search for cookies
         curl_cookie_file: Path to save the cookie file to be used with cURL
         password: Optional system password
-        as_cookies: Return `list[Cookie]` instead of `dict`
     Returns:
         Dictionary of cookie values for URL
     """
     domain = get_domain(url)
 
-    # Force a ValueError early if a string of an unreconized browser is passed
-    if browser is not None:
-        browser = BrowserType(browser)
+    # Force a ValueError early if a string of an unrecognized browser is passed
+    browser = BrowserType(browser)
 
     # If running Chrome on MacOS
     if sys.platform == "darwin":

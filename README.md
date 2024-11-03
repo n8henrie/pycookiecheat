@@ -77,21 +77,22 @@ Netscape Cookie File Format.
 ### As a Python Library
 
 ```python
-from pycookiecheat import BrowserType, chrome_cookies
+from pycookiecheat import BrowserType, get_cookies
 import requests
 
 url = 'https://n8henrie.com'
 
 # Uses Chrome's default cookies filepath by default
-cookies = chrome_cookies(url)
+cookies = get_cookies(url)
 r = requests.get(url, cookies=cookies)
 
 # Using an alternate browser
-cookies = chrome_cookies(url, browser=BrowserType.CHROMIUM)
+cookies = get_cookies(url, browser=BrowserType.CHROMIUM)
 ```
 
-Use the `cookie_file` keyword-argument to specify a different filepath for the
-cookies-file: `chrome_cookies(url, cookie_file='/abspath/to/cookies')`
+Use the `cookie_file` keyword-argument to specify a different path to the file
+containing your cookies:
+`get_cookies(url, cookie_file='/abspath/to/cookies')`
 
 You may be able to retrieve cookies for alternative Chromium-based browsers by
 manually specifying something like
