@@ -1,0 +1,4 @@
+MSPV:
+    - 3.10
+        - Replace `t.Union` with `|`
+        - several places that match would work well

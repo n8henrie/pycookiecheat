@@ -1,6 +1,6 @@
 """Tests for pycookiecheat.common."""
 
-from typing import Iterable
+import typing as t
 
 import pytest
 
@@ -49,7 +49,7 @@ def test_cookie_as_cookie_file_line(
         ("localhost", ["localhost"]),
     ],
 )
-def test_generate_host_keys(host: str, host_keys: Iterable[str]) -> None:
+def test_generate_host_keys(host: str, host_keys: t.Iterable[str]) -> None:
     """Test `generate_host_keys()` with various example hostnames."""
     assert list(generate_host_keys(host)) == host_keys
 

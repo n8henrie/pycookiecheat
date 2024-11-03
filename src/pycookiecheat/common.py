@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import logging
+import typing as t
 import urllib.parse
 from dataclasses import dataclass
 from enum import Enum, unique
 from pathlib import Path
-from typing import Iterator
 from warnings import warn
 
 import pycookiecheat
@@ -46,7 +46,7 @@ class Cookie:
         ])
 
 
-def generate_host_keys(hostname: str) -> Iterator[str]:
+def generate_host_keys(hostname: str) -> t.Iterator[str]:
     """Yield keys for `hostname`, from least to most specific.
 
     Given a hostname like foo.example.com, this yields the key sequence:

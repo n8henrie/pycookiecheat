@@ -265,9 +265,6 @@ def test_get_profiles_dir_for_os_invalid() -> None:
         _get_profiles_dir_for_os("linux", BrowserType("invalid"))
 
 
-# _find_firefox_default_profile()
-
-
 def test_firefox_get_default_profile_valid(
     profiles_ini_versions: Path,
 ) -> None:
@@ -283,9 +280,6 @@ def test_firefox_get_default_profile_invalid(no_profiles: Path) -> None:
     """Ensure profile discovery in an invalid data dir raises an exception."""
     with pytest.raises(Exception, match="no profiles found"):
         _find_firefox_default_profile(no_profiles)
-
-
-# _load_firefox_cookie_db()
 
 
 def test_load_firefox_cookie_db_populated(
@@ -325,9 +319,6 @@ def test_load_firefox_cookie_db_copy_error(
             tmp_path,
             TEST_PROFILE_DIR,
         )
-
-
-# firefox_cookies()
 
 
 def test_firefox_cookies(set_cookie: None) -> None:
