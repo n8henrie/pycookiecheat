@@ -107,8 +107,8 @@ def _find_firefox_default_profile(firefox_dir: Path) -> str:
     profiles_ini.read(firefox_dir / "profiles.ini")
     installs = [s for s in profiles_ini.sections() if s.startswith("Install")]
     if installs:  # Firefox >= 67
-        # Heuristic: Take the first install, that's probably the system install
-        return profiles_ini[installs[0]]["Default"]
+        # Heuristic: Take the most recently created profile which should be the active one.
+        return profiles_ini[installs[-1]]["Default"]
     else:  # Firefox < 67
         profiles = [
             s for s in profiles_ini.sections() if s.startswith("Profile")
