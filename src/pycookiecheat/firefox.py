@@ -107,7 +107,18 @@ def _find_firefox_default_profile(firefox_dir: Path) -> str:
     profiles_ini.read(firefox_dir / "profiles.ini")
     installs = [s for s in profiles_ini.sections() if s.startswith("Install")]
     if installs:  # Firefox >= 67
-        # Heuristic: Take the most recently created profile which should be the active one.
+        """
+        Default to last Firefox install if multiple
+
+        When _not_ explicitly requesting a specific Firefox profile directory
+        the default profile is chosen. However on top of profiles Firefox may
+        have multiple "installs" (listed in the `installs.ini` file) each with
+        their own default profile.
+        
+        Before, the default profile was the one from the first install.
+        However, it makes more sense to pick the last one instead, assuming
+        that that's the most recently created one, and thus the active one.
+        """
         return profiles_ini[installs[-1]]["Default"]
     else:  # Firefox < 67
         profiles = [
