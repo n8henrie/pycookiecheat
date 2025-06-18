@@ -123,22 +123,28 @@ def get_macos_config(browser: BrowserType) -> dict:
         raise ValueError(errmsg) from e
     cookie_file = "~" / app_support / cookies_suffix
 
-    # Slack cookies can be in two places on MacOS depending on whether it was
-    # installed from the App Store or direct download.
-    if browser is BrowserType.SLACK and not cookie_file.exists():
-        # And this location if Slack is installed from App Store
+    # Cookie location and keyring username in MacOS depends on whether the
+    # application was installed from the App Store or direct download. To find
+    # out, we simply assume it's direct download and fall back to App Store if
+    # it's not there. Currently this distinction is only known for Slack, so
+    # that is the only case handled here.
+    isAppStore = False
+    if browser is BrowserType.SLACK and not cookie_file.expanduser().exists():
+        isAppStore = True
         cookie_file = (
             "~/Library/Containers/com.tinyspeck.slackmacgap/Data"
-            / app_support
-            / cookies_suffix
+            / app_support / cookies_suffix
         )
 
     browser_name = browser.title()
     keyring_service_name = f"{browser_name} Safe Storage"
 
-    keyring_username = browser_name
-    if browser is BrowserType.SLACK:
-        keyring_username = "Slack App Store Key"
+    if browser is BrowserType.SLACK and isAppStore:
+        keyring_username = f"{browser_name} App Store Key"
+    elif browser is BrowserType.SLACK:
+        keyring_username = f"{browser_name} Key"
+    else:
+        keyring_username = f"{browser_name}"
 
     key_material = keyring.get_password(keyring_service_name, keyring_username)
     if key_material is None:
