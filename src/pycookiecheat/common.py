@@ -97,6 +97,7 @@ class BrowserType(str, Enum):
     CHROMIUM = "chromium"
     FIREFOX = "firefox"
     SLACK = "slack"
+    VIVALDI = "vivaldi"
 
     # https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
     @classmethod
