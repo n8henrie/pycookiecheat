@@ -55,13 +55,13 @@
             python -m playwright install chromium firefox
           '';
           buildInputs = with pkgs; [
-            python39
-            python310
             python311
             python313
+            python314
+            python315
 
-            python312Packages.venvShellHook
-            (python312.withPackages (ps: [ ps.tox ]))
+            python314Packages.venvShellHook
+            (python314.withPackages (ps: [ ps.tox ]))
           ];
         };
 
