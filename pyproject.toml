@@ -62,6 +62,12 @@ dev = [
     "twine==5.*",
     "wheel==0.43.*",
 ]
+gnome-keyring = [
+    "pygobject==3.*"
+]
+kwallet = [
+    "dbus-python==1.*"
+]
 
 [project.scripts]
 pycookiecheat = "pycookiecheat.__main__:main"
